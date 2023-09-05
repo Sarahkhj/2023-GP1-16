@@ -8,5 +8,6 @@ Our solution seeks to reduce the risk of data loss or unauthorized access while 
 Therefore, our project intends to provide customers with a secure, practical, and effective file-storing and sharing experience by merging these advanced technologies. To meet the evolving needs of mobile users in a world that is becoming more connected, we set a high priority on data security, encryption, and user-friendly functionality.
 # Technology
 We will be using Java programming language.
+# launching instructions
 
 
