@@ -15,7 +15,7 @@ Therefore, our project intends to provide customers with a secure, practical, an
 # launching Instructions
 1. Clone the Repository:
  ```
-$ git clone https://github.com/afnmo/2023-GP1-16.git
+$ git clone https://github.com/Sarahkhj/2023-GP1-16.git
 ```
 2. Go to the Project Directory:
 ```
