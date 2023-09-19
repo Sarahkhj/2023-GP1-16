@@ -13,5 +13,14 @@ Therefore, our project intends to provide customers with a secure, practical, an
 # Technology
 [![My Skills](https://skillicons.dev/icons?i=github,java,visualstudio,androidstudio)](https://skillicons.dev)
 # launching Instructions
+1. Clone the Repository:
+ ```
+$ git clone https://github.com/afnmo/2023-GP1-16.git
+```
+2. Go to the Project Directory:
+```
+$ cd 2023-GP1-16
+```
+3. Run the app
 
 
