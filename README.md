@@ -1,7 +1,9 @@
 #### 2023-GP1-16
 # Secure Box
+<p align="center">
+    <img width="400" src="Untitssled.png" alt="logo">
+</p>
 
-![Screenshot](Untitssled.png)
 # Overview
 Nowadays, mobile phones have become an essential part of our lives in the current age of technology, acting as our personal assistants, entertainment centres of activity, and communication engines. 
 The limited storage of smartphones frequently causes a problem for users who gather multimedia files and application data. Furthermore, the constant presence of security risks linked to file storage on mobile devices, such as the potential for hacking or damage, intensifies the necessity for a dependable and robust solution.
