@@ -11,7 +11,7 @@ We propose a file storage and sharing system that makes use of server-based stor
 Our solution seeks to reduce the risk of data loss or unauthorized access while providing users with an effortless and secure platform for storing and accessing their files.
 Therefore, our project intends to provide customers with a secure, practical, and effective file-storing and sharing experience by merging these advanced technologies. To meet the evolving needs of mobile users in a world that is becoming more connected, we set a high priority on data security, encryption, and user-friendly functionality.
 # Technology
-[![My Skills](https://skillicons.dev/icons?i=github,java,vscode,androidstudio)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=github,java,visualstudio,androidstudio)](https://skillicons.dev)
 # launching Instructions
 
 
