@@ -10,13 +10,13 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="266dp"
-        android:layout_height="196dp"
+        android:layout_width="228dp"
+        android:layout_height="172dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="78dp"
-        android:layout_marginEnd="67dp"
+        android:layout_marginStart="91dp"
+        android:layout_marginEnd="92dp"
         android:layout_marginBottom="451dp"
         app:srcCompat="@drawable/logoremove" />
 

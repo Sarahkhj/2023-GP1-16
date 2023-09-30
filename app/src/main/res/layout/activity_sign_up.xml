@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="65dp"
                 android:textColor="@color/black"
-                android:text="i'm already a member, Login"
+                android:text="i'm already a member, Sign in"
                 android:textAlignment="center" />
 
 
