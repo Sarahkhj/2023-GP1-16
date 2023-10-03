@@ -6,12 +6,4 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="213dp"
-        android:layout_height="129dp"
-        android:text="HOME PAGE"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="92dp"
-        tools:layout_editor_absoluteY="263dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

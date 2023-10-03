@@ -73,11 +73,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public Boolean checkusername(String username) {
+    public Boolean checkusername(String email) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        String sql="select * from " + usersTable + " where username =?";
+        String sql="select * from " + usersTable + " where email =?";
        // Cursor cursor = MyDB.rawQuery("Select * from usersTable where username = ?", new String [] {username});
-        Cursor cursor = MyDB.rawQuery(sql, new String[] {username});
+        Cursor cursor = MyDB.rawQuery(sql, new String[] {email});
         if (cursor.getCount() > 0)
             return true;
         else
