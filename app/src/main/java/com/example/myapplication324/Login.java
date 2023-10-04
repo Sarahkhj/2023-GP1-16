@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
     private TextView t1;
+    private TextView t2;
+
 
     Button SignInButton;
 
@@ -33,10 +35,18 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         t1 = (TextView) findViewById(R.id.signup);
+        t2 = (TextView) findViewById(R.id.forget);
+
         t1.setOnClickListener(new View.OnClickListener() {//makes the signup text clickable
             @Override
             public void onClick(View view) {
                 opensignup();
+            }
+        });
+        t2.setOnClickListener(new View.OnClickListener() {//makes the signup text clickable
+            @Override
+            public void onClick(View view) {
+                openforget();
             }
         });
 
@@ -101,6 +111,10 @@ public class Login extends AppCompatActivity {
 
     public void opensignup(){
         Intent intent = new Intent(this, Sign_up.class);
+        startActivity(intent);
+    }
+    public void openforget(){
+        Intent intent = new Intent(this, Forgetpassword.class);
         startActivity(intent);
     }
     private boolean isValidEmail(String email) {
