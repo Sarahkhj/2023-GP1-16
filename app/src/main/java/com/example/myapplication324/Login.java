@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Login extends AppCompatActivity {
     private TextView t1;
 
@@ -51,6 +54,11 @@ public class Login extends AppCompatActivity {
                 if(!validateForm())
                     return;
                 //checkusernamepassword
+                String emailAsText= email.getText().toString().trim();
+                if(!isValidEmail(emailAsText)){
+                    Toast.makeText(Login.this, "invalid email format", Toast.LENGTH_SHORT).show();
+                }
+
 
                 if(db.checkusernamepassword((email.getText().toString()),
                         password.getText().toString()))
@@ -61,7 +69,7 @@ public class Login extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(Login.this, "Invalid inputs", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -79,7 +87,7 @@ public class Login extends AppCompatActivity {
         String passwordAsText=password.getText().toString().trim();
 
         if (TextUtils.isEmpty(emailAsText)) {
-            email.setError("Please enter a username");
+            email.setError("Please enter your email");
             email.requestFocus();
             return false;
         }
@@ -94,5 +102,11 @@ public class Login extends AppCompatActivity {
     public void opensignup(){
         Intent intent = new Intent(this, Sign_up.class);
         startActivity(intent);
+    }
+    private boolean isValidEmail(String email) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
