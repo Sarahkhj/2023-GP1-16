@@ -70,8 +70,7 @@ public class Login extends AppCompatActivity {
                 }
 
 
-                if (!db.checkusernamepassword((email.getText().toString()),
-                        password.getText().toString())) {
+                if (!db.checkusername((email.getText().toString()))) {
                             Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
                         } else {
                             Intent intent=new Intent(Login.this , Home.class);
