@@ -37,7 +37,7 @@ public class Login extends AppCompatActivity {
         t1 = (TextView) findViewById(R.id.signup);
         t2 = (TextView) findViewById(R.id.forget);
 
-        t1.setOnClickListener(new View.OnClickListener() {//makes the signup text clickable
+        t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 opensignup();
@@ -64,24 +64,20 @@ public class Login extends AppCompatActivity {
                 if(!validateForm())
                     return;
                 //checkusernamepassword
-                String emailAsText= email.getText().toString().trim();
+                String emailAsText= email.getText().toString();
                 if(!isValidEmail(emailAsText)){
                     Toast.makeText(Login.this, "invalid email format", Toast.LENGTH_SHORT).show();
                 }
 
 
-                if(db.checkusernamepassword((email.getText().toString()),
-                        password.getText().toString()))
-                {
-                    Intent intent=new Intent(Login.this , Home.class);
-                    startActivity(intent);
+                if (!db.checkusernamepassword((email.getText().toString()),
+                        password.getText().toString())) {
+                            Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Intent intent=new Intent(Login.this , Home.class);
+                            startActivity(intent);
 
-                }
-                else
-                {
-                    Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
-                }
-
+                        }
 
 
             }
