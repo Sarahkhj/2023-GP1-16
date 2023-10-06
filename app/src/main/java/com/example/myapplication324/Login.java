@@ -1,8 +1,11 @@
 package com.example.myapplication324;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.core.content.ContextCompat;
+import androidx.biometric.BiometricPrompt;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,10 +16,12 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
+
     private TextView t1;
     private TextView t2;
 
@@ -58,51 +63,70 @@ public class Login extends AppCompatActivity {
 
         db = new DBHelper(this);//to gain access to the local database and perform various operations
 
+
+
+
         SignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!validateForm())
-                    return;
+
+//
+//                if(!validateForm())
+//                    return;
                 //checkusernamepassword
-                String emailAsText= email.getText().toString();
-                if(!isValidEmail(emailAsText)){
-                    Toast.makeText(Login.this, "invalid email format", Toast.LENGTH_SHORT).show();
+                String emailAsText= email.getText().toString().trim();
+                String pass=password.getText().toString().trim();
+                isCredentialsValid();
+                if (!db.checkusernamepassword(emailAsText,pass)){
+                    Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+
                 }
 
 
-                if (!db.checkusername((email.getText().toString()))) {
-                            Toast.makeText(Login.this, "Account does not exist", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Intent intent=new Intent(Login.this , Home.class);
-                            startActivity(intent);
-
-                        }
 
 
             }
         });
 
 
+
     }
-
-    private boolean validateForm(){
-        email.setError(null);
-        password.setError(null);
-        String emailAsText= email.getText().toString().trim();  //retrieve the text entered in the email
-        String passwordAsText=password.getText().toString().trim();
-
-        if (TextUtils.isEmpty(emailAsText)) {
-            email.setError("Please enter your email");
-            email.requestFocus();
+    private boolean isCredentialsValid() {
+        String emailAddress = email.getText().toString().trim();
+        String pass = password.getText().toString();
+        if (TextUtils.isEmpty(emailAddress)
+                || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
+            email.setError("Enter valid email!");
             return false;
-        }
-        if (TextUtils.isEmpty(passwordAsText)) {
-            password.setError("Please enter your Password");
-            password.requestFocus();
+        } else if (TextUtils.isEmpty(pass)) {
+            password.setError("Enter your password");
             return false;
         }
         return true;
     }
+  //  @alanoudnasser
+
+//    private boolean validateForm(){
+//        email.setError(null);
+//        password.setError(null);
+//        String emailAsText= email.getText().toString().trim();  //retrieve the text entered in the email
+//        String passwordAsText=password.getText().toString().trim();
+//
+//        if (TextUtils.isEmpty(emailAsText)) {
+//            email.setError("Please enter your email");
+//            email.requestFocus();
+//            return false;
+//        }
+//        if (TextUtils.isEmpty(passwordAsText)) {
+//            password.setError("Please enter your Password");
+//            password.requestFocus();
+//            return false;
+//        }
+//        return true;
+//    }
 
     public void opensignup(){
         Intent intent = new Intent(this, Sign_up.class);
@@ -112,10 +136,5 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(this, Forgetpassword.class);
         startActivity(intent);
     }
-    private boolean isValidEmail(String email) {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        Pattern pattern = Pattern.compile(emailPattern);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
+
 }
