@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +27,11 @@ public class Sign_up extends AppCompatActivity {
     private Button sign;
     private DBHelper DB;
     private FirebaseAuth auth;
+    private FirebaseDatabase rootNode;
+    private DatabaseReference reference;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +91,15 @@ public class Sign_up extends AppCompatActivity {
                         // Toast.makeText(signin.this, errorMessage.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
+////             $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+                rootNode = FirebaseDatabase.getInstance();
+                reference= rootNode.getReference("users");
 
+
+                UserHelperClass helperClass = new UserHelperClass(user,mail,Phone,pass);
+
+              //  reference.child(user).setValue(helperClass);
+                reference.push().setValue(helperClass);
             }
         });
     }
