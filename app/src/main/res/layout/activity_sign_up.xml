@@ -10,14 +10,14 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="228dp"
-        android:layout_height="172dp"
+        android:layout_width="215dp"
+        android:layout_height="184dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="91dp"
-        android:layout_marginEnd="92dp"
-        android:layout_marginBottom="496dp"
+        android:layout_marginStart="87dp"
+        android:layout_marginEnd="90dp"
+        android:layout_marginBottom="601dp"
         app:srcCompat="@drawable/logoremove" />
 
     <androidx.cardview.widget.CardView
@@ -27,34 +27,37 @@
         android:backgroundTint="@color/white"
         android:layout_marginBottom="-20dp"
         android:layout_alignParentBottom="true">
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="414dp"
+            android:layout_height="562dp"
             android:orientation="vertical"
             android:padding="40dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hello, Friend!"
+                android:textColor="@color/black"
                 android:textSize="36dp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please Sign up with your information"
-                android:alpha="0.8"/>
+                android:alpha="0.8"
+                android:text="Please Sign up with your information" />
 
             <View
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"/>
+                android:layout_height="30dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Name"
-                android:textStyle="bold"
                 android:alpha="0.8"
-                />
+                android:text="User Name"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/username"
@@ -62,13 +65,13 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/person_icpn"
                 android:inputType="textPersonName" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email Address"
-                android:textStyle="bold"
                 android:alpha="0.8"
-                />
+                android:text="Email Address"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/email"
@@ -76,13 +79,13 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/email_icon"
                 android:inputType="textEmailAddress" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:textStyle="bold"
                 android:alpha="0.8"
-                />
+                android:text="Phone Number"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/PhoneNum"
@@ -90,13 +93,13 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/phone_icon"
                 android:inputType="phone" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password"
-                android:textStyle="bold"
                 android:alpha="0.8"
-                />
+                android:text="Password"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/password"
@@ -118,14 +121,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="65dp"
-                android:textColor="@color/black"
                 android:text="i'm already a member, Sign in"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/black" />
 
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>
