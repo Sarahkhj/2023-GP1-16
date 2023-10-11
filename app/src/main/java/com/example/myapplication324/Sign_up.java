@@ -23,15 +23,12 @@ import java.util.regex.Pattern;
 
 public class Sign_up extends AppCompatActivity {
     private TextView login;
-    private EditText username, email, PhoneNum, password;
+    private EditText username, email, PhoneNum, password, rePassword;
     private Button sign;
     private DBHelper DB;
     private FirebaseAuth auth;
     private FirebaseDatabase rootNode;
     private DatabaseReference reference;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,22 +40,23 @@ public class Sign_up extends AppCompatActivity {
         email = findViewById(R.id.email);
         PhoneNum = findViewById(R.id.PhoneNum);
         password = findViewById(R.id.password);
+        rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
-
-
 
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String user = username.getText().toString();
                 String pass = password.getText().toString();
+                String rePass = rePassword.getText().toString();
                 String mail = email.getText().toString();
                 String Phone = PhoneNum.getText().toString();
-                if (user.equals("") || pass.equals("") || mail.equals("") || Phone.equals("")) {
+                if (user.equals("") || pass.equals("") || rePass.equals("") || mail.equals("") || Phone.equals("")) {
                     Toast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
+                } else if (!pass.equals(rePass)) {
+                    // Set an error on the rePassword field
+                    rePassword.setError("Passwords do not match");
                 } else {
-                    //Boolean checkuser = DB.checkusername(user);
-
                     boolean validEmail = isValidEmail(mail);
                     boolean validPhone = isValidPhoneNumber(Phone);
                     boolean validPassword = isValidPassword(pass);
@@ -67,7 +65,7 @@ public class Sign_up extends AppCompatActivity {
                         auth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()) {
+                                if (task.isSuccessful()) {
                                     Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(Sign_up.this, Home.class));
                                 } else {
@@ -76,7 +74,6 @@ public class Sign_up extends AppCompatActivity {
                             }
                         });
                     } else {
-                        //  StringBuilder errorMessage = new StringBuilder("Invalid format: ");
                         StringBuilder errorMessage = new StringBuilder("Invalid format: ");
                         if (!validEmail) {
                             email.setError("Email, ");
@@ -87,18 +84,12 @@ public class Sign_up extends AppCompatActivity {
                         if (!validPassword) {
                             password.setError("Password, ");
                         }
-                        // errorMessage.deleteCharAt(errorMessage.length() - 2); // Remove the last comma and space
-                        // Toast.makeText(signin.this, errorMessage.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
-////             $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+                // Rest of your code
                 rootNode = FirebaseDatabase.getInstance();
-                reference= rootNode.getReference("users");
-
-
-                UserHelperClass helperClass = new UserHelperClass(user,mail,Phone,pass);
-
-              //  reference.child(user).setValue(helperClass);
+                reference = rootNode.getReference("users");
+                UserHelperClass helperClass = new UserHelperClass(user, mail, Phone, pass);
                 reference.push().setValue(helperClass);
             }
         });
@@ -117,13 +108,11 @@ public class Sign_up extends AppCompatActivity {
     }
 
     private boolean isValidPassword(String password) {
-        // Check if the password meets all the specified criteria
-        return password.length() >= 8 &&                 // At least 8 characters
-                password.length() <= 15 &&                // At most 15 characters
-                !password.equals(password.toLowerCase()) && // At least one uppercase letter
-                !password.equals(password.toUpperCase()) && // At least one lowercase letter
-                password.matches(".*\\d.*") &&            // At least one digit (0-9)
-                password.matches(".*[./].*");             // At least one of '.' or '/'
+        return password.length() >= 8 &&
+                password.length() <= 15 &&
+                !password.equals(password.toLowerCase()) &&
+                !password.equals(password.toUpperCase()) &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[./].*");
     }
-
 }

@@ -29,8 +29,8 @@
         android:layout_alignParentBottom="true">
 
         <LinearLayout
-            android:layout_width="414dp"
-            android:layout_height="562dp"
+            android:layout_width="407dp"
+            android:layout_height="592dp"
             android:orientation="vertical"
             android:padding="40dp">
 
@@ -109,6 +109,20 @@
                 android:inputType="textPassword" />
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:text="Retype Password"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/rePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableRight="@drawable/lock_icon"
+                android:inputType="textPassword" />
+
             <Button
                 android:id="@+id/sign"
                 android:layout_width="match_parent"
@@ -118,8 +132,8 @@
 
             <TextView
                 android:id="@+id/login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="195dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="65dp"
                 android:text="i'm already a member, Sign in"
                 android:textAlignment="center"
