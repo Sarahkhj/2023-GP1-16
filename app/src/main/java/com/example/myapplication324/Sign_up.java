@@ -89,7 +89,7 @@ public class Sign_up extends AppCompatActivity {
                 // Rest of your code
                 rootNode = FirebaseDatabase.getInstance();
                 reference = rootNode.getReference("users");
-                UserHelperClass helperClass = new UserHelperClass(user, mail, Phone, pass);
+                UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
                 reference.push().setValue(helperClass);
             }
         });
