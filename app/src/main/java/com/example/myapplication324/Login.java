@@ -2,6 +2,7 @@ package com.example.myapplication324;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -106,6 +107,7 @@ public class Login extends AppCompatActivity {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
                 break;
+
         }
 
         // Initialize biometric prompt

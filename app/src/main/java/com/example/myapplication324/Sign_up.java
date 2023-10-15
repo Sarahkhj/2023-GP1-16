@@ -82,7 +82,7 @@ public class Sign_up extends AppCompatActivity {
                             PhoneNum.setError("Phone number, ");
                         }
                         if (!validPassword) {
-                            password.setError("Password, ");
+                            password.setError("password minimum 8\natleast 1 uppercase\natleast 1 lowercase\natleast 1 numbers\natleast 1special charecter  ");
                         }
                     }
                 }
