@@ -67,6 +67,12 @@ public class Sign_up extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
+
+                                    rootNode = FirebaseDatabase.getInstance();
+                                    reference = rootNode.getReference("users");
+                                    UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
+                                    reference.push().setValue(helperClass);
+
                                     startActivity(new Intent(Sign_up.this, Home.class));
                                 } else {
                                     Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -76,10 +82,10 @@ public class Sign_up extends AppCompatActivity {
                     } else {
                         StringBuilder errorMessage = new StringBuilder("Invalid format: ");
                         if (!validEmail) {
-                            email.setError("Email, ");
+                            email.setError("Email ");
                         }
                         if (!validPhone) {
-                            PhoneNum.setError("Phone number, ");
+                            PhoneNum.setError("Phone number ");
                         }
                         if (!validPassword) {
                             password.setError("password minimum 8\natleast 1 uppercase\natleast 1 lowercase\natleast 1 numbers\natleast 1special charecter  ");
@@ -87,10 +93,10 @@ public class Sign_up extends AppCompatActivity {
                     }
                 }
                 // Rest of your code
-                rootNode = FirebaseDatabase.getInstance();
-                reference = rootNode.getReference("users");
-                UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
-                reference.push().setValue(helperClass);
+               // rootNode = FirebaseDatabase.getInstance();
+               // reference = rootNode.getReference("users");
+              //  UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
+                //reference.push().setValue(helperClass);
             }
         });
         login.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +108,7 @@ public class Sign_up extends AppCompatActivity {
     }
 
     private boolean isValidEmail(String email) {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        String emailPattern = "(?i)[a-z0-9._-]+@[a-z]+\\.+[a-z]+";
         Pattern pattern = Pattern.compile(emailPattern);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
