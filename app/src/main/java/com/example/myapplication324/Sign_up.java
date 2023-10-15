@@ -93,6 +93,12 @@ public class Sign_up extends AppCompatActivity {
                 reference.push().setValue(helperClass);
             }
         });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openlogin();
+            }
+        });
     }
 
     private boolean isValidEmail(String email) {
@@ -114,5 +120,10 @@ public class Sign_up extends AppCompatActivity {
                 !password.equals(password.toUpperCase()) &&
                 password.matches(".*\\d.*") &&
                 password.matches(".*[./].*");
+    }
+
+    public void openlogin() {
+        Intent intent = new Intent(this, Login.class);
+        startActivity(intent);
     }
 }
