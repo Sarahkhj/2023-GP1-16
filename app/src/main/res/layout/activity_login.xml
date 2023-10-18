@@ -80,13 +80,14 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/lock_icon"
                 android:inputType="textPassword" />
+
             <TextView
                 android:id="@+id/forget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="Forget password?"
                 android:layout_marginLeft="190dp"
+                android:text="Forgot password?"
+                android:textColor="@color/black"
 
 
                 />

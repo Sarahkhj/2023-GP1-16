@@ -2,9 +2,13 @@ package com.example.myapplication324;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +34,9 @@ public class Sign_up extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseDatabase rootNode;
     private DatabaseReference reference;
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,26 @@ public class Sign_up extends AppCompatActivity {
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
 
+
+        // Checking biometric authentication availability
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Log.e("MY_APP_TAG", "No biometric features available on this device.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
+                break;
+
+        }
+        // Initialize biometric prompt
+        executor = ContextCompat.getMainExecutor(this);
+
+
+
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,6 +79,7 @@ public class Sign_up extends AppCompatActivity {
                 String rePass = rePassword.getText().toString();
                 String mail = email.getText().toString();
                 String Phone = PhoneNum.getText().toString();
+
                 if (user.equals("") || pass.equals("") || rePass.equals("") || mail.equals("") || Phone.equals("")) {
                     Toast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
                 } else if (!pass.equals(rePass)) {
@@ -62,23 +91,44 @@ public class Sign_up extends AppCompatActivity {
                     boolean validPassword = isValidPassword(pass);
 
                     if (validEmail && validPhone && validPassword) {
-                        auth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        biometricPrompt = new BiometricPrompt(Sign_up.this, executor, new BiometricPrompt.AuthenticationCallback() {
                             @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
+                            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                                super.onAuthenticationError(errorCode, errString);
+                                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                            }
 
-                                    rootNode = FirebaseDatabase.getInstance();
-                                    reference = rootNode.getReference("users");
-                                    UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
-                                    reference.push().setValue(helperClass);
+                            @Override
+                            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                                super.onAuthenticationSucceeded(result);
+                                Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                                auth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
 
-                                    startActivity(new Intent(Sign_up.this, Home.class));
-                                } else {
-                                    Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+                                            rootNode = FirebaseDatabase.getInstance();
+                                            reference = rootNode.getReference("users");
+                                            UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
+                                            reference.push().setValue(helperClass);
+
+                                            startActivity(new Intent(Sign_up.this, Home.class));
+                                        } else {
+                                            Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onAuthenticationFailed() {
+                                super.onAuthenticationFailed();
+                                Toast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                             }
                         });
+
+                        biometricPrompt.authenticate(promptInfo);
                     } else {
                         StringBuilder errorMessage = new StringBuilder("Invalid format: ");
                         if (!validEmail) {
@@ -88,15 +138,10 @@ public class Sign_up extends AppCompatActivity {
                             PhoneNum.setError("Phone number ");
                         }
                         if (!validPassword) {
-                            password.setError("password minimum 8\natleast 1 uppercase\natleast 1 lowercase\natleast 1 numbers\natleast 1special charecter  ");
+                            password.setError("password minimum 8\natleast 1 uppercase\natleast 1 lowercase\natleast 1 numbers\natleast 1 special character");
                         }
                     }
                 }
-                // Rest of your code
-               // rootNode = FirebaseDatabase.getInstance();
-               // reference = rootNode.getReference("users");
-              //  UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
-                //reference.push().setValue(helperClass);
             }
         });
         login.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +150,12 @@ public class Sign_up extends AppCompatActivity {
                 openlogin();
             }
         });
+        // Configure biometric prompt
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Biometric login for my app")
+                .setSubtitle("Log in using your biometric credential")
+                .setNegativeButtonText("Use account password")
+                .build();
     }
 
     private boolean isValidEmail(String email) {
@@ -131,5 +182,9 @@ public class Sign_up extends AppCompatActivity {
     public void openlogin() {
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
+    }
+    private void showBiometricPrompt() {
+        // Show the biometric authentication prompt
+        biometricPrompt.authenticate(promptInfo);
     }
 }
