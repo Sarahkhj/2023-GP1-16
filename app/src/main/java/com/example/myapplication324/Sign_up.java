@@ -50,7 +50,7 @@ public class Sign_up extends AppCompatActivity {
         password = findViewById(R.id.password);
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
-
+        DB = new DBHelper(this);
 
         // Checking biometric authentication availability
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -64,12 +64,9 @@ public class Sign_up extends AppCompatActivity {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
                 break;
-
         }
         // Initialize biometric prompt
         executor = ContextCompat.getMainExecutor(this);
-
-
 
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +87,15 @@ public class Sign_up extends AppCompatActivity {
                     boolean validPhone = isValidPhoneNumber(Phone);
                     boolean validPassword = isValidPassword(pass);
 
-                    if (validEmail && validPhone && validPassword) {
+                    // Check if the user already exists
+                    boolean checkUser = DB.checkusername(mail);
+                    boolean checkPhone = DB.checkPhoneNumber(Phone);
+
+                    if (checkUser) {
+                        Toast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT).show();
+                    } else if (checkPhone) {
+                        Toast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT).show();
+                    } else if (validEmail && validPhone && validPassword) {
                         biometricPrompt = new BiometricPrompt(Sign_up.this, executor, new BiometricPrompt.AuthenticationCallback() {
                             @Override
                             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
@@ -107,12 +112,10 @@ public class Sign_up extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
-
                                             rootNode = FirebaseDatabase.getInstance();
                                             reference = rootNode.getReference("users");
                                             UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
                                             reference.push().setValue(helperClass);
-
                                             startActivity(new Intent(Sign_up.this, Home.class));
                                         } else {
                                             Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -138,7 +141,7 @@ public class Sign_up extends AppCompatActivity {
                             PhoneNum.setError("Phone number ");
                         }
                         if (!validPassword) {
-                            password.setError("password minimum 8\natleast 1 uppercase\natleast 1 lowercase\natleast 1 numbers\natleast 1 special character");
+                            password.setError("Password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.");
                         }
                     }
                 }
@@ -183,6 +186,7 @@ public class Sign_up extends AppCompatActivity {
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
+
     private void showBiometricPrompt() {
         // Show the biometric authentication prompt
         biometricPrompt.authenticate(promptInfo);

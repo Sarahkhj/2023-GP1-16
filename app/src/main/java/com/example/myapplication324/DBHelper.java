@@ -94,4 +94,14 @@ public class DBHelper extends SQLiteOpenHelper {
         else
             return false;
     }
+    public Boolean checkPhoneNumber(String phoneNumber) {
+        SQLiteDatabase MyDB = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + usersTable + " WHERE phone = ?";
+        Cursor cursor = MyDB.rawQuery(sql, new String[] { phoneNumber });
+        if (cursor.getCount() > 0) {
+            return true; // Phone number already exists
+        } else {
+            return false; // Phone number does not exist
+        }
+    }
 }
