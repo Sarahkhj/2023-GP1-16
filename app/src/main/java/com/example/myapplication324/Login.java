@@ -136,9 +136,9 @@ public class Login extends AppCompatActivity {
 
         // Configure biometric prompt
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Biometric login for my app")
-                .setSubtitle("Log in using your biometric credential")
-                .setNegativeButtonText("Use account password")
+                .setTitle("Sign in")
+                .setSubtitle("Touch the fingerprint sensor to continue")
+                .setNegativeButtonText("Cancel")
                 .build();
     }
 
