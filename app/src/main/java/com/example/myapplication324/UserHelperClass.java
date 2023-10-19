@@ -3,7 +3,7 @@ package com.example.myapplication324;
 public class UserHelperClass {
     String username, email, PhoneNum;
 
-    public UserHelperClass () {
+    public UserHelperClass (Sign_up signUp) {
 
     }
     public UserHelperClass(String username, String email,String phone) {
