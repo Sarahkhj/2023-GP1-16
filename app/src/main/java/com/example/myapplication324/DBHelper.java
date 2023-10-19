@@ -73,18 +73,28 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public Boolean checkusername(String email) {
+    /*public Boolean checkusername(String email) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         String sql="select * from " + usersTable + " where email =?";
-       // Cursor cursor = MyDB.rawQuery("Select * from usersTable where username = ?", new String [] {username});
         Cursor cursor = MyDB.rawQuery(sql, new String[] {email});
         if (cursor.getCount() > 0)
             return true;
         else
-            return false;
+            return false;}*/
+
+    public Boolean checkEmail(String email) {
+        SQLiteDatabase MyDB = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + usersTable + " WHERE email = ?";
+        Cursor cursor = MyDB.rawQuery(sql, new String[] { email });
+        if (cursor.getCount() > 0) {
+            return true; // Email already exists
+        } else {
+            return false; // Email does not exist
+        }
     }
 
-    public Boolean checkusernamepassword(String username, String password){
+
+    /*public Boolean checkusernamepassword(String username, String password){
         SQLiteDatabase MyDB = this.getWritableDatabase();
         String sql="Select * from " + usersTable + " where username =? and password =? ";
 
@@ -93,7 +103,7 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
         else
             return false;
-    }
+    }*/
     public Boolean checkPhoneNumber(String phoneNumber) {
         SQLiteDatabase MyDB = this.getReadableDatabase();
         String sql = "SELECT * FROM " + usersTable + " WHERE phone = ?";

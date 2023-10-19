@@ -37,7 +37,6 @@ public class Sign_up extends AppCompatActivity {
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
-
     private UserHelperClass helperClass;
 
     @Override
@@ -53,7 +52,7 @@ public class Sign_up extends AppCompatActivity {
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
         DB = new DBHelper(this);
-        helperClass= new UserHelperClass(this);
+        helperClass = new UserHelperClass(this);
 
         // Checking biometric authentication availability
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -91,15 +90,14 @@ public class Sign_up extends AppCompatActivity {
                     boolean validPassword = isValidPassword(pass);
 
                     // Check if the user already exists
-                    boolean checkUser = DB.checkusername(user);
-//                    boolean checkPhone = DB.checkPhoneNumber(Phone);
+                    boolean checkEmail = DB.checkEmail(mail);
+                    boolean checkPhone = DB.checkPhoneNumber(Phone);
 
-                    if (checkUser) {
+                    if (checkEmail) {
                         Toast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT).show();
-            //        } else if (checkPhone) {
+                    } else if (checkPhone) {
                         Toast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT).show();
-                    } else
-                        if (validEmail && validPhone && validPassword) {
+                    } else if (validEmail && validPhone && validPassword) {
                         biometricPrompt = new BiometricPrompt(Sign_up.this, executor, new BiometricPrompt.AuthenticationCallback() {
                             @Override
                             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
@@ -118,11 +116,11 @@ public class Sign_up extends AppCompatActivity {
                                             Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
                                             rootNode = FirebaseDatabase.getInstance();
                                             reference = rootNode.getReference("users");
-                                            helperClass = new UserHelperClass(user, mail, Phone);
+                                            UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
                                             reference.push().setValue(helperClass);
                                             startActivity(new Intent(Sign_up.this, Home.class));
                                         } else {
-                                            Toast.makeText(Sign_up.this, "SignUp Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
