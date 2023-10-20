@@ -107,7 +107,10 @@ public class Login extends AppCompatActivity {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 Log.e("MY_APP_TAG", "Biometric features are currently unavailable.");
                 break;
-
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                // Prompts the user to create credentials that your app accepts.
+                Log.e("MY_APP_TAG", "please enroll your fingerprint in the settings");
+                break;
         }
 
         // Initialize biometric prompt
