@@ -26,6 +26,8 @@ import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.muddz.styleabletoast.StyleableToast;
+
 public class Sign_up extends AppCompatActivity {
     private TextView login;
     private EditText username, email, PhoneNum, password, rePassword;
@@ -84,7 +86,9 @@ public class Sign_up extends AppCompatActivity {
                 String Phone = PhoneNum.getText().toString();
 
                 if (user.equals("") || pass.equals("") || rePass.equals("") || mail.equals("") || Phone.equals("")) {
-                    Toast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_LONG, R.style.mytoast).show();
+
                 } else if (!pass.equals(rePass)) {
                     // Set an error on the rePassword field
                     rePassword.setError("Passwords do not match");
@@ -98,33 +102,33 @@ public class Sign_up extends AppCompatActivity {
                     boolean checkPhone = DB.checkPhoneNumber(Phone);
 
                     if (checkEmail) {
-                        Toast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT).show();
+                        StyleableToast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT,R.style.mytoast).show();
                     } else if (checkPhone) {
-                        Toast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT).show();
+                        StyleableToast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT,R.style.mytoast).show();
                     } else if (validEmail && validPhone && validPassword) {
                         biometricPrompt = new BiometricPrompt(Sign_up.this, executor, new BiometricPrompt.AuthenticationCallback() {
                             @Override
                             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                                 super.onAuthenticationError(errorCode, errString);
-                                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                                StyleableToast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT,R.style.mytoast).show();
                             }
 
                             @Override
                             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                                 super.onAuthenticationSucceeded(result);
-                                Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                                StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                 auth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            Toast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT).show();
+                                            StyleableToast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                             rootNode = FirebaseDatabase.getInstance();
                                             reference = rootNode.getReference("users");
                                             UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
                                             reference.push().setValue(helperClass);
                                             startActivity(new Intent(Sign_up.this, Home.class));
                                         } else {
-                                            Toast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            StyleableToast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT,R.style.mytoast).show();
                                         }
                                     }
                                 });
@@ -133,7 +137,7 @@ public class Sign_up extends AppCompatActivity {
                             @Override
                             public void onAuthenticationFailed() {
                                 super.onAuthenticationFailed();
-                                Toast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                                StyleableToast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
                             }
                         });
 

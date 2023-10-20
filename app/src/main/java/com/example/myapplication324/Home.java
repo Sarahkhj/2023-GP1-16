@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import io.github.muddz.styleabletoast.StyleableToast;
+
 public class Home extends AppCompatActivity {
     private TextView t1;
     private Button b1;
@@ -35,7 +37,7 @@ public class Home extends AppCompatActivity {
                 Intent intent = new Intent(Home.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-                Toast.makeText(Home.this, "Logout Successful !", Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(Home.this, "Logout Successful !", Toast.LENGTH_SHORT,R.style.mytoast).show();
 
             }
         });
@@ -44,7 +46,7 @@ public class Home extends AppCompatActivity {
             t1.setText(rtvFullName);
 
         } else {
-            Toast.makeText(Home.this, "Error = No users Found !", Toast.LENGTH_SHORT).show();
+            StyleableToast.makeText(Home.this, "Error = No users Found !", Toast.LENGTH_SHORT,R.style.mytoast).show();
         }
 
     }

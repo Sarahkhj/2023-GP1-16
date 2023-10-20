@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.concurrent.Executor;
 
+import io.github.muddz.styleabletoast.StyleableToast;
+
 public class Login extends AppCompatActivity {
 
     private TextView t1;
@@ -81,14 +83,14 @@ public class Login extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
-                                    Toast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                    StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                     showBiometricPrompt(); // Show the biometric prompt on success
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Login.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                                    StyleableToast.makeText(Login.this, "Login Failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                 }
                             });
                 }
@@ -119,13 +121,13 @@ public class Login extends AppCompatActivity {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT,R.style.mytoast).show();
             }
 
             @Override
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
                 Intent intent1 = new Intent(getApplicationContext(), Home.class);
                 startActivity(intent1);
             }
@@ -133,7 +135,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
-                Toast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                StyleableToast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
             }
         });
 
