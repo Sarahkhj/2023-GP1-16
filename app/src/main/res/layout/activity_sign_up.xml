@@ -130,16 +130,31 @@
 
                 android:text="Sign Up" />
 
-            <TextView
-                android:id="@+id/login"
-                android:layout_width="195dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="65dp"
-                android:text="i'm already a member, Sign in"
-                android:textAlignment="center"
-                android:textColor="@color/black" />
+            <LinearLayout
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="1dp">
 
+                <TextView
+                    android:id="@+id/login1"
+                    android:layout_width="145dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="65dp"
+                    android:text="I'm already a member,"
+                    android:textAlignment="center"
+                    android:textColor="@color/black" />
 
+                <TextView
+                    android:id="@+id/login"
+                    android:layout_width="45dp"
+                    android:layout_height="30dp"
+
+                    android:text="Sign in"
+                    android:textAlignment="center"
+                    android:textColor="@color/bluelogo" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

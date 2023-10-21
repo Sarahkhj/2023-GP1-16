@@ -85,6 +85,7 @@ public class Sign_up extends AppCompatActivity {
                 String mail = email.getText().toString();
                 String Phone = PhoneNum.getText().toString();
 
+
                 if (user.equals("") || pass.equals("") || rePass.equals("") || mail.equals("") || Phone.equals("")) {
                     //Toast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
                     StyleableToast.makeText(Sign_up.this, "Please enter all the fields", Toast.LENGTH_LONG, R.style.mytoast).show();
