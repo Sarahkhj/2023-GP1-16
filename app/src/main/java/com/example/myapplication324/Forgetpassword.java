@@ -35,7 +35,7 @@ public class Forgetpassword extends AppCompatActivity {
                     email.setError("Enter email!");
                 }
                 else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(textemail).matches()){
-                    email.setError("Enter valid email!");
+                    email.setError("Enter a valid email address");
 
 
                 }

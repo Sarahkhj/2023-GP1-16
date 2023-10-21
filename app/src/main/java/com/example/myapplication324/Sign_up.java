@@ -146,10 +146,10 @@ public class Sign_up extends AppCompatActivity {
                     } else {
                         StringBuilder errorMessage = new StringBuilder("Invalid format: ");
                         if (!validEmail) {
-                            email.setError("Email ");
+                            email.setError("Enter a valid email address");
                         }
                         if (!validPhone) {
-                            PhoneNum.setError("Phone number ");
+                            PhoneNum.setError("Phone number must be 10 number and start with 05");
                         }
                         if (!validPassword) {
                             password.setError("Password must be at least 8 characters, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.");

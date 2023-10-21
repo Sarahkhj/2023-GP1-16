@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    StyleableToast.makeText(Login.this, "Login Failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                                    StyleableToast.makeText(Login.this, "Incorrect email or password", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                 }
                             });
                 }
@@ -150,7 +150,7 @@ public class Login extends AppCompatActivity {
         String emailAddress = email.getText().toString().trim();
         String pass = password.getText().toString();
         if (TextUtils.isEmpty(emailAddress) || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
-            email.setError("Enter valid email!");
+            email.setError("Enter a valid email address");
             return false;
         } else if (TextUtils.isEmpty(pass)) {
             password.setError("Enter your password");
