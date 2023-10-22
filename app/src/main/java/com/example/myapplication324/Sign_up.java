@@ -19,8 +19,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
@@ -102,6 +105,7 @@ public class Sign_up extends AppCompatActivity {
                     boolean checkEmail = DB.checkEmail(mail);
                     boolean checkPhone = DB.checkPhoneNumber(Phone);
 
+
                     if (checkEmail) {
                         StyleableToast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT,R.style.mytoast).show();
                     } else if (checkPhone) {
@@ -117,17 +121,34 @@ public class Sign_up extends AppCompatActivity {
                             @Override
                             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                                 super.onAuthenticationSucceeded(result);
-                                StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                              //  StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                 auth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            StyleableToast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                                         //   StyleableToast.makeText(Sign_up.this, "Signup Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                             rootNode = FirebaseDatabase.getInstance();
                                             reference = rootNode.getReference("users");
-                                            UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
-                                            reference.push().setValue(helperClass);
-                                            startActivity(new Intent(Sign_up.this, Home.class));
+                                            reference.orderByChild("phoneNum").equalTo(Phone).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists()){
+                                                        StyleableToast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT,R.style.mytoast).show();
+
+                                                    }
+                                                    else{
+                                                        UserHelperClass helperClass = new UserHelperClass(user, mail, Phone);
+                                                        reference.push().setValue(helperClass);
+                                                        startActivity(new Intent(Sign_up.this, Home.class));
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
                                         } else {
                                             StyleableToast.makeText(Sign_up.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT,R.style.mytoast).show();
                                         }
