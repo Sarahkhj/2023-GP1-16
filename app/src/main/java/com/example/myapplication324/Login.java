@@ -39,7 +39,6 @@ public class Login extends AppCompatActivity {
     private EditText email, password;
     private FirebaseAuth auth;
 
-    DBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

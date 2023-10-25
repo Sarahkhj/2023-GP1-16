@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
+import io.github.muddz.styleabletoast.StyleableToast;
+
 public class Forgetpassword extends AppCompatActivity {
     private Button rest;
     private EditText email;
@@ -53,7 +55,7 @@ public class Forgetpassword extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(Forgetpassword.this, "Please Check you inbox for password reset link", Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(Forgetpassword.this, "Please Check you inbox for password reset link", Toast.LENGTH_SHORT,R.style.mytoast).show();
                     Intent intent = new Intent ( Forgetpassword. this, Login.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
 

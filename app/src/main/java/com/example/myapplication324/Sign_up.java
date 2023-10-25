@@ -35,7 +35,7 @@ public class Sign_up extends AppCompatActivity {
     private TextView login;
     private EditText username, email, PhoneNum, password, rePassword;
     private Button sign;
-    private DBHelper DB;
+
     private FirebaseAuth auth;
     private FirebaseDatabase rootNode;
     private DatabaseReference reference;
@@ -56,7 +56,6 @@ public class Sign_up extends AppCompatActivity {
         password = findViewById(R.id.password);
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
-        DB = new DBHelper(this);
         helperClass = new UserHelperClass(this);
 
         // Checking biometric authentication availability
@@ -101,16 +100,7 @@ public class Sign_up extends AppCompatActivity {
                     boolean validPhone = isValidPhoneNumber(Phone);
                     boolean validPassword = isValidPassword(pass);
 
-                    // Check if the user already exists
-                    boolean checkEmail = DB.checkEmail(mail);
-                    boolean checkPhone = DB.checkPhoneNumber(Phone);
-
-
-                    if (checkEmail) {
-                        StyleableToast.makeText(Sign_up.this, "User already exists! Please sign in", Toast.LENGTH_SHORT,R.style.mytoast).show();
-                    } else if (checkPhone) {
-                        StyleableToast.makeText(Sign_up.this, "Phone number already exists! Please use another number.", Toast.LENGTH_SHORT,R.style.mytoast).show();
-                    } else if (validEmail && validPhone && validPassword) {
+                      if (validEmail && validPhone && validPassword) {
                         biometricPrompt = new BiometricPrompt(Sign_up.this, executor, new BiometricPrompt.AuthenticationCallback() {
                             @Override
                             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
