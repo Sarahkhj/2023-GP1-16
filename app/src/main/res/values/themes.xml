@@ -13,6 +13,7 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
     <style name="mytoast">
         <item name="stTextBold">true</item>
         <item name="stTextColor">@color/white</item>
@@ -20,9 +21,20 @@
         <item name="stColorBackground">@color/lightblue</item>
         <item name="stStrokeColor">@color/lightblue</item>
         <item name="stSolidBackground">true</item>
-        <item name="stGravity">center</item> top or center
+        <item name="stGravity">center</item>
+        top or center
         <item name="stStrokeWidth">2dp</item>
         <!--   <item name="stIconStart">@drawable/logoremove</item>-->
-           <item name="stLength">LONG</item> LONG or SHORT
-       </style>
-   </resources>
+        <item name="stLength">LONG</item>
+        LONG or SHORT
+    </style>
+
+    <style name="Theme.MyApplication324.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.MyApplication324.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.MyApplication324.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>
