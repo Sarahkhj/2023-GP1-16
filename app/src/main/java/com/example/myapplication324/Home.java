@@ -7,8 +7,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,13 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+import com.example.myapplication324.databinding.ActivityDashboardBinding;
+import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
-public class Home extends AppCompatActivity {
+public class Home extends DrawerBaseActivity { //i changed the extends class
     private TextView t1;
     private Button b1;
     private FirebaseAuth auth;
@@ -34,7 +39,14 @@ public class Home extends AppCompatActivity {
     protected final int shared = 3;
     protected final int search = 4;
 
+     private Button chooseFile_btn;
+     private TextView filePath;
 
+    private final int CHOSE_PDF_FROM_DEVICE=1001;
+    private final int PICK_WORD_FILE=1002;
+
+    private static final String TAG ="Home";
+    ActivityHomeBinding activityHomeBinding;
 
 
 
@@ -42,11 +54,32 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        activityHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
+        setContentView(activityHomeBinding.getRoot());
+        allocateActivityTitle("Home");
+        //The code above is to appear the side navigation
+        //setContentView(R.layout.activity_home);
         t1 = findViewById(R.id.name);
         b1 = findViewById(R.id.logout);
         auth = FirebaseAuth.getInstance();
         rootNode =FirebaseDatabase.getInstance();
+
+        chooseFile_btn= findViewById(R.id.choose_file_btn);
+        filePath = findViewById(R.id.file_path);
+
+        chooseFile_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callChoosePdfFile();
+            }
+        });
+        findViewById(R.id.choose_word_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callChooseWordFile();
+            }
+        });
+
 
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,14 +119,14 @@ public class Home extends AppCompatActivity {
                 String name;
                 switch(item.getId()){
                     case home:name="home";
-                    break;
+                        break;
                     case favo:name="favo";
                         break;
                     case shared:name="shared";
                         break;
                     case search:name="search";
-                        Intent intent = new Intent(Home.this, search.class);
-                        startActivity(intent);
+                        // Intent intent = new Intent(Home.this, search.class);
+                        //  startActivity(intent);
                         break;                }
             }
 
@@ -110,6 +143,51 @@ public class Home extends AppCompatActivity {
 
 
     }
+   private void callChoosePdfFile(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/pdf");
+        startActivityForResult(intent,CHOSE_PDF_FROM_DEVICE);
+   }
+
+   public void onActivityResult(int requestCode, int resultCode, Intent resultDate) {
+       super.onActivityResult(requestCode, resultCode, resultDate);
+       if (requestCode ==CHOSE_PDF_FROM_DEVICE && resultCode == Activity.RESULT_OK){
+
+           if(resultDate != null){
+               Log.d(TAG,"onActivityResult: "+resultDate.getData());
+
+               filePath.setText("File Path: "+resultDate.getData());
+
+           }
+       }
+
+       if (requestCode ==PICK_WORD_FILE && resultCode == Activity.RESULT_OK){
+
+           if(resultDate != null){
+               Log.d(TAG,"onActivityResult: "+resultDate.getData());
+
+               filePath.setText("File Path: "+resultDate.getData());
+
+           }
+       }
 
 
+   }
+   private void callChooseWordFile(){
+
+       Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+       intent1.addCategory(Intent.CATEGORY_OPENABLE);
+       intent1.setType("*/*");
+       String[] mimetype = {"application/vnd.openxmlformats-officedocument.wordprocessingml.document",""};
+       intent1.putExtra(Intent.EXTRA_MIME_TYPES,mimetype);
+       startActivityForResult(intent1,PICK_WORD_FILE);
+
+   }
+    private void callChooseTXTfFile(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        startActivityForResult(intent,CHOSE_PDF_FROM_DEVICE);
+    }
 }

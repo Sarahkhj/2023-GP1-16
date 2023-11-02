@@ -83,6 +83,7 @@ public class Login extends AppCompatActivity {
                                 public void onSuccess(AuthResult authResult) {
                                     StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                     showBiometricPrompt(); // Show the biometric prompt on success
+
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
