@@ -7,8 +7,10 @@ import android.os.Bundle;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityFavoriteBinding;
+import com.example.myapplication324.databinding.ActivityShareBinding;
 
-public class Favorite extends DrawerBaseActivity {
+public class Share extends DrawerBaseActivity {
+    ActivityShareBinding activityShareBinding;
     protected final int home = 1;
     protected final int favo = 2;
     protected final int shared = 3;
@@ -16,14 +18,12 @@ public class Favorite extends DrawerBaseActivity {
     private Intent intent;
 
 
-    ActivityFavoriteBinding activityFavoriteBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityFavoriteBinding= ActivityFavoriteBinding.inflate(getLayoutInflater());
-        setContentView(activityFavoriteBinding.getRoot());
-        allocateActivityTitle("Favorite");
+        activityShareBinding= ActivityShareBinding.inflate(getLayoutInflater());
+        setContentView(activityShareBinding.getRoot());
+        allocateActivityTitle("Share");
         //Bottom nav
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.add(new MeowBottomNavigation.Model(home,R.drawable.baseline_home_24));
@@ -38,17 +38,17 @@ public class Favorite extends DrawerBaseActivity {
                 int num = item.getId();
                 switch(num){
                     case 1:
-                        intent = new Intent(Favorite.this, Home.class);
+                        intent = new Intent(Share.this, Home.class);
                         startActivity(intent);
                         break;
                     case 2:
-                        break;
-                    case 3:
-                        intent = new Intent(Favorite.this, Share.class);
+                        intent = new Intent(Share.this, Favorite.class);
                         startActivity(intent);
                         break;
+                    case 3:
+                        break;
                     case 4:
-                        intent = new Intent(Favorite.this, Search.class);
+                        intent = new Intent(Share.this, Search.class);
                         startActivity(intent);
                         break;                }
             }

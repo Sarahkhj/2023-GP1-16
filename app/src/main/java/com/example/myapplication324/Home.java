@@ -38,6 +38,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     private Button chooseFile_btn;
     private TextView filePath;
+    private Intent intent;
 
     private final int CHOSE_PDF_FROM_DEVICE=1001;
     private final int PICK_WORD_FILE=1002;
@@ -117,7 +118,24 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         bottomNavigation.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
             @Override
             public void onClickItem(MeowBottomNavigation.Model item) {
-                StyleableToast.makeText(Home.this, "item"+item.getId(), Toast.LENGTH_SHORT,R.style.mytoast).show();
+               // StyleableToast.makeText(Home.this, "item"+item.getId(), Toast.LENGTH_SHORT,R.style.mytoast).show();
+                // chose which class to go
+                int num = item.getId();
+                switch(num){
+                    case 1:
+                        break;
+                    case 2:
+                        intent = new Intent(Home.this, Favorite.class);
+                        startActivity(intent);
+                        break;
+                    case 3:
+                         intent = new Intent(Home.this, Share.class);
+                         startActivity(intent);
+                        break;
+                    case 4:
+                        intent = new Intent(Home.this, Search.class);
+                        startActivity(intent);
+                        break;                }
             }
         });
 
@@ -131,21 +149,18 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                     case favo:name="favo";
                         break;
                     case shared:name="shared";
+                      //  Intent intent = new Intent(Home.this, Share.class);
+                        //startActivity(intent);
                         break;
                     case search:name="search";
-                        // Intent intent = new Intent(Home.this, search.class);
-                        //  startActivity(intent);
+                      //  Intent intent = new Intent(Home.this, search.class);
+                        // startActivity(intent);
                         break;                }
             }
 
         });
 
-        bottomNavigation.setOnReselectListener(new MeowBottomNavigation.ReselectListener() {
-            @Override
-            public void onReselectItem(MeowBottomNavigation.Model item) {
-                // your codes
-            }
-        });
+
 
     }
 

@@ -7,23 +7,22 @@ import android.os.Bundle;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityFavoriteBinding;
+import com.example.myapplication324.databinding.ActivitySearchBinding;
 
-public class Favorite extends DrawerBaseActivity {
+public class Search extends DrawerBaseActivity {
+    ActivitySearchBinding activitySearchBinding;
     protected final int home = 1;
     protected final int favo = 2;
     protected final int shared = 3;
     protected final int search = 4;
     private Intent intent;
 
-
-    ActivityFavoriteBinding activityFavoriteBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityFavoriteBinding= ActivityFavoriteBinding.inflate(getLayoutInflater());
-        setContentView(activityFavoriteBinding.getRoot());
-        allocateActivityTitle("Favorite");
+        activitySearchBinding= ActivitySearchBinding.inflate(getLayoutInflater());
+        setContentView(activitySearchBinding.getRoot());
+        allocateActivityTitle("Search");
         //Bottom nav
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.add(new MeowBottomNavigation.Model(home,R.drawable.baseline_home_24));
@@ -38,18 +37,18 @@ public class Favorite extends DrawerBaseActivity {
                 int num = item.getId();
                 switch(num){
                     case 1:
-                        intent = new Intent(Favorite.this, Home.class);
+                        intent = new Intent(Search.this, Home.class);
                         startActivity(intent);
                         break;
                     case 2:
+                        intent = new Intent(Search.this, Favorite.class);
+                        startActivity(intent);
                         break;
                     case 3:
-                        intent = new Intent(Favorite.this, Share.class);
+                        intent = new Intent(Search.this, Share.class);
                         startActivity(intent);
                         break;
                     case 4:
-                        intent = new Intent(Favorite.this, Search.class);
-                        startActivity(intent);
                         break;                }
             }
         });
@@ -74,7 +73,6 @@ public class Favorite extends DrawerBaseActivity {
             }
 
         });
-
 
     }
 }
