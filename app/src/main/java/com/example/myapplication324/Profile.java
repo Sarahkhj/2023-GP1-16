@@ -30,7 +30,7 @@ public class Profile extends  DrawerBaseActivity {
         setContentView(activityProfileBinding.getRoot());
         allocateActivityTitle("Profile");
         // User name
-        t1 = findViewById(R.id.name);
+        t1 = findViewById(R.id.amazonName);
         auth = FirebaseAuth.getInstance();
         rootNode =FirebaseDatabase.getInstance();
         if (auth.getCurrentUser() != null) {

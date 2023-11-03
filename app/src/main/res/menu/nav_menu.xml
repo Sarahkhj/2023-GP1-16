@@ -13,6 +13,9 @@
     <item android:id="@+id/note"
         android:icon="@drawable/baseline_notifications_24"
         android:title="Notifications"/>
+    <item android:id="@+id/setting"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Setting"/>
 
 
 </group>
