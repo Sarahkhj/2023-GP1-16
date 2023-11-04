@@ -13,12 +13,13 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="44dp"
-        android:layout_marginEnd="212dp"
-        android:layout_marginBottom="487dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginEnd="223dp"
+        android:layout_marginBottom="592dp"
         android:text="Welcome"
         android:textColor="#000000"
         android:textSize="30sp" />
+
 
     <TextView
         android:id="@+id/name"
@@ -27,37 +28,22 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="94dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="444dp"
+        android:layout_marginStart="69dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="549dp"
         android:text="Name"
         android:textColor="#000000"
         android:textSize="22sp" />
 
     <Button
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="58dp"
-
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="66dp"
-        android:layout_marginEnd="94dp"
-        android:layout_marginBottom="371dp"
-        android:text="Log out" />
-
-    <Button
         android:id="@+id/choose_file_btn"
-        android:layout_width="168dp"
-        android:layout_height="wrap_content"
+        android:layout_width="222dp"
+        android:layout_height="42dp"
         android:layout_above="@+id/meow"
-        android:layout_below="@+id/choose_word_btn"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="135dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginEnd="79dp"
         android:layout_marginBottom="163dp"
         android:text="Choose PDF File" />
 
@@ -65,12 +51,12 @@
         android:id="@+id/choose_word_btn"
         android:layout_width="214dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/logout"
+        android:layout_above="@+id/choose_file_btn"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="102dp"
-        android:layout_marginTop="-360dp"
-        android:layout_marginEnd="95dp"
+        android:layout_marginStart="113dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="47dp"
         android:text="Choose Word File" />
 
     <TextView
@@ -80,9 +66,9 @@
         android:layout_above="@+id/meow"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="175dp"
+        android:layout_marginStart="174dp"
         android:layout_marginEnd="135dp"
-        android:layout_marginBottom="78dp"
+        android:layout_marginBottom="119dp"
         android:text="File Path" />
 
     <com.etebarian.meowbottomnavigation.MeowBottomNavigation
