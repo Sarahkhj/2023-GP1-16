@@ -19,12 +19,12 @@
 
 
 </group>
-    <item android:title="Profile">
+    <item android:title="Account">
         <menu>
             <group android:checkableBehavior="single">
                 <item android:id="@+id/about"
                     android:icon="@drawable/person_icpn"
-                    android:title="About"/>
+                    android:title="Profile"/>
                 <item android:id="@+id/logout"
                     android:icon="@drawable/baseline_logout_24"
                     android:title="Logout"/>

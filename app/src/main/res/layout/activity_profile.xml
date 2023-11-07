@@ -17,37 +17,40 @@
             android:id="@+id/amazonName"
             android:layout_width="207dp"
             android:layout_height="58dp"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="172dp"
             android:text="Name"
+            android:textAlignment="center"
             android:textColor="@color/bluelogo"
             android:textSize="40sp"
-            app:layout_constraintEnd_toStartOf="@+id/amazonImage"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/amazonDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/amazonDesc"
+            android:layout_marginTop="8dp"
             android:text="email"
+            android:textAlignment="center"
             android:textColor="@color/bluelogo"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="18dp"
+            android:textSize="26sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/amazonName"
-            app:layout_constraintEnd_toStartOf="@+id/amazonImage"/>
+            app:layout_constraintTop_toBottomOf="@id/amazonName" />
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="160dp"
             android:id="@+id/amazonImage"
+            android:layout_width="293dp"
+            android:layout_height="160dp"
+            android:layout_marginLeft="-48dp"
+            android:layout_marginTop="4dp"
             android:src="@drawable/baseline_account_circle_24"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintStart_toEndOf="@id/amazonName"
+            app:layout_constraintHorizontal_bias="0.669"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/lightblue" />
 
         <LinearLayout
@@ -55,7 +58,7 @@
             android:layout_height="175dp"
             android:id="@+id/row1"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="150dp"
             android:padding="10dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -217,78 +220,6 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:id="@+id/row3"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/row2">
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/pharmName"
-                        android:text="i dont know"
-                        android:textColor="@color/bluelogo"
-                        android:textSize="15sp"
-                        android:textAlignment="center"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/pharmImage"/>
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/pharmImage"
-                        android:src="@drawable/baseline_group_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/grocName"
-                        android:text="Back to home"
-                        android:textAlignment="center"
-                        android:textSize="15sp"
-                        android:textColor="@color/bluelogo"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/grocImage"/>
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/grocImage"
-                        android:src="@drawable/baseline_home_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
