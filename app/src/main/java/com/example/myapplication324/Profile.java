@@ -2,7 +2,10 @@ package com.example.myapplication324;
 
 import androidx.annotation.NonNull;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ public class Profile extends  DrawerBaseActivity {
     private DatabaseReference mDatabase;
 
     private EditText username , email,PhoneNum;
+    private Button pass;
 
 
 
@@ -40,9 +44,21 @@ public class Profile extends  DrawerBaseActivity {
         username = findViewById(R.id.profileName); // Assuming this is the TextView for the email
         email = findViewById(R.id.profile_email); // Assuming this is the TextView to display the username
         PhoneNum=findViewById(R.id.editTextPhone);
+        pass= findViewById(R.id.updatepassword);
         UserHelperClass userHelper = new UserHelperClass();
 
         userHelper.getUserProfile(this, username, email,PhoneNum);
 
+        pass.setOnClickListener(new View.OnClickListener() { // open change password
+            @Override
+            public void onClick(View view) {
+                openchangepass();
+            }
+        });
+
     }
-}
+
+    public void openchangepass() {
+        Intent intent = new Intent(this, ChangePassword.class);
+        startActivity(intent);
+    }}
