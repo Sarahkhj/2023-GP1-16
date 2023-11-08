@@ -1,15 +1,84 @@
 package com.example.myapplication324;
 
+import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import io.github.muddz.styleabletoast.StyleableToast;
 
 
 public class UserHelperClass {
     String username, email, PhoneNum;
     private static String usersTable="usersTable";
+    FirebaseAuth auth;
+    DatabaseReference mDatabase;
+    public UserHelperClass() {
+        auth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+    }
+
+    public void getUserProfile(Activity activity, TextView usernameTextView, TextView emailTextView,TextView P) {
+
+        if(auth.getCurrentUser() != null) {
+
+            String userEmail = auth.getCurrentUser().getEmail();
+
+            mDatabase.orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String phone=snapshot.child("phoneNum").getValue(String.class);
+
+
+                            String username = snapshot.child("username").getValue(String.class);
+                            usernameTextView.setText(username);
+
+                            emailTextView.setText(userEmail);
+                            P.setText(phone);
+
+                        }
+
+                    } else {
+
+                        StyleableToast.makeText(activity, "No username found for this email", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    StyleableToast.makeText(activity, "Database Error", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                }
+            });
+
+        } else {
+
+            StyleableToast.makeText(activity, "Error: No user found!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+        }
+
+    }
+
 
     public UserHelperClass (Sign_up signUp) {
 

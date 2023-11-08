@@ -7,220 +7,103 @@
     android:layout_height="match_parent"
     tools:context=".Profile">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/constraintLayout"
-        android:layout_marginTop="20dp">
-
-        <TextView
-            android:id="@+id/amazonName"
-            android:layout_width="207dp"
-            android:layout_height="58dp"
-            android:layout_marginTop="172dp"
-            android:text="Name"
-            android:textAlignment="center"
-            android:textColor="@color/bluelogo"
-            android:textSize="40sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/amazonDesc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="email"
-            android:textAlignment="center"
-            android:textColor="@color/bluelogo"
-            android:textSize="26sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/amazonName" />
+        android:layout_height="match_parent"
+        android:background="@color/lightblue">
 
         <ImageView
             android:id="@+id/amazonImage"
-            android:layout_width="293dp"
-            android:layout_height="160dp"
-            android:layout_marginLeft="-48dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="215dp"
+            android:layout_height="184dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="90dp"
             android:src="@drawable/baseline_account_circle_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.669"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/lightblue" />
+            app:tint="@color/white" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:id="@+id/row1"
-            android:orientation="horizontal"
-            android:layout_marginTop="150dp"
-            android:padding="10dp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/amazonImage">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/clothingCard"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/clothingName"
-                        android:text="Personal Information "
-                        android:textColor="@color/bluelogo"
-                        android:textSize="15sp"
-                        android:textAlignment="center"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/clothingImage"/>
-
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/clothingImage"
-                        android:src="@drawable/baseline_person_pin_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue" />
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/elecName"
-                        android:text="Edit Information"
-                        android:textSize="15sp"
-                        android:textColor="@color/bluelogo"
-                        android:textAlignment="center"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/elecImage"/>
-
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/elecImage"
-                        android:src="@drawable/baseline_edit_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue"/>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:id="@+id/row2"
-            android:orientation="horizontal"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/amazonImage"
             android:layout_marginTop="10dp"
-            android:padding="10dp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/row1">
+            android:backgroundTint="@color/white"
+            app:cardBackgroundColor="#DAEFEE"
+            app:cardCornerRadius="28dp">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="546dp"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <RelativeLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Personal informaiton" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.8"
+                    android:text="User Name"
+
+                    android:textStyle="bold"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="3dp"
+                    tools:layout_editor_absoluteY="0dp" />
+
+                <EditText
+                    android:id="@+id/profileName"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="39dp"
+                    android:drawableRight="@drawable/baseline_edit_24"
+                    android:textSize="20sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/homeName"
-                        android:textColor="@color/bluelogo"
-                        android:text="Notification"
-                        android:textSize="15sp"
-                        android:textAlignment="center"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/homeImage"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.8"
+                    android:text="Email"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/homeImage"
-                        android:src="@drawable/baseline_notifications_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue"/>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="20dp">
-
-                <RelativeLayout
+                <EditText
+                    android:id="@+id/profile_email"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="39dp"
+                    android:drawableRight="@drawable/baseline_edit_24"
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/Logout"
-                        android:text="Log Out"
-                        android:textColor="@color/bluelogo"
-                        android:textSize="15sp"
-                        android:textAlignment="center"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/beautyImage"/>
+                    android:inputType="textEmailAddress" />
 
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/beautyImage"
-                        android:src="@drawable/baseline_logout_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"
-                        app:tint="@color/lightblue"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.8"
+                    android:text="Phone number"
+                    android:textStyle="bold" />
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/editTextPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="39dp"
+                    android:drawableRight="@drawable/baseline_edit_24"
+                    android:ems="10"
+                    android:inputType="phone" />
 
+            </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
 
 </ScrollView>
