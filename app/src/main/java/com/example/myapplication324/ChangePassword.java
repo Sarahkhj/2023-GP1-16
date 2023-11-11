@@ -3,6 +3,7 @@ package com.example.myapplication324;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -76,6 +77,7 @@ public class ChangePassword extends DrawerBaseActivity {
                                                 if (task.isSuccessful()) {
                                                     // Password update successful
                                                     StyleableToast.makeText(ChangePassword.this, "Password updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                                    openhome();
                                                 } else {
                                                     // Password update failed
                                                     StyleableToast.makeText(ChangePassword.this, "Failed to update password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
@@ -112,6 +114,11 @@ public class ChangePassword extends DrawerBaseActivity {
         return password.length() >= 8 && password.length() <= 15
                 && !password.equals(password.toLowerCase()) && !password.equals(password.toUpperCase())
                 && password.matches(".*\\d.*") && password.matches(".*[./].*");
+    }
+
+    private void openhome(){
+        Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
     }
 
 }

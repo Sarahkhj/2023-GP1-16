@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'io.github.muddz:styleabletoast:2.4.0'
     implementation 'com.etebarian:meow-bottom-navigation-java:1.2.0'
+    implementation 'com.google.android.material:material:1.2.0'
 
     implementation 'com.google.android.material:material:1.10.0'
 

@@ -7,12 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityHomeBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -50,6 +53,12 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private DatabaseReference databaseReference;
     private String currentUserId; // This should be unique for each user
 
+    private FloatingActionButton fab_main, fab1_mail, fab2_share;
+    private Animation fab_open, fab_close, fab_clock, fab_anticlock;
+    TextView textview_mail, textview_share;
+    Boolean isOpen = false;
+
+
 
     private List<FileMetadata> fileMetadataList = new ArrayList<>();
 
@@ -61,6 +70,64 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         allocateActivityTitle("Home");
         //The code above is to appear the side navigation
         //setContentView(R.layout.activity_home);
+        //FloatingActionButton
+        fab_main = findViewById(R.id.fab);
+        fab1_mail = findViewById(R.id.fab1);
+        fab2_share = findViewById(R.id.fab2);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_clock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_clock);
+        fab_anticlock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_anticlock);
+
+        textview_mail = (TextView) findViewById(R.id.textview_mail);
+        textview_share = (TextView) findViewById(R.id.textview_share);
+
+        fab_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isOpen) {
+
+                    textview_mail.setVisibility(View.INVISIBLE);
+                    textview_share.setVisibility(View.INVISIBLE);
+                    fab2_share.startAnimation(fab_close);
+                    fab1_mail.startAnimation(fab_close);
+                    fab_main.startAnimation(fab_anticlock);
+                    fab2_share.setClickable(false);
+                    fab1_mail.setClickable(false);
+                    isOpen = false;
+                } else {
+                    textview_mail.setVisibility(View.VISIBLE);
+                    textview_share.setVisibility(View.VISIBLE);
+                    fab2_share.startAnimation(fab_open);
+                    fab1_mail.startAnimation(fab_open);
+                    fab_main.startAnimation(fab_clock);
+                    fab2_share.setClickable(true);
+                    fab1_mail.setClickable(true);
+                    isOpen = true;
+                }
+
+            }
+        });
+
+
+        fab2_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(getApplicationContext(), "upload file", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        fab1_mail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        // end of FloatingActionButton
         t1 = findViewById(R.id.name);
         auth = FirebaseAuth.getInstance();
         rootNode =FirebaseDatabase.getInstance();

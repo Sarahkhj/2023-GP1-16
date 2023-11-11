@@ -81,7 +81,7 @@ public class Login extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
-                                    StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                                 //   StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                                     showBiometricPrompt(); // Show the biometric prompt on success
 
                                 }
@@ -127,6 +127,7 @@ public class Login extends AppCompatActivity {
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
                 StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
                 Intent intent1 = new Intent(getApplicationContext(), Home.class);
                 startActivity(intent1);
             }
