@@ -61,4 +61,5 @@ public class Profile extends  DrawerBaseActivity {
     public void openchangepass() {
         Intent intent = new Intent(this, ChangePassword.class);
         startActivity(intent);
-    }}
+    }
+}

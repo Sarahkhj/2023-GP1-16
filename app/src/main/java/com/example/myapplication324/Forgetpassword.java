@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
@@ -27,7 +26,7 @@ public class Forgetpassword extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgetpassword);
-        rest = findViewById(R.id.rest);
+        rest = findViewById(R.id.update_pass);
         email = findViewById(R.id.email);
         rest.setOnClickListener(new View.OnClickListener() {
             @Override
