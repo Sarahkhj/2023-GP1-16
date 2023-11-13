@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:allowBackup="true"
@@ -46,6 +48,7 @@
         <activity
             android:name=".Sign_up"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

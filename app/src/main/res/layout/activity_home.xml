@@ -87,6 +87,11 @@
         app:mbn_selectedIconColor="@color/lightblue"
         app:mbn_shadowColor="#1f212121"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp" />
 
     <!--
         <com.google.android.material.navigation.NavigationView
