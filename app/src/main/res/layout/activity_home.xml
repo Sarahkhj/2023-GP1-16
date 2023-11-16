@@ -20,8 +20,9 @@
         android:text="Welcome"
         android:textColor="#000000"
         android:textSize="30sp" />
-    <include layout="@layout/content_main" />
 
+
+    <include layout="@layout/content_main" />
 
     <TextView
         android:id="@+id/name"
@@ -37,41 +38,9 @@
         android:textColor="#000000"
         android:textSize="22sp" />
 
-    <Button
-        android:id="@+id/choose_file_btn"
-        android:layout_width="222dp"
-        android:layout_height="42dp"
-        android:layout_above="@+id/meow"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="110dp"
-        android:layout_marginEnd="79dp"
-        android:layout_marginBottom="163dp"
-        android:text="Choose PDF File" />
 
-    <Button
-        android:id="@+id/choose_word_btn"
-        android:layout_width="214dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/choose_file_btn"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="113dp"
-        android:layout_marginEnd="84dp"
-        android:layout_marginBottom="47dp"
-        android:text="Choose Word File" />
 
-    <TextView
-        android:id="@+id/file_path"
-        android:layout_width="101dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/meow"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="174dp"
-        android:layout_marginEnd="135dp"
-        android:layout_marginBottom="119dp"
-        android:text="File Path" />
+
 
     <com.etebarian.meowbottomnavigation.MeowBottomNavigation
         android:layout_width="match_parent"
@@ -85,7 +54,12 @@
         app:mbn_defaultIconColor="#90a4ae"
         app:mbn_rippleColor="#2f424242"
         app:mbn_selectedIconColor="@color/lightblue"
-        app:mbn_shadowColor="#1f212121"/>
+        app:mbn_shadowColor="#1f212121">
+
+    </com.etebarian.meowbottomnavigation.MeowBottomNavigation>
+
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
