@@ -50,65 +50,24 @@ public class ChangePassword extends DrawerBaseActivity {
                 String newPassword = newpass.getText().toString();
                 String confirmPassword = confirmpass.getText().toString();
 
-                // Check if new password meets the criteria
-                if (isValidPassword(newPassword)) {
-                    // Make sure the new password and confirm password fields match
-                    if (newPassword.equals(confirmPassword)) {
-                        // Get the current user
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                        // Check if the user is logged in
-                        if (user != null) {
-                            // Get the user's email
-                            String email = user.getEmail();
-
-                            // Create the credential using the email and old password
-                            AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
-
-                            // Reauthenticate the user with the credential
-                            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        // If reauthentication is successful, update the user's password
-                                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    // Password update successful
-                                                    StyleableToast.makeText(ChangePassword.this, "Password updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                                    openhome();
-                                                } else {
-                                                    // Password update failed
-                                                    StyleableToast.makeText(ChangePassword.this, "Failed to update password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        // Reauthentication failed, display incorrect old password message
-                                        StyleableToast.makeText(ChangePassword.this, "Incorrect old password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-                                    }
-                                }
-                            });
+                if (newPassword.equals(confirmPassword)) {
+                    UserHelperClass helperClass = new UserHelperClass();
+                    helperClass.changePassword(oldPassword, newPassword, new ChangePasswordCallback() {
+                        @Override
+                        public void onPasswordChanged(boolean success, String message) {
+                            if (success) {
+                                StyleableToast.makeText(ChangePassword.this, message, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                openhome();
+                            } else {
+                                StyleableToast.makeText(ChangePassword.this, message, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
                         }
-                    } else {
-                        // New password and confirm password fields do not match
-                        StyleableToast.makeText(ChangePassword.this, "New password and confirm password do not match", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-
-                    }
+                    });
                 } else {
-                    // New password does not meet the criteria
-                    newpass.setError("Password must be at least 8 characters and meet certain criteria");
-
-
+                    StyleableToast.makeText(ChangePassword.this, "New password and confirm password do not match", Toast.LENGTH_SHORT, R.style.mytoast).show();
                 }
             }
-        });
-    }
+        });    }
 
     private boolean isValidPassword(String password) {
         return password.length() >= 8 && password.length() <= 15
