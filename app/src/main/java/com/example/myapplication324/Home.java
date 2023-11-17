@@ -12,6 +12,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -19,12 +20,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -66,6 +74,11 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     TextView textview_mail, textview_share, text;
     Boolean isOpen = false;
     private EditText FolderName;
+
+    private RecyclerView recyclerView;
+    private FileAdapter fileAdapter;
+
+    private List<FileMetadata> fileMetadataList = new ArrayList<>();
 
 
     @Override
@@ -213,8 +226,43 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         });
 
+        recyclerView = findViewById(R.id.recyclerView); // Add RecyclerView in your XML layout
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        fileAdapter = new FileAdapter();
+        recyclerView.setAdapter(fileAdapter);
+
+        // Call method to fetch files from Firebase
+        fetchFilesFromFirebase();
 
     }
+
+
+
+    private void fetchFilesFromFirebase() {
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
+
+        filesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                fileMetadataList.clear(); // Clear existing data
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
+                    fileMetadataList.add(fileMetadata);
+                }
+                fileAdapter.setFileList(fileMetadataList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error
+                Toast.makeText(Home.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
 
     ////Uploading files////
     private void callChoosePdfFile() {
@@ -420,6 +468,43 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         // Show the dialog
         dialog.show();
+    }
+    private static class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
+
+        private List<FileMetadata> fileList = new ArrayList<>();
+
+        public void setFileList(List<FileMetadata> fileList) {
+            this.fileList = fileList;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_file, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            FileMetadata fileMetadata = fileList.get(position);
+            holder.fileNameTextView.setText(fileMetadata.getFileName());
+            // You can handle file download or other actions here if needed
+        }
+
+        @Override
+        public int getItemCount() {
+            return fileList.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView fileNameTextView;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Add TextView in your item layout
+            }
+        }
     }
 
 
