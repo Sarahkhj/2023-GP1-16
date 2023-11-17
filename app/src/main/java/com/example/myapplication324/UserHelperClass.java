@@ -1,11 +1,6 @@
 package com.example.myapplication324;
 
 import android.app.Activity;
-import android.database.sqlite.SQLiteDatabase;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +22,7 @@ import io.github.muddz.styleabletoast.StyleableToast;
 
 
 public class UserHelperClass {
-    String username, email, PhoneNum;
+    String username, email, PhoneNum, password;
     private static String usersTable="usersTable";
     FirebaseAuth auth;
     DatabaseReference mDatabase;
@@ -116,7 +111,11 @@ public class UserHelperClass {
     public UserHelperClass (Sign_up signUp) {
 
     }
-    public UserHelperClass(String username, String email,String phone) {
+
+
+
+
+    public UserHelperClass(String username, String password, String email, String phone) {
         this.username = username;
         this.email = email;
         this.PhoneNum = phone;
@@ -130,6 +129,14 @@ public class UserHelperClass {
     public void setUsername(String username) {
         this.username = username;
     }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password; }
 
     public String getEmail() {
         return email;
@@ -147,26 +154,6 @@ public class UserHelperClass {
         PhoneNum = phoneNum;
     }
 
-    /*public Boolean checkPhoneNumber(String phoneNumber) {
-        SQLiteDatabase MyDB = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + usersTable + " WHERE phone = ?";
-        Cursor cursor = MyDB.rawQuery(sql, new String[] { phoneNumber });
-        if (cursor.getCount() > 0) {
-            return true; // Phone number already exists
-        } else {
-            return false; // Phone number does not exist
-        }
-    }
 
-    public Boolean checkEmail(String email) {
-        SQLiteDatabase MyDB = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + usersTable + " WHERE email = ?";
-        Cursor cursor = MyDB.rawQuery(sql, new String[] { email });
-        if (cursor.getCount() > 0) {
-            return true; // Email already exists
-        } else {
-            return false; // Email does not exist
-        }
-    }*/
 }
 

@@ -165,7 +165,7 @@ public class Sign_up extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    UserHelperClass helperClass = new UserHelperClass(username.getText().toString(), email.getText().toString(), PhoneNum.getText().toString());
+                    UserHelperClass helperClass = new UserHelperClass(username.getText().toString(),password.getText().toString(), email.getText().toString(), PhoneNum.getText().toString());
                     reference.push().setValue(helperClass);
                     startActivity(new Intent(Sign_up.this, Home.class));
                 } else {
