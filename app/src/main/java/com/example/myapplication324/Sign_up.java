@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,6 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
+
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import io.github.muddz.styleabletoast.StyleableToast;
@@ -31,6 +35,9 @@ public class Sign_up extends AppCompatActivity {
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
 
+    private Spinner spinner;
+    private ArrayList<Custom_spinner> customList;
+    private SpinnerAdapter spinnerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +52,38 @@ public class Sign_up extends AppCompatActivity {
         password = findViewById(R.id.password);
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
+        spinner = findViewById(R.id.spinner2);
+
+        // create spinnerItemlist for spinner
+        customList=new ArrayList<>();
+        customList.add(new Custom_spinner("Black",R.drawable.black));
+        customList.add(new Custom_spinner("Red",R.drawable.red));
+        customList.add(new Custom_spinner("Blue",R.drawable.blue));
+        customList.add(new Custom_spinner("Green",R.drawable.green));
+        customList.add(new Custom_spinner("Dark gray",R.drawable.dark_gray));
+        customList.add(new Custom_spinner("Cyan",R.drawable.cyan));
+        customList.add(new Custom_spinner("Magenta",R.drawable.magenta));
+        customList.add(new Custom_spinner("Yellow",R.drawable.yellow));
+
+        //create Adapter for spinner
+          spinnerAdapter = new SpinnerAdapter(this,customList);
+
+        if (spinner != null) {
+            spinner.setAdapter(spinnerAdapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    Custom_spinner clickeditem= (Custom_spinner)adapterView.getSelectedItem();
+                    StyleableToast.makeText(Sign_up.this, clickeditem.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }
+
 
         // Checking biometric authentication availability
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -202,3 +241,11 @@ public class Sign_up extends AppCompatActivity {
     }
 }
 
+//<item>RED</item>
+//<item>YELLOW</item>
+//<item>BLUE</item>
+//<item>GREEN</item>
+//<item>BLACK</item>
+//<item>MAGENTA</item>
+//<item>DKGRAY</item>
+//<item>CYAN</item>
