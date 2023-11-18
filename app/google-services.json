@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1068517637122",
+    "firebase_url": "https://box-1aa0c-default-rtdb.firebaseio.com",
+    "project_id": "box-1aa0c",
+    "storage_bucket": "box-1aa0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068517637122:android:b0b2b0c3f1901c6c95fb1b",
+        "android_client_info": {
+          "package_name": "com.example.myapplication324"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvsz-sfczgIRuFSei5SZrAyWEHhYVPhDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
