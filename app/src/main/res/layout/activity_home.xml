@@ -59,13 +59,14 @@
     </com.etebarian.meowbottomnavigation.MeowBottomNavigation>
 
 
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp" />
+        android:layout_height="591dp"
+        android:padding="12dp"
+
+
+        />
 
     <!--
         <com.google.android.material.navigation.NavigationView

@@ -78,7 +78,7 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
     @Override
     public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
         super.onAuthenticationError(errorCode, errString);
-        StyleableToast.makeText(context, "Authentication error: " + errString, Toast.LENGTH_SHORT, R.style.mytoast).show();
+        StyleableToast.makeText(context, "Authentication error: you haven't set your fingerprint" , Toast.LENGTH_SHORT, R.style.mytoast).show();
     }
 
 
