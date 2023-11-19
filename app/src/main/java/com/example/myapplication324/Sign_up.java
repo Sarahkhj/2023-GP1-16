@@ -25,10 +25,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import io.github.muddz.styleabletoast.StyleableToast;
 
-public class Sign_up extends AppCompatActivity {
+public class Sign_up extends AppCompatActivity implements FingerPrintAuthenticator.AuthenticationCallback {
     private TextView login;
     private EditText username, email, PhoneNum, password, rePassword;
     private Button sign;
+    private FingerPrintAuthenticator fingerprintAuthenticator;
 
     private FirebaseAuth auth;
     private DatabaseReference reference;
@@ -85,41 +86,20 @@ public class Sign_up extends AppCompatActivity {
         }
 
 
-        // Checking biometric authentication availability
-        BiometricManager biometricManager = BiometricManager.from(this);
-        if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS) {
-            Log.d("MY_APP_TAG", "App can authenticate using biometrics.");
-        } else {
-            Log.e("MY_APP_TAG", "Biometric authentication is not available.");
-        }
-
-        // Initialize biometric prompt
-        biometricPrompt = new BiometricPrompt(Sign_up.this, ContextCompat.getMainExecutor(this), new BiometricPrompt.AuthenticationCallback() {
+        fingerprintAuthenticator = new FingerPrintAuthenticator(Sign_up.this, new FingerPrintAuthenticator.AuthenticationCallback() {
             @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                StyleableToast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT, R.style.mytoast).show();
-            }
-
-            @Override
-            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                handleAuthenticationSuccess();
-            }
-
-            @Override
-            public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-                StyleableToast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+            public void onAuthenticationSuccess() {
+                handleAuthenticationSuccessWrapper();
             }
         });
+        // Initialize biometric prompt
+        biometricPrompt = new BiometricPrompt(Sign_up.this, ContextCompat.getMainExecutor(Sign_up.this), new FingerPrintAuthenticator(Sign_up.this, new FingerPrintAuthenticator.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSuccess() {
+                handleAuthenticationSuccessWrapper();
+            }
+        }));
 
-        // Configure biometric prompt
-        promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Sign up")
-                .setSubtitle("Register your fingerprint to sign up")
-                .setNegativeButtonText("Cancel")
-                .build();
 
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +146,7 @@ public class Sign_up extends AppCompatActivity {
                                         StyleableToast.makeText(Sign_up.this, "Email already exists! Please use another email.", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     } else {
                                         // If phone number and email are unique, proceed with biometric authentication
-                                        authenticateWithBiometrics();
+                                        fingerprintAuthenticator.showSignUpBiometricPrompt();
                                     }
                                 }
 
@@ -198,7 +178,9 @@ public class Sign_up extends AppCompatActivity {
             }
         }
     }
-
+public void handleAuthenticationSuccessWrapper(){
+    handleAuthenticationSuccess();// Calling the private method internally
+}
     private void handleAuthenticationSuccess() {
         auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -238,6 +220,11 @@ public class Sign_up extends AppCompatActivity {
     private void openLogin() {
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onAuthenticationSuccess() {
+
     }
 }
 

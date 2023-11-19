@@ -25,14 +25,15 @@ import java.util.concurrent.Executor;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements FingerPrintAuthenticator.AuthenticationCallback{
 
     private TextView t1;
     private TextView t2;
 
     private Executor executor;
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
+
+    private FingerPrintAuthenticator fingerprintAuthenticator;
+
 
     Button SignInButton;
 
@@ -46,7 +47,12 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         t1 = findViewById(R.id.signup);
         t2 = findViewById(R.id.forget);
+        fingerprintAuthenticator = new FingerPrintAuthenticator(Login.this, new FingerPrintAuthenticator.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSuccess() {
 
+            }
+        });
         t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +88,8 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
                                  //   StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
-                                    showBiometricPrompt(); // Show the biometric prompt on success
+                                    fingerprintAuthenticator.showSignInBiometricPrompt();
+                                    // Show the biometric prompt on success
 
                                 }
                             })
@@ -114,37 +121,7 @@ public class Login extends AppCompatActivity {
                 break;
         }
 
-        // Initialize biometric prompt
-        executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new BiometricPrompt(Login.this, executor, new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                StyleableToast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT,R.style.mytoast).show();
-            }
 
-            @Override
-            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                StyleableToast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT,R.style.mytoast).show();
-                StyleableToast.makeText(Login.this, "Login Successful", Toast.LENGTH_SHORT,R.style.mytoast).show();
-                Intent intent1 = new Intent(getApplicationContext(), Home.class);
-                startActivity(intent1);
-            }
-
-            @Override
-            public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-                StyleableToast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
-            }
-        });
-
-        // Configure biometric prompt
-        promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Sign in")
-                .setSubtitle("Touch the fingerprint sensor to continue")
-                .setNegativeButtonText("Cancel")
-                .build();
     }
 
     private boolean isCredentialsValid() {
@@ -170,8 +147,13 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showBiometricPrompt() {
-        // Show the biometric authentication prompt
-        biometricPrompt.authenticate(promptInfo);
+//    private void showBiometricPrompt() {
+//        // Show the biometric authentication prompt
+//        biometricPrompt.authenticate(promptInfo);
+//    }
+
+    @Override
+    public void onAuthenticationSuccess() {
+
     }
 }
