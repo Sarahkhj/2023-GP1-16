@@ -39,6 +39,7 @@ public class Sign_up extends AppCompatActivity implements FingerPrintAuthenticat
     private Spinner spinner;
     private ArrayList<Custom_spinner> customList;
     private SpinnerAdapter spinnerAdapter;
+    private Custom_spinner clickedcolor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +75,8 @@ public class Sign_up extends AppCompatActivity implements FingerPrintAuthenticat
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                 //   Custom_spinner clickeditem= (Custom_spinner)adapterView.getSelectedItem();
-                 //   StyleableToast.makeText(Sign_up.this, clickeditem.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
+                   clickedcolor= (Custom_spinner)adapterView.getSelectedItem();
+                 //   StyleableToast.makeText(Sign_up.this, clickedcolor.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
                 }
 
                 @Override
@@ -186,7 +187,7 @@ public void handleAuthenticationSuccessWrapper(){
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    UserHelperClass helperClass = new UserHelperClass(username.getText().toString(),password.getText().toString(), email.getText().toString(), PhoneNum.getText().toString());
+                    UserHelperClass helperClass = new UserHelperClass(username.getText().toString(),password.getText().toString(), email.getText().toString(), PhoneNum.getText().toString(), clickedcolor.getSpinnerText());
                     reference.push().setValue(helperClass);
                     startActivity(new Intent(Sign_up.this, Home.class));
                 } else {

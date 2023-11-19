@@ -22,7 +22,7 @@ import io.github.muddz.styleabletoast.StyleableToast;
 
 
 public class UserHelperClass {
-    String username, email, PhoneNum, password;
+    String username, email, PhoneNum, password,color;
     private static String usersTable="usersTable";
     FirebaseAuth auth;
     DatabaseReference mDatabase;
@@ -115,11 +115,12 @@ public class UserHelperClass {
 
 
 
-    public UserHelperClass(String username, String password, String email, String phone) {
+    public UserHelperClass(String username, String password, String email, String phone, String color) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.PhoneNum = phone;
+        this.color = color;
 
     }
 
@@ -155,6 +156,12 @@ public class UserHelperClass {
         PhoneNum = phoneNum;
     }
 
+    public String getColor() {
+        return color;
+    }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
 }
 
