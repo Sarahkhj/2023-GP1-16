@@ -74,8 +74,8 @@ public class Sign_up extends AppCompatActivity implements FingerPrintAuthenticat
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    Custom_spinner clickeditem= (Custom_spinner)adapterView.getSelectedItem();
-                    StyleableToast.makeText(Sign_up.this, clickeditem.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
+                 //   Custom_spinner clickeditem= (Custom_spinner)adapterView.getSelectedItem();
+                 //   StyleableToast.makeText(Sign_up.this, clickeditem.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
                 }
 
                 @Override

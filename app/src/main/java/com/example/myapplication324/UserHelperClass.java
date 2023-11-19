@@ -118,6 +118,7 @@ public class UserHelperClass {
     public UserHelperClass(String username, String password, String email, String phone) {
         this.username = username;
         this.email = email;
+        this.password = password;
         this.PhoneNum = phone;
 
     }
