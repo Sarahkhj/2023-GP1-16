@@ -25,7 +25,7 @@ import java.util.concurrent.Executor;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
-public class Login extends AppCompatActivity implements FingerPrintAuthenticator.AuthenticationCallback{
+public class Login extends AppCompatActivity {
 
     private TextView t1;
     private TextView t2;
@@ -135,8 +135,5 @@ public class Login extends AppCompatActivity implements FingerPrintAuthenticator
 //        biometricPrompt.authenticate(promptInfo);
 //    }
 
-    @Override
-    public void onAuthenticationSuccess() {
 
-    }
 }

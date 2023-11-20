@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import io.github.muddz.styleabletoast.StyleableToast;
 
-public class Sign_up extends AppCompatActivity implements FingerPrintAuthenticator.AuthenticationCallback {
+public class Sign_up extends AppCompatActivity  {
     private TextView login;
     private EditText username, email, PhoneNum, password, rePassword;
     private Button sign;
@@ -222,10 +222,7 @@ public void handleAuthenticationSuccessWrapper(){
         startActivity(intent);
     }
 
-    @Override
-    public void onAuthenticationSuccess() {
 
-    }
 }
 
 //<item>RED</item>
