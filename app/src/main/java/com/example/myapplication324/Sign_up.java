@@ -33,9 +33,6 @@ public class Sign_up extends AppCompatActivity  {
 
     private FirebaseAuth auth;
     private DatabaseReference reference;
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
-
     private Spinner spinner;
     private ArrayList<Custom_spinner> customList;
     private SpinnerAdapter spinnerAdapter;
@@ -90,16 +87,10 @@ public class Sign_up extends AppCompatActivity  {
         fingerprintAuthenticator = new FingerPrintAuthenticator(Sign_up.this, new FingerPrintAuthenticator.AuthenticationCallback() {
             @Override
             public void onAuthenticationSuccess() {
-                handleAuthenticationSuccessWrapper();
+                handleAuthenticationSuccess();
             }
         });
-        // Initialize biometric prompt
-        biometricPrompt = new BiometricPrompt(Sign_up.this, ContextCompat.getMainExecutor(Sign_up.this), new FingerPrintAuthenticator(Sign_up.this, new FingerPrintAuthenticator.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSuccess() {
-                handleAuthenticationSuccessWrapper();
-            }
-        }));
+
 
 
         sign.setOnClickListener(new View.OnClickListener() {
@@ -179,9 +170,7 @@ public class Sign_up extends AppCompatActivity  {
             }
         }
     }
-public void handleAuthenticationSuccessWrapper(){
-    handleAuthenticationSuccess();// Calling the private method internally
-}
+
     private void handleAuthenticationSuccess() {
         auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -214,9 +203,6 @@ public void handleAuthenticationSuccessWrapper(){
                 && password.matches(".*\\d.*") && password.matches(".*[./].*");
     }
 
-    private void authenticateWithBiometrics() {
-        biometricPrompt.authenticate(promptInfo);
-    }
 
     private void openLogin() {
         Intent intent = new Intent(this, Login.class);

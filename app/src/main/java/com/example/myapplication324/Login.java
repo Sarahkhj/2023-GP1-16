@@ -29,12 +29,7 @@ public class Login extends AppCompatActivity {
 
     private TextView t1;
     private TextView t2;
-
-    private Executor executor;
-
     private FingerPrintAuthenticator fingerprintAuthenticator;
-
-
     Button SignInButton;
 
     private EditText email, password;
@@ -50,7 +45,7 @@ public class Login extends AppCompatActivity {
         fingerprintAuthenticator = new FingerPrintAuthenticator(Login.this, new FingerPrintAuthenticator.AuthenticationCallback() {
             @Override
             public void onAuthenticationSuccess() {
-
+                // Action already handled within the FingerPrintAuthenticator class
             }
         });
         t1.setOnClickListener(new View.OnClickListener() {
@@ -102,9 +97,6 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
-
-
-
     }
 
     private boolean isCredentialsValid() {
@@ -119,21 +111,12 @@ public class Login extends AppCompatActivity {
         }
         return true;
     }
-
     public void opensignup() {
         Intent intent = new Intent(this, Sign_up.class);
         startActivity(intent);
     }
-
     public void openforget() {
         Intent intent = new Intent(this, Forgetpassword.class);
         startActivity(intent);
     }
-
-//    private void showBiometricPrompt() {
-//        // Show the biometric authentication prompt
-//        biometricPrompt.authenticate(promptInfo);
-//    }
-
-
 }
