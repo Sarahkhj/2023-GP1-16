@@ -169,7 +169,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             }
         });
         // end of FloatingActionButton
-        t1 = findViewById(R.id.name);
+        //t1 = findViewById(R.id.name);
         auth = FirebaseAuth.getInstance();
         rootNode = FirebaseDatabase.getInstance();
 
@@ -197,7 +197,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         if (auth.getCurrentUser() != null) {
             rtvFullName = auth.getCurrentUser().getEmail();
-            t1.setText(rtvFullName);
+            //t1.setText(rtvFullName);
 
         } else {
             StyleableToast.makeText(Home.this, "Error = No users Found !", Toast.LENGTH_SHORT, R.style.mytoast).show();

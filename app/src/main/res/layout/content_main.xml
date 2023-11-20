@@ -93,7 +93,7 @@
         android:visibility="invisible"
         app:backgroundTint="@color/lightblue"
         app:pressedTranslationZ="12dp"
-        app:srcCompat="@drawable/baseline_create_new_folder_24" />
+        app:srcCompat="@drawable/baseline_upload_file_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
