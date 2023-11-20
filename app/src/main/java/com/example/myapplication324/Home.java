@@ -393,33 +393,30 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-
     private void createFolder() {
         String folderName = FolderName.getText().toString().trim();
 
         if (!folderName.isEmpty()) {
+            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
-            // Access the StorageReference
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            // Generate a unique key for the folder
+            String folderId = foldersRef.push().getKey();
 
-            // Path for the new folder
-            String folderPath = currentUserId + "/" + folderName + "/";
+            // Store folder metadata in the Realtime Database
+            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
 
-            // Reference to the folder path
-            StorageReference folderRef = storageRef.child(folderPath);
-
-            // This creates an empty file in the folder to signify its creation
-            folderRef.child("New File").putBytes(new byte[0])
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Folder has been created
-                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
+            // Save folder metadata using the unique key
+            foldersRef.child(folderId).setValue(folderMetadata)
+                    .addOnSuccessListener(aVoid -> {
+                        // Folder created successfully
+                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
                     })
                     .addOnFailureListener(e -> {
                         // Folder creation failed
-                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
                     });
         } else {
-            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT,R.style.mytoast).show();
+            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
         }
     }
 
@@ -441,25 +438,24 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
             // Perform folder creation logic here
             if (!folderName.isEmpty()) {
-                // Access the StorageReference
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
-                // Path for the new folder
-                String folderPath = currentUserId + "/" + folderName + "/";
+                // Generate a unique key for the folder
+                String folderId = foldersRef.push().getKey();
 
-                // Reference to the folder path
-                StorageReference folderRef = storageRef.child(folderPath);
+                // Store folder metadata in the Realtime Database
+                FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
 
-                // This creates an empty file in the folder to signify its creation
-                folderRef.child("New File").putBytes(new byte[0])
-                        .addOnSuccessListener(taskSnapshot -> {
-                            // Folder has been created
-                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                // Save folder metadata using the unique key
+                foldersRef.child(folderId).setValue(folderMetadata)
+                        .addOnSuccessListener(aVoid -> {
+                            // Folder created successfully
+                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
                             dialog.dismiss(); // Dismiss the dialog after creating the folder
                         })
                         .addOnFailureListener(e -> {
                             // Folder creation failed
-                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
                         });
             } else {
                 folderNameEditText.setError("Please enter a folder name");
@@ -469,6 +465,81 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         // Show the dialog
         dialog.show();
     }
+//    private void createFolder() {
+//        String folderName = FolderName.getText().toString().trim();
+//
+//        if (!folderName.isEmpty()) {
+//
+//            // Access the StorageReference
+//            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+//
+//            // Path for the new folder
+//            String folderPath = currentUserId + "/" + folderName + "/";
+//
+//            // Reference to the folder path
+//            StorageReference folderRef = storageRef.child(folderPath);
+//
+//            // This creates an empty file in the folder to signify its creation
+//            folderRef.child("New File").putBytes(new byte[0])
+//                    .addOnSuccessListener(taskSnapshot -> {
+//                        // Folder has been created
+//                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        // Folder creation failed
+//                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+//                    });
+//        } else {
+//            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT,R.style.mytoast).show();
+//        }
+//    }
+//
+//    private void ShowDialog() {
+//        // Create a Dialog object
+//        Dialog dialog = new Dialog(this);
+//
+//        // Set the content view of the dialog by inflating folder_dialog.xml
+//        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
+//        dialog.setContentView(dialogView);
+//
+//        // Now, you can find and use the views inside the dialogView
+//        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
+//        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
+//
+//        // Set click listener for the create folder button
+//        createFolderBtn.setOnClickListener(v -> {
+//            String folderName = folderNameEditText.getText().toString().trim();
+//
+//            // Perform folder creation logic here
+//            if (!folderName.isEmpty()) {
+//                // Access the StorageReference
+//                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+//
+//                // Path for the new folder
+//                String folderPath = currentUserId + "/" + folderName + "/";
+//
+//                // Reference to the folder path
+//                StorageReference folderRef = storageRef.child(folderPath);
+//
+//                // This creates an empty file in the folder to signify its creation
+//                folderRef.child("New File").putBytes(new byte[0])
+//                        .addOnSuccessListener(taskSnapshot -> {
+//                            // Folder has been created
+//                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
+//                            dialog.dismiss(); // Dismiss the dialog after creating the folder
+//                        })
+//                        .addOnFailureListener(e -> {
+//                            // Folder creation failed
+//                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+//                        });
+//            } else {
+//                folderNameEditText.setError("Please enter a folder name");
+//            }
+//        });
+//
+//        // Show the dialog
+//        dialog.show();
+//    }
     private static class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
         private List<FileMetadata> fileList = new ArrayList<>();
