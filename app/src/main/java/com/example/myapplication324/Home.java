@@ -239,17 +239,19 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-
     private void fetchFilesAndFoldersFromFirebase() {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
         DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
         // Clear the items list before populating it again
         itemsList.clear();
+        fileMetadataList.clear(); // Clear file metadata list
+        folderMetadataList.clear(); // Clear folder metadata list
 
         filesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                fileMetadataList.clear(); // Clear file metadata list before populating
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
                     if (fileMetadata != null) {
@@ -257,6 +259,10 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                         itemsList.add(fileMetadata); // Add file to combined list
                     }
                 }
+                // Clear and re-add items to the combined list
+                itemsList.clear();
+                itemsList.addAll(fileMetadataList);
+                itemsList.addAll(folderMetadataList);
 
                 // Update RecyclerView
                 updateRecyclerView();
@@ -272,6 +278,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         foldersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                folderMetadataList.clear(); // Clear folder metadata list before populating
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
                     if (folderMetadata != null) {
@@ -279,6 +286,11 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                         itemsList.add(folderMetadata); // Add folder to combined list
                     }
                 }
+
+                // Clear and re-add items to the combined list
+                itemsList.clear();
+                itemsList.addAll(fileMetadataList);
+                itemsList.addAll(folderMetadataList);
 
                 // Update RecyclerView
                 updateRecyclerView();
@@ -291,6 +303,63 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             }
         });
     }
+
+
+
+
+//    private void fetchFilesAndFoldersFromFirebase() {
+//        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
+//        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+//
+//        // Clear the items list before populating it again
+//        fileMetadataList.clear();
+//        folderMetadataList.clear();
+//        itemsList.clear();
+//
+//        filesRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
+//                    if (fileMetadata != null) {
+//                        fileMetadataList.add(fileMetadata);
+//                        itemsList.add(fileMetadata); // Add file to combined list
+//                    }
+//                }
+//
+//                // Update RecyclerView
+//                updateRecyclerView();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle error
+//                Toast.makeText(Home.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        foldersRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
+//                    if (folderMetadata != null) {
+//                        folderMetadataList.add(folderMetadata);
+//                        itemsList.add(folderMetadata); // Add folder to combined list
+//                    }
+//                }
+//
+//                // Update RecyclerView
+//                updateRecyclerView();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle error
+//                Toast.makeText(Home.this, "Failed to fetch folders: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
 
 
