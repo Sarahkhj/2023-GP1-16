@@ -79,6 +79,9 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private FileAdapter fileAdapter;
 
     private List<FileMetadata> fileMetadataList = new ArrayList<>();
+    private List<FolderMetadata> folderMetadataList = new ArrayList<>();
+
+    private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
 
 
     @Override
@@ -231,25 +234,32 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         fileAdapter = new FileAdapter();
         recyclerView.setAdapter(fileAdapter);
 
-        // Call method to fetch files from Firebase
-        fetchFilesFromFirebase();
+        // Call method to fetch files and folders from Firebase
+        fetchFilesAndFoldersFromFirebase();
 
     }
 
 
-
-    private void fetchFilesFromFirebase() {
+    private void fetchFilesAndFoldersFromFirebase() {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
+        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+
+        // Clear the items list before populating it again
+        itemsList.clear();
 
         filesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                fileMetadataList.clear(); // Clear existing data
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
-                    fileMetadataList.add(fileMetadata);
+                    if (fileMetadata != null) {
+                        fileMetadataList.add(fileMetadata);
+                        itemsList.add(fileMetadata); // Add file to combined list
+                    }
                 }
-                fileAdapter.setFileList(fileMetadataList);
+
+                // Update RecyclerView
+                updateRecyclerView();
             }
 
             @Override
@@ -258,9 +268,39 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                 Toast.makeText(Home.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        foldersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
+                    if (folderMetadata != null) {
+                        folderMetadataList.add(folderMetadata);
+                        itemsList.add(folderMetadata); // Add folder to combined list
+                    }
+                }
+
+                // Update RecyclerView
+                updateRecyclerView();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error
+                Toast.makeText(Home.this, "Failed to fetch folders: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
+
+
+
+    private void updateRecyclerView() {
+        // Notify the adapter about changes in the combined list
+        fileAdapter.setItemsList(itemsList);
+        fileAdapter.notifyDataSetChanged();
+    }
 
 
 
@@ -540,45 +580,93 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 //        // Show the dialog
 //        dialog.show();
 //    }
-    private static class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
-        private List<FileMetadata> fileList = new ArrayList<>();
+    private static class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private List<Object> itemsList = new ArrayList<>();
+        private static final int FILE_TYPE = 0;
+        private static final int FOLDER_TYPE = 1;
 
-        public void setFileList(List<FileMetadata> fileList) {
-            this.fileList = fileList;
-            notifyDataSetChanged();
+        public void setItemsList(List<Object> itemsList) {
+            this.itemsList = itemsList;
         }
+
+        @Override
+        public int getItemViewType(int position) {
+            Object item = itemsList.get(position);
+
+            if (item instanceof FileMetadata) {
+                return 0;
+            } else if (item instanceof FolderMetadata) {
+                return 1;
+            }
+
+            return -1;
+        }
+
+
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_file, parent, false);
-            return new ViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            RecyclerView.ViewHolder viewHolder;
+
+            switch (viewType) {
+                case 0:
+                    View fileView = inflater.inflate(R.layout.item_file, parent, false);
+                    viewHolder = new FileViewHolder(fileView);
+                    break;
+                case 1:
+                    View folderView = inflater.inflate(R.layout.item_folder, parent, false);
+                    viewHolder = new FolderViewHolder(folderView);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + viewType);
+            }
+            return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            FileMetadata fileMetadata = fileList.get(position);
-            holder.fileNameTextView.setText(fileMetadata.getFileName());
-            // You can handle file download or other actions here if needed
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Object item = itemsList.get(position);
+
+            if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
+                FileMetadata fileMetadata = (FileMetadata) item;
+                ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
+            } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
+                FolderMetadata folderMetadata = (FolderMetadata) item;
+                ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
+            }
         }
+
+
 
         @Override
         public int getItemCount() {
-            return fileList.size();
+            return itemsList.size();
         }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
+        static class FileViewHolder extends RecyclerView.ViewHolder {
             TextView fileNameTextView;
 
-            public ViewHolder(@NonNull View itemView) {
+            public FileViewHolder(@NonNull View itemView) {
                 super(itemView);
-                fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Add TextView in your item layout
+                fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
+            }
+        }
+
+        static class FolderViewHolder extends RecyclerView.ViewHolder {
+            TextView folderNameTextView;
+
+            public FolderViewHolder(@NonNull View itemView) {
+                super(itemView);
+                folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
             }
         }
     }
-
-
 }
+
+
+
 
 
