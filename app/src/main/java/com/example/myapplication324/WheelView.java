@@ -153,20 +153,20 @@ public class WheelView extends View {
                 if (j < 4) {
                     float characterAngle = positionMidAngle -8+ (j * 7.8f);
                     // 4 characters positioned close to the arc
-                    float distanceFromArc = (float) (radius * 0.9); // Adjust the distance as desired
+                    float distanceFromArc = (float) (radius * 0.89); // Adjust the distance as desired
                     float offset = (float) (radius * 0.09); // Adjust the offset as desired
                     positionX = (float) (width / 2 + distanceFromArc * Math.cos(Math.toRadians( positionMidAngle -10+ (j * 7.8f))))  ;
                     positionY = (float) (height / 2 + distanceFromArc * Math.sin(Math.toRadians( positionMidAngle -10+ (j * 7.8f)))) ;
                 } else if (j < 7) {
                     //  float characterAngle = positionMidAngle -7 + (j * 10);
                     // 3 characters positioned after the 4 characters
-                    float distanceFromArc = (float) (radius * 0.7); // Adjust the distance as desired
+                    float distanceFromArc = (float) (radius * 0.69); // Adjust the distance as desired
                     float offset = (float) (radius * 0.01); // Adjust the offset as desired
-                    positionX = (float) (width / 2 + distanceFromArc * Math.cos(Math.toRadians(positionMidAngle -35 + (j * 7.5)))) ;
-                    positionY = (float) (height / 2 + distanceFromArc * Math.sin(Math.toRadians(positionMidAngle -35 + (j * 7.5))));
+                    positionX = (float) (width / 2 + distanceFromArc * Math.cos(Math.toRadians(positionMidAngle -38 + (j * 7f)))) ;
+                    positionY = (float) (height / 2 + distanceFromArc * Math.sin(Math.toRadians(positionMidAngle -38 + (j * 8f))));
                 } else {
                     // 1 character positioned towards the inner sector
-                    float distanceFromArc = (float) (radius * 0.5); // Adjust the distance as desired
+                    float distanceFromArc = (float) (radius * 0.45); // Adjust the distance as desired
                     float characterAngle = positionMidAngle +12 + (j * 10);
                     float offset = (float) (radius * 0.08f); // Adjust the offset as desired
                     positionX = (float) (width / 2 + distanceFromArc * Math.cos(Math.toRadians(positionMidAngle-14+(j*2)))) ;
@@ -183,7 +183,17 @@ public class WheelView extends View {
                 textPaint.setColor(POSITION_COLOR);
                 textPaint.setTextSize(55); // Adjust the text size as desired
                 textPaint.setTextAlign(Paint.Align.CENTER);
-
+// Adjust the text size as desired
+                // Adjust the text size and font style based on the character
+                if (character.equals(".")) {
+                    textPaint.setTextSize(70); // Increase the text size for "."
+                    textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                } else if (character.equals("/")) {
+                    textPaint.setTextSize(65); // Default text size for "/"
+                    textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+                } else {
+                    textPaint.setTextSize(55); // Default text size for other characters
+                }
                 // Apply font styles based on the type of character
                 if (Character.isUpperCase(character.charAt(0))) {
                     textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));

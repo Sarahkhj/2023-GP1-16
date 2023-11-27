@@ -91,9 +91,10 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
             authenticationCallback.onAuthenticationSuccess();
         }
         // Check if the context is Login activity
-        else if (context instanceof Login) {
-            Intent intent = new Intent(context, Home.class);
-            context.startActivity(intent);
+        else if (context instanceof Login2) {
+//            Intent intent = new Intent(context, Home.class);
+//            context.startActivity(intent);
+          context.startActivity(new Intent(context, Home.class));
         }
     }
 

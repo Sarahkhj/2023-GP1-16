@@ -35,6 +35,7 @@ public class Login2 extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference reference;
     private int usertry=0;
+    //private FingerPrintAuthenticator fingerprintAuthenticator;
 
 
 
@@ -52,7 +53,9 @@ public class Login2 extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         wheelView.setTextView(pass); // Set the TextView in the WheelView
         reference = FirebaseDatabase.getInstance().getReference("users");
-
+//        fingerprintAuthenticator = new FingerPrintAuthenticator(Login.this, () -> {
+//
+//        });
 
         forget.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +99,7 @@ public class Login2 extends AppCompatActivity {
                                         userfinal = pass.getText().toString().trim();
                                         if(userfinal.equals(password)){
                                             // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, password)
+                                            auth.signInWithEmailAndPassword(userEmail, userfinal)
                                                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                                         @Override
                                                         public void onSuccess(AuthResult authResult) {
