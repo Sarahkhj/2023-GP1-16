@@ -131,33 +131,7 @@ private FingerPrintAuthenticator fingerprintAuthenticator;
                                                     });
 
                                     }
-else{
-                                            // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, password)
-                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                        @Override
-                                                        public void onSuccess(AuthResult authResult) {
-                                                            // Handle successful login
-                                                        //    startActivity(new Intent(Login2.this, Home.class));
-                                                        //  fingerprintAuthenticator.showSignInBiometricPrompt();
-                                                            // Show the biometric prompt on success
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            // Handle login failure
-                                                            usertry++;
-                                                            if(usertry==3){
-                                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
 
-                                                            }
-                                                            else {
-                                                                pass.setText("");
-                                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();}
-                                                        }
-                                                    });
-}
 
 
                                     //pass.setText(fin);
