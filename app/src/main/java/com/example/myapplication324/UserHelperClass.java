@@ -49,7 +49,6 @@ public class UserHelperClass {
 
                             String username = snapshot.child("username").getValue(String.class);
                             usernameTextView.setText(username);
-
                             emailTextView.setText(userEmail);
                             P.setText(phone);
 
