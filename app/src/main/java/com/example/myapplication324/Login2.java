@@ -35,7 +35,7 @@ public class Login2 extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference reference;
     private int usertry=0;
-    //private FingerPrintAuthenticator fingerprintAuthenticator;
+private FingerPrintAuthenticator fingerprintAuthenticator;
 
 
 
@@ -53,9 +53,14 @@ public class Login2 extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         wheelView.setTextView(pass); // Set the TextView in the WheelView
         reference = FirebaseDatabase.getInstance().getReference("users");
-//        fingerprintAuthenticator = new FingerPrintAuthenticator(Login.this, () -> {
-//
-//        });
+        fingerprintAuthenticator = new FingerPrintAuthenticator(Login2.this, new FingerPrintAuthenticator.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSuccess() {
+                startActivity(new Intent(Login2.this, Home.class));
+
+            }
+        });
+
 
         forget.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,8 +109,9 @@ public class Login2 extends AppCompatActivity {
                                                         @Override
                                                         public void onSuccess(AuthResult authResult) {
                                                             // Handle successful login
-                                                            startActivity(new Intent(Login2.this, Home.class));
-                                                            // fingerprintAuthenticator.showSignInBiometricPrompt();
+                                                             fingerprintAuthenticator.showSignInBiometricPrompt();
+                                                             //startActivity(new Intent(Login2.this, Home.class));
+
                                                             // Show the biometric prompt on success
                                                         }
                                                     })
@@ -127,13 +133,13 @@ public class Login2 extends AppCompatActivity {
                                     }
 else{
                                             // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, userfinal)
+                                            auth.signInWithEmailAndPassword(userEmail, password)
                                                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                                         @Override
                                                         public void onSuccess(AuthResult authResult) {
                                                             // Handle successful login
-                                                            startActivity(new Intent(Login2.this, Home.class));
-                                                            // fingerprintAuthenticator.showSignInBiometricPrompt();
+                                                        //    startActivity(new Intent(Login2.this, Home.class));
+                                                        //  fingerprintAuthenticator.showSignInBiometricPrompt();
                                                             // Show the biometric prompt on success
                                                         }
                                                     })
@@ -150,7 +156,8 @@ else{
                                                                 pass.setText("");
                                                                 StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();}
                                                         }
-                                                    });                                        }
+                                                    });
+}
 
 
                                     //pass.setText(fin);
