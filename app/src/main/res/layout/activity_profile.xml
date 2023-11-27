@@ -66,7 +66,7 @@ android:background="@drawable/bbs"
                 <EditText
                     android:id="@+id/profileName"
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
+                    android:layout_height="43dp"
                     android:drawableRight="@drawable/baseline_edit_24"
          />
 
@@ -84,7 +84,7 @@ android:background="@drawable/bbs"
                 <EditText
                     android:id="@+id/profile_email"
                     android:layout_width="match_parent"
-                    android:layout_height="39dp"
+                    android:layout_height="43dp"
                     android:drawableRight="@drawable/baseline_edit_24"
 
                     android:inputType="textEmailAddress" />
@@ -103,7 +103,7 @@ android:background="@drawable/bbs"
                 <EditText
                     android:id="@+id/editTextPhone"
                     android:layout_width="match_parent"
-                    android:layout_height="39dp"
+                    android:layout_height="43dp"
                     android:drawableRight="@drawable/baseline_edit_24"
                     android:ems="10"
                     android:inputType="phone" />
