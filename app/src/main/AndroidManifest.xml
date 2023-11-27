@@ -40,6 +40,9 @@
         <activity
             android:name=".Home"
             android:exported="false" />
+        <activity
+            android:name=".Login2"
+            android:exported="false" />
 
 
         <activity

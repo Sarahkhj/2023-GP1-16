@@ -55,11 +55,12 @@ public class Sign_up extends AppCompatActivity  {
 
         // create spinnerItemlist for spinner
         customList=new ArrayList<>();
-        customList.add(new Custom_spinner("Black",R.drawable.black));
+       // customList.add(new Custom_spinner("Black",R.drawable.black));
         customList.add(new Custom_spinner("Red",R.drawable.red));
         customList.add(new Custom_spinner("Blue",R.drawable.blue));
         customList.add(new Custom_spinner("Green",R.drawable.green));
         customList.add(new Custom_spinner("Dark gray",R.drawable.dark_gray));
+        customList.add(new Custom_spinner("Purple",R.drawable.purple));
         customList.add(new Custom_spinner("Cyan",R.drawable.cyan));
         customList.add(new Custom_spinner("Magenta",R.drawable.magenta));
         customList.add(new Custom_spinner("Yellow",R.drawable.yellow));

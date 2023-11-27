@@ -5,19 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bbs"
-    tools:context=".Login">
+    tools:context=".Login2">
 
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="228dp"
-        android:layout_height="172dp"
+        android:layout_width="206dp"
+        android:layout_height="106dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="91dp"
-        android:layout_marginEnd="92dp"
-        android:layout_marginBottom="451dp"
+        android:layout_marginStart="89dp"
+        android:layout_marginEnd="116dp"
+        android:layout_marginBottom="625dp"
         app:srcCompat="@drawable/logoremove" />
 
     <androidx.cardview.widget.CardView
@@ -25,19 +25,20 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="28dp"
         android:backgroundTint="@color/white"
-        android:layout_marginBottom="-20dp"
+        android:layout_marginBottom="-15dp"
         android:layout_alignParentBottom="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="50dp">
+            android:padding="20dp">
 
             <TextView
+                android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hello, Again!"
+                android:text="Email"
                 android:textColor="@color/black"
                 android:textSize="36dp"
                 android:textStyle="bold" />
@@ -46,27 +47,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.9"
-                android:text="Please Sign in with your information" />
+                android:text="Please Enter your Password" />
 
             <View
                 android:layout_width="wrap_content"
-                android:layout_height="30dp" />
+                android:layout_height="40dp" />
 
-            <TextView
+
+            <com.example.myapplication324.WheelView
+                android:id="@+id/wheelView"
+                android:layout_width="470dp"
+                android:layout_height="343dp"
+                android:layout_marginLeft="-65dp" />
+
+            <Button
+                android:id="@+id/rotateClockwiseButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:alpha="0.8"
-                android:text="Email Address"
-                android:textStyle="bold" />
+                android:layout_marginLeft="200dp"
+                android:layout_marginBottom="-45dp"
+                android:backgroundTint="@color/bluelogo"
+                android:onClick="rotateClockwise"
+                android:text="Rotate right" />
 
-            <EditText
-                android:id="@+id/email"
+
+            <Button
+                android:id="@+id/rotateCounterClockwiseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="200dp"
+                android:backgroundTint="@color/bluelogo"
+                android:onClick="rotateCounterClockwise"
+                android:text="Rotate left" />
+            <TextView
+                android:id="@+id/pass"
+                android:inputType="textPassword"
+                android:textSize="22dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableRight="@drawable/email_icon"
-                android:inputType="textEmailAddress" />
-
-
+                android:textAlignment="center"
+                android:drawableRight="@drawable/lock_icon"
+                />
 
 
 
@@ -75,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:text="Next" />
+                android:text="Sign In" />
 
             <LinearLayout
                 android:layout_width="365dp"
@@ -84,17 +105,14 @@
                 android:padding="1dp">
 
                 <TextView
+                    android:id="@+id/forget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="               Don't have an account, "
+                    android:text="Forgot password?"
+                    android:layout_marginLeft="230dp"
+
                     android:textColor="@color/black" />
 
-                <TextView
-                    android:id="@+id/signup"
-                    android:layout_width="211dp"
-                    android:layout_height="wrap_content"
-                    android:text="Sign up"
-                    android:textColor="@color/bluelogo" />
 
             </LinearLayout>
 
