@@ -131,9 +131,16 @@ public class Login2 extends AppCompatActivity {
                                                         }
                                                     });
                                         } else {
-                                            pass.setText("");
-                                            userfinal = "";
-                                            StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                            usertry++;
+                                            if (usertry == 3) {
+                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
+
+                                            } else {
+                                                pass.setText("");
+                                                userfinal = "";
+                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                            }
+
                                         }
                                     } else {
                                         // Handle the case where the password is empty

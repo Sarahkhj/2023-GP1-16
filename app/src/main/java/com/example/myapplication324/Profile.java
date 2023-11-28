@@ -127,7 +127,7 @@ public class Profile extends  DrawerBaseActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if(snapshot.exists()){
-                                    StyleableToast.makeText(Profile.this, "  phone already exist!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                //    StyleableToast.makeText(Profile.this, "  phone already exist!", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
                                 }
                                 else{
