@@ -35,7 +35,7 @@ public class Login2 extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference reference;
     private int usertry=0;
-private FingerPrintAuthenticator fingerprintAuthenticator;
+    private FingerPrintAuthenticator fingerprintAuthenticator;
 
 
 
@@ -77,7 +77,7 @@ private FingerPrintAuthenticator fingerprintAuthenticator;
             if (userEmail != null) {
                 // Display the user's email in a TextView or perform other actions
                 userEmailTextView.setText(userEmail);
-               // password = "Ss123456.";
+                // password = "Ss123456.";
                 //scolor = Color.RED;
                 //
                 getUserData(userEmail, new UserDataCallback() {
@@ -87,8 +87,8 @@ private FingerPrintAuthenticator fingerprintAuthenticator;
                             // Do something with the color
                             scolor = getColorInt(userColor);
                             password = userName;
-                          //  StyleableToast.makeText(Login2.this, userName, Toast.LENGTH_SHORT, R.style.mytoast).show();
-                           // StyleableToast.makeText(Login2.this, userColor, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            //  StyleableToast.makeText(Login2.this, userName, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            // StyleableToast.makeText(Login2.this, userColor, Toast.LENGTH_SHORT, R.style.mytoast).show();
                             // Set onTouchListener for the WheelView
                             wheelView.setOnTouchListener((v, event) -> {
                                 wheelView.onTouchEvent(event, scolor,password);
@@ -102,15 +102,15 @@ private FingerPrintAuthenticator fingerprintAuthenticator;
                                     // Check if the password is not empty
                                     if (!TextUtils.isEmpty(pass.getText())) {
                                         userfinal = pass.getText().toString().trim();
-                                        if(userfinal.equals(password)){
+                                        if (userfinal.equals(password)) {
                                             // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, userfinal)
+                                            auth.signInWithEmailAndPassword(userEmail, password)
                                                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                                         @Override
                                                         public void onSuccess(AuthResult authResult) {
                                                             // Handle successful login
-                                                             fingerprintAuthenticator.showSignInBiometricPrompt();
-                                                             //startActivity(new Intent(Login2.this, Home.class));
+                                                            fingerprintAuthenticator.showSignInBiometricPrompt();
+                                                            //startActivity(new Intent(Login2.this, Home.class));
 
                                                             // Show the biometric prompt on success
                                                         }
@@ -120,49 +120,21 @@ private FingerPrintAuthenticator fingerprintAuthenticator;
                                                         public void onFailure(@NonNull Exception e) {
                                                             // Handle login failure
                                                             usertry++;
-                                                            if(usertry==3){
+                                                            if (usertry == 3) {
                                                                 wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
 
-                                                            }
-                                                            else {
+                                                            } else {
                                                                 pass.setText("");
-                                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();}
+                                                                userfinal = "";
+                                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                                            }
                                                         }
                                                     });
-
-                                    }
-else{
-                                            // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, userfinal)
-                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                        @Override
-                                                        public void onSuccess(AuthResult authResult) {
-                                                            // Handle successful login
-                                                        //    startActivity(new Intent(Login2.this, Home.class));
-                                                          fingerprintAuthenticator.showSignInBiometricPrompt();
-                                                            // Show the biometric prompt on success
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            // Handle login failure
-                                                            usertry++;
-                                                            if(usertry==3){
-                                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
-
-                                                            }
-                                                            else {
-                                                                pass.setText("");
-                                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();}
-                                                        }
-                                                    });
-}
-
-
-                                    //pass.setText(fin);
-
-
+                                        } else {
+                                            pass.setText("");
+                                            userfinal = "";
+                                            StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        }
                                     } else {
                                         // Handle the case where the password is empty
                                         // You might want to show an error message or do something else
