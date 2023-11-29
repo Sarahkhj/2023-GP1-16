@@ -121,7 +121,7 @@ public class Login2 extends AppCompatActivity {
                                                             // Handle login failure
                                                             usertry++;
                                                             if (usertry == 3) {
-                                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
+                                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
 
                                                             } else {
                                                                 pass.setText("");
@@ -133,7 +133,7 @@ public class Login2 extends AppCompatActivity {
                                         } else {
                                             usertry++;
                                             if (usertry == 3) {
-                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?");
+                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
 
                                             } else {
                                                 pass.setText("");

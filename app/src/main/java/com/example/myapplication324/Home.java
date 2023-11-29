@@ -150,8 +150,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         fab2_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Toast.makeText(getApplicationContext(), "upload file", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "upload file", Toast.LENGTH_SHORT).show();
                 callChoosePdfFile();
 
             }
@@ -160,8 +159,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         fab1_mail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
-                ShowDialog();  ///////////////////////////////////////////////////////////////////////////////////////
+               // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
+                ShowDialog();
 
             }
         });
@@ -203,7 +202,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             //t1.setText(rtvFullName);
 
         } else {
-            StyleableToast.makeText(Home.this, "Error = No users Found !", Toast.LENGTH_SHORT, R.style.mytoast).show();
+            StyleableToast.makeText(Home.this, "No users Found !", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
         }
 

@@ -3,6 +3,7 @@ package com.example.myapplication324;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -375,7 +376,7 @@ public class WheelView extends View {
         return false;
     }
 
-    public void showAlertDialog(String title, String message) {
+    public void showAlertDialog(String title, String message,final Class<?> targetActivityClass) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
         builder.setTitle(title)
                 .setMessage(message)
@@ -383,6 +384,8 @@ public class WheelView extends View {
                     public void onClick(DialogInterface dialog, int id) {
                         // Handle the click on the positive button (in this case, "OK").
                         dialog.dismiss(); // Close the dialog
+                        Intent intent = new Intent(getContext(), targetActivityClass);
+                        getContext().startActivity(intent);
                     }
                 });
 
@@ -390,6 +393,7 @@ public class WheelView extends View {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
 
 
 

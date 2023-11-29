@@ -12,8 +12,11 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="87dp"
         android:layout_marginBottom="222dp"
-        android:padding="8dp"
+        android:padding="18dp"
         android:text="Upload PDF File "
+        android:background="@drawable/baseline_square_24"
+
+
         android:textColor="@color/black"
         android:visibility="invisible" />
 
@@ -43,8 +46,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="89dp"
         android:layout_marginBottom="150dp"
-        android:padding="8dp"
-        android:text="Creat New Folder"
+        android:padding="18dp"
+        android:text="Create  New Folder"
+        android:background="@drawable/baseline_square_24"
+
         android:textColor="@color/black"
         android:visibility="invisible" />
 
@@ -73,8 +78,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="93dp"
         android:layout_marginBottom="302dp"
-        android:padding="8dp"
+        android:padding="18dp"
         android:text="Upload DOC File "
+        android:background="@drawable/baseline_square_24"
         android:textColor="@color/black"
         android:visibility="invisible" />
 

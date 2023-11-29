@@ -10,14 +10,14 @@
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:layout_width="198dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="117dp"
-        android:layout_marginEnd="123dp"
-        android:layout_marginBottom="533dp"
+        android:layout_marginEnd="96dp"
+        android:layout_marginBottom="532dp"
         android:drawablePadding="8dp"
         android:shadowColor="#57000000"
         android:shadowDx="3"

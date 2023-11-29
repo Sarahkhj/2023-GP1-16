@@ -93,7 +93,7 @@ public class Login extends AppCompatActivity {
                                 // Start the OtherActivity
                                 startActivity(intent);
                             } else {
-                                StyleableToast.makeText(Login.this, "Error: Email does not exist! Please enter an existing email.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                StyleableToast.makeText(Login.this, "Email does not exist! Please enter an existing email.", Toast.LENGTH_SHORT, R.style.mytoast).show();
                             }
                         }
                     });
