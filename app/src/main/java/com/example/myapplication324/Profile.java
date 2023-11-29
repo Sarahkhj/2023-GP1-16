@@ -38,7 +38,8 @@ public class Profile extends  DrawerBaseActivity {
     private String rtvFullName;
     private DatabaseReference mDatabase;
 
-    private EditText username, email, PhoneNum;
+    private EditText username, PhoneNum;
+    private TextView email;
     private Button pass;
     private Button update;
     private UserHelperClass userHelper;
@@ -71,7 +72,7 @@ public class Profile extends  DrawerBaseActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userHelper.updateProfile(Profile.this, username, email, PhoneNum);
+                userHelper.updateProfile(Profile.this, username, PhoneNum);
             }
         });
     }

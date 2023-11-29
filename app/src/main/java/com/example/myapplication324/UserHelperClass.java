@@ -134,9 +134,9 @@ public class UserHelperClass {
     }
 
 
-    public void updateProfile(Activity activity, EditText username, EditText email, EditText phoneNum) {
+    public void updateProfile(Activity activity, EditText username, EditText phoneNum) {
         String updatedUsername = username.getText().toString().trim();
-        String updatedEmail = email.getText().toString().trim();
+
         String updatedPhoneNum = phoneNum.getText().toString().trim();
 
         // Input validation
@@ -165,6 +165,8 @@ public class UserHelperClass {
                         if (!currentUsername.equals(updatedUsername)) {
                             // Update the username
                             mDatabase.child(userKey).child("username").setValue(updatedUsername);
+                            StyleableToast.makeText(activity, "Username updated successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
                         }
 
                         // Check if the phone number is changing
@@ -181,8 +183,10 @@ public class UserHelperClass {
                                     } else {
                                         // Update the phone number
                                         mDatabase.child(userKey).child("phoneNum").setValue(updatedPhoneNum);
+                                        StyleableToast.makeText(activity, "Phone number updated successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
                                         // After updating phone number, check and update email
-                                        checkAndUpdateEmail(activity, user, updatedEmail);
+
                                     }
                                 }
 
@@ -192,8 +196,6 @@ public class UserHelperClass {
                                 }
                             });
                         } else {
-                            // If phone number is not changing, check and update email
-                            checkAndUpdateEmail(activity, user, updatedEmail);
                         }
                     }
                 }
@@ -206,48 +208,6 @@ public class UserHelperClass {
         }
     }
 
-    private void checkAndUpdateEmail(Activity activity, FirebaseUser user, String updatedEmail) {
-        String userEmail = user.getEmail();
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-
-        // Check if the email is changing
-        if (!userEmail.equals(updatedEmail)) {
-            // Check if the new email already exists
-            mDatabase.orderByChild("email").equalTo(updatedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                    if (snapshot.exists()) {
-                        // Show error message and reset email field
-                        EditText email = activity.findViewById(R.id.profile_email);
-                        email.setText(user.getEmail());
-                        StyleableToast.makeText(activity, "Email already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    } else {
-                        // Update the email in Firebase Authentication
-                        user.updateEmail(updatedEmail)
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        // Profile update successful
-                                        showCompletionMessage(activity);
-                                    } else {
-                                        // Profile update failed
-                                        String errorMessage = task.getException().getMessage();
-                                        StyleableToast.makeText(activity, "Failed to update profile: " + errorMessage, Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                    }
-                                });
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    // Handle error
-                }
-            });
-        } else {
-            // If email is not changing, show completion message
-            showCompletionMessage(activity);
-        }
-    }
 
     private void showCompletionMessage(Activity activity) {
         StyleableToast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
