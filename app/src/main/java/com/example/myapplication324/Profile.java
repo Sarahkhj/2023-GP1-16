@@ -124,6 +124,8 @@ public class Profile extends  DrawerBaseActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if (snapshot.exists()) {
                                         StyleableToast.makeText(Profile.this, "Phone already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        // Revert to the original phone number
+                                        PhoneNum.setText(currentPhoneNum);
                                     } else {
                                         // Update the phone number
                                         mDatabase.child(userKey).child("phoneNum").setValue(updatedPhoneNum);
@@ -151,6 +153,7 @@ public class Profile extends  DrawerBaseActivity {
             });
         }
     }
+
 
     private void checkAndUpdateEmail(FirebaseUser user, String updatedEmail) {
         String userEmail = user.getEmail();
