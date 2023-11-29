@@ -1,6 +1,7 @@
 package com.example.myapplication324;
 
 import android.app.Activity;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,33 +79,178 @@ public class UserHelperClass {
 
     }
     //change password
-    public void changePassword(String oldPassword, String newPassword, final ChangePasswordCallback callback) {
+    public void updatePassword(String email, String oldPassword, String newPassword, final OnCompleteListener<Void> onCompleteListener) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        // Check if the user is logged in
         if (user != null) {
-            String email = user.getEmail();
-            AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
+            // Get the user's email
+            String userEmail = user.getEmail();
 
+            // Create the credential using the email and old password
+            AuthCredential credential = EmailAuthProvider.getCredential(userEmail, oldPassword);
+
+            // Reauthenticate the user with the credential
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
+                        // If reauthentication is successful, update the user's password in Firebase Authentication
                         user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    callback.onPasswordChanged(true, "Password updated successfully");
+                                    // Password update in Firebase Authentication successful
+                                    // Update the password in the Realtime Database
+                                    mDatabase.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                                String userKey = userSnapshot.getKey();
+                                                mDatabase.child(userKey).child("password").setValue(newPassword);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            // Handle onCancelled
+                                        }
+                                    });
+
+                                    onCompleteListener.onComplete(task);
                                 } else {
-                                    callback.onPasswordChanged(false, "Failed to update password. Please try again");
+                                    // Password update in Firebase Authentication failed
+                                    onCompleteListener.onComplete(task);
                                 }
                             }
                         });
                     } else {
-                        callback.onPasswordChanged(false, "Incorrect old password. Please try again");
+                        // Reauthentication failed
+                        onCompleteListener.onComplete(task);
                     }
                 }
             });
         }
+    }
+
+
+    public void updateProfile(Activity activity, EditText username, EditText email, EditText phoneNum) {
+        String updatedUsername = username.getText().toString().trim();
+        String updatedEmail = email.getText().toString().trim();
+        String updatedPhoneNum = phoneNum.getText().toString().trim();
+
+        // Input validation
+        if (updatedUsername.isEmpty()) {
+            // Show error message to the user indicating missing fields
+            StyleableToast.makeText(activity, "Please enter a username", Toast.LENGTH_SHORT, R.style.mytoast).show();
+            return;
+        }
+
+        // Firebase instances
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+        if (user != null) {
+            String userEmail = user.getEmail();
+
+            mDatabase.orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        String userKey = userSnapshot.getKey();
+
+                        // Check if the username is actually changing
+                        String currentUsername = userSnapshot.child("username").getValue(String.class);
+                        if (!currentUsername.equals(updatedUsername)) {
+                            // Update the username
+                            mDatabase.child(userKey).child("username").setValue(updatedUsername);
+                        }
+
+                        // Check if the phone number is changing
+                        String currentPhoneNum = userSnapshot.child("phoneNum").getValue(String.class);
+                        if (!currentPhoneNum.equals(updatedPhoneNum)) {
+                            // Check if the new phone number already exists
+                            mDatabase.orderByChild("phoneNum").equalTo(updatedPhoneNum).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        StyleableToast.makeText(activity, "Phone already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        // Revert to the original phone number
+                                        phoneNum.setText(currentPhoneNum);
+                                    } else {
+                                        // Update the phone number
+                                        mDatabase.child(userKey).child("phoneNum").setValue(updatedPhoneNum);
+                                        // After updating phone number, check and update email
+                                        checkAndUpdateEmail(activity, user, updatedEmail);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // Handle error
+                                }
+                            });
+                        } else {
+                            // If phone number is not changing, check and update email
+                            checkAndUpdateEmail(activity, user, updatedEmail);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle error
+                }
+            });
+        }
+    }
+
+    private void checkAndUpdateEmail(Activity activity, FirebaseUser user, String updatedEmail) {
+        String userEmail = user.getEmail();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+        // Check if the email is changing
+        if (!userEmail.equals(updatedEmail)) {
+            // Check if the new email already exists
+            mDatabase.orderByChild("email").equalTo(updatedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    if (snapshot.exists()) {
+                        // Show error message and reset email field
+                        EditText email = activity.findViewById(R.id.profile_email);
+                        email.setText(user.getEmail());
+                        StyleableToast.makeText(activity, "Email already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    } else {
+                        // Update the email in Firebase Authentication
+                        user.updateEmail(updatedEmail)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        // Profile update successful
+                                        showCompletionMessage(activity);
+                                    } else {
+                                        // Profile update failed
+                                        String errorMessage = task.getException().getMessage();
+                                        StyleableToast.makeText(activity, "Failed to update profile: " + errorMessage, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                    }
+                                });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle error
+                }
+            });
+        } else {
+            // If email is not changing, show completion message
+            showCompletionMessage(activity);
+        }
+    }
+
+    private void showCompletionMessage(Activity activity) {
+        StyleableToast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
     }
 
     public UserHelperClass (Sign_up signUp) {

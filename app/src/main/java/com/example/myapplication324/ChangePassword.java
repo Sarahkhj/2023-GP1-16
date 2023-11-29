@@ -61,54 +61,26 @@ public class ChangePassword extends DrawerBaseActivity {
                     if (newPassword.equals(confirmPassword)) {
                         // Get the current user
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
                         // Check if the user is logged in
                         if (user != null) {
                             // Get the user's email
                             String email = user.getEmail();
 
-                            // Create the credential using the email and old password
-                            AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
+                            // Create an instance of UserHelperClass
+                            UserHelperClass userHelper = new UserHelperClass();
 
-                            // Reauthenticate the user with the credential
-                            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            // Call the updatePassword method
+                            userHelper.updatePassword(email, oldPassword, newPassword, new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        // If reauthentication is successful, update the user's password
-                                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    // Password update in Firebase Authentication successful
-                                                    // Update the password in the Realtime Database
-                                                    mDatabase.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                                                                String userKey = userSnapshot.getKey();
-                                                                mDatabase.child(userKey).child("password").setValue(newPassword);
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError error) {
-                                                            // Handle onCancelled
-                                                        }
-                                                    });
-
-                                                    StyleableToast.makeText(ChangePassword.this, "Password updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                                    openhome();
-                                                } else {
-                                                    // Password update in Firebase Authentication failed
-                                                    StyleableToast.makeText(ChangePassword.this, "Failed to update password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                                }
-                                            }
-                                        });
+                                        // Password update successful
+                                        StyleableToast.makeText(ChangePassword.this, "Password updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        openhome();
                                     } else {
-                                        // Reauthentication failed, display incorrect old password message
-                                        StyleableToast.makeText(ChangePassword.this, "Incorrect old password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        // Password update failed
+                                        StyleableToast.makeText(ChangePassword.this, "Failed to update password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     }
                                 }
                             });
