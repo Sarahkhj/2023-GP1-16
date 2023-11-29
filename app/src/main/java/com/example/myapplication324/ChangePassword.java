@@ -20,6 +20,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
@@ -56,6 +61,7 @@ public class ChangePassword extends DrawerBaseActivity {
                     if (newPassword.equals(confirmPassword)) {
                         // Get the current user
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
                         // Check if the user is logged in
                         if (user != null) {
@@ -75,21 +81,34 @@ public class ChangePassword extends DrawerBaseActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    // Password update successful
+                                                    // Password update in Firebase Authentication successful
+                                                    // Update the password in the Realtime Database
+                                                    mDatabase.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                                                String userKey = userSnapshot.getKey();
+                                                                mDatabase.child(userKey).child("password").setValue(newPassword);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            // Handle onCancelled
+                                                        }
+                                                    });
+
                                                     StyleableToast.makeText(ChangePassword.this, "Password updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                                     openhome();
                                                 } else {
-                                                    // Password update failed
+                                                    // Password update in Firebase Authentication failed
                                                     StyleableToast.makeText(ChangePassword.this, "Failed to update password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-
                                                 }
                                             }
                                         });
                                     } else {
                                         // Reauthentication failed, display incorrect old password message
                                         StyleableToast.makeText(ChangePassword.this, "Incorrect old password. Please try again", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
                                     }
                                 }
                             });
@@ -97,18 +116,13 @@ public class ChangePassword extends DrawerBaseActivity {
                     } else {
                         // New password and confirm password fields do not match
                         StyleableToast.makeText(ChangePassword.this, "New password and confirm password do not match", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-
                     }
                 } else {
                     // New password does not meet the criteria
                     newpass.setError("Password must be at least 8 characters and meet certain criteria");
-
-
                 }
             }
-        });
-    }
+        });    }
 
     private boolean isValidPassword(String password) {
         return password.length() >= 8 && password.length() <= 15

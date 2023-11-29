@@ -165,7 +165,9 @@ public class Profile extends  DrawerBaseActivity {
             mDatabase.orderByChild("email").equalTo(updatedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                     if (snapshot.exists()) {
+                        email.setText(user.getEmail());
                         StyleableToast.makeText(Profile.this, "Email already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
                     } else {
                         // Update the email in Firebase Authentication
