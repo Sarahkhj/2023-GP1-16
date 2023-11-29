@@ -79,7 +79,7 @@ public class UserHelperClass {
 
     }
     //change password
-    public void updatePassword(String email, String oldPassword, String newPassword, final OnCompleteListener<Void> onCompleteListener) {
+    public void updatePassword(String email, String oldPassword, String newPassword, Custom_spinner clickedcolor, final OnCompleteListener<Void> onCompleteListener) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Check if the user is logged in
@@ -108,6 +108,7 @@ public class UserHelperClass {
                                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                                 String userKey = userSnapshot.getKey();
                                                 mDatabase.child(userKey).child("password").setValue(newPassword);
+                                                mDatabase.child(userKey).child("color").setValue(clickedcolor.getSpinnerText());
                                             }
                                         }
 

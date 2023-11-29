@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.myapplication324.databinding.ActivityChangePasswordBinding;
@@ -26,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import io.github.muddz.styleabletoast.StyleableToast;
 
 public class ChangePassword extends DrawerBaseActivity {
@@ -36,7 +40,10 @@ public class ChangePassword extends DrawerBaseActivity {
     private  EditText newpass;
     private EditText confirmpass;
 
-
+    private Spinner spinner;
+    private ArrayList<Custom_spinner> customList;
+    private SpinnerAdapter spinnerAdapter;
+    private Custom_spinner clickedcolor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +53,37 @@ public class ChangePassword extends DrawerBaseActivity {
         old=findViewById(R.id.oldpass);
         newpass=findViewById(R.id.newpass);
         confirmpass=findViewById(R.id.conpass);
+
+        spinner = findViewById(R.id.spinner2);
+        // create spinnerItemlist for spinner
+        customList=new ArrayList<>();
+        // customList.add(new Custom_spinner("Black",R.drawable.black));
+        customList.add(new Custom_spinner("Red", R.drawable.red));
+        customList.add(new Custom_spinner("Blue",R.drawable.blue));
+        customList.add(new Custom_spinner("Green",R.drawable.green));
+        customList.add(new Custom_spinner("Dark gray",R.drawable.dark_gray));
+        customList.add(new Custom_spinner("Purple",R.drawable.purple));
+        customList.add(new Custom_spinner("Cyan",R.drawable.cyan));
+        customList.add(new Custom_spinner("Magenta",R.drawable.magenta));
+        customList.add(new Custom_spinner("Yellow",R.drawable.yellow));
+
+        //create Adapter for spinner
+        spinnerAdapter = new SpinnerAdapter(this,customList);
+        if (spinner != null) {
+            spinner.setAdapter(spinnerAdapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    clickedcolor= (Custom_spinner)adapterView.getSelectedItem();
+                    //   StyleableToast.makeText(Sign_up.this, clickedcolor.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }
 
         update=findViewById(R.id.update_pass);
         update.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +109,7 @@ public class ChangePassword extends DrawerBaseActivity {
                             UserHelperClass userHelper = new UserHelperClass();
 
                             // Call the updatePassword method
-                            userHelper.updatePassword(email, oldPassword, newPassword, new OnCompleteListener<Void>() {
+                            userHelper.updatePassword(email, oldPassword, newPassword,clickedcolor, new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {

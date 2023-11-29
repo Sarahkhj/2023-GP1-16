@@ -70,6 +70,8 @@ public class Sign_up extends AppCompatActivity  {
 
         if (spinner != null) {
             spinner.setAdapter(spinnerAdapter);
+
+
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
