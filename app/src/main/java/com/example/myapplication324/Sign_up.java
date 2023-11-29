@@ -175,18 +175,8 @@ public class Sign_up extends AppCompatActivity  {
     }
 
     private void handleAuthenticationSuccess() {
-        auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    UserHelperClass helperClass = new UserHelperClass(username.getText().toString(),password.getText().toString(), email.getText().toString(), PhoneNum.getText().toString(), clickedcolor.getSpinnerText());
-                    reference.push().setValue(helperClass);
-                    startActivity(new Intent(Sign_up.this, Home.class));
-                } else {
-                    StyleableToast.makeText(Sign_up.this, "SignUp Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
-                }
-            }
-        });
+        UserHelperClass helperClass = new UserHelperClass(username.getText().toString(), password.getText().toString(), email.getText().toString(), PhoneNum.getText().toString(), clickedcolor.getSpinnerText());
+        helperClass.saveUserToDatabase(reference, auth, this);
     }
 
     private boolean isValidEmail(String email) {
