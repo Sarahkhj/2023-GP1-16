@@ -62,7 +62,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private final int PICK_WORD_FILE = 1002;
 
     private static final String TAG = "Home";
-    ActivityHomeBinding activityHomeBinding;
+     private ActivityHomeBinding activityHomeBinding;
 
     private FirebaseStorage storage;
     private StorageReference storageReference;

@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,11 +38,9 @@ public class Profile extends  DrawerBaseActivity {
     private String rtvFullName;
     private DatabaseReference mDatabase;
 
-    private EditText username , email,PhoneNum;
+    private EditText username, email, PhoneNum;
     private Button pass;
     private Button update;
-
-
 
 
     @Override
@@ -54,12 +53,12 @@ public class Profile extends  DrawerBaseActivity {
         // Initializing views
         username = findViewById(R.id.profileName); // Assuming this is the TextView for the email
         email = findViewById(R.id.profile_email); // Assuming this is the TextView to display the username
-        PhoneNum=findViewById(R.id.editTextPhone);
-        pass= findViewById(R.id.updatepassword);
-        update=findViewById(R.id.update1);
+        PhoneNum = findViewById(R.id.editTextPhone);
+        pass = findViewById(R.id.updatepassword);
+        update = findViewById(R.id.update1);
         UserHelperClass userHelper = new UserHelperClass();
 
-        userHelper.getUserProfile(this, username, email,PhoneNum);
+        userHelper.getUserProfile(this, username, email, PhoneNum);
 
         pass.setOnClickListener(new View.OnClickListener() { // open change password
             @Override
@@ -71,8 +70,6 @@ public class Profile extends  DrawerBaseActivity {
             @Override
             public void onClick(View view) {
                 updateProfile();
-
-
 
 
             }
@@ -91,26 +88,18 @@ public class Profile extends  DrawerBaseActivity {
         String updatedPhoneNum = PhoneNum.getText().toString().trim();
 
         // Input validation
-        if (updatedUsername.isEmpty() || updatedEmail.isEmpty() || updatedPhoneNum.isEmpty()) {
+        if (updatedUsername.isEmpty()) {
             // Show error message to the user indicating missing fields
-            StyleableToast.makeText(Profile.this, "Please fill in all fields", Toast.LENGTH_SHORT, R.style.mytoast).show();
+            StyleableToast.makeText(Profile.this, "Please enter a username", Toast.LENGTH_SHORT, R.style.mytoast).show();
             return;
         }
 
-        // Email validation
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(updatedEmail).matches()) {
-            // Show error message to the user indicating invalid email format
-            StyleableToast.makeText(Profile.this, "Invalid email format", Toast.LENGTH_SHORT, R.style.mytoast).show();
-            return;
-        }
-
+        // Firebase instances
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
         if (user != null) {
-          //  auth.signOut(); // Sign out the current user
-
             String userEmail = user.getEmail();
 
             mDatabase.orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,55 +108,91 @@ public class Profile extends  DrawerBaseActivity {
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         String userKey = userSnapshot.getKey();
 
-                        // Update the username
-                        mDatabase.child(userKey).child("username").setValue(updatedUsername);
+                        // Check if the username is actually changing
+                        String currentUsername = userSnapshot.child("username").getValue(String.class);
+                        if (!currentUsername.equals(updatedUsername)) {
+                            // Update the username
+                            mDatabase.child(userKey).child("username").setValue(updatedUsername);
+                        }
 
-                        // Update the phone number
-                        mDatabase.orderByChild("phoneNum").equalTo(PhoneNum.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if(snapshot.exists()){
-                                //    StyleableToast.makeText(Profile.this, "  phone already exist!", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-                                }
-                                else{
-                                    mDatabase.child(userKey).child("phoneNum").setValue(updatedPhoneNum);
-
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
-
-                    // Update the email in Firebase Authentication
-                    user.updateEmail(updatedEmail)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        // Check if the phone number is changing
+                        String currentPhoneNum = userSnapshot.child("phoneNum").getValue(String.class);
+                        if (!currentPhoneNum.equals(updatedPhoneNum)) {
+                            // Check if the new phone number already exists
+                            mDatabase.orderByChild("phoneNum").equalTo(updatedPhoneNum).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        StyleableToast.makeText(Profile.this, "Phone already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                    } else {
+                                        // Update the phone number
+                                        mDatabase.child(userKey).child("phoneNum").setValue(updatedPhoneNum);
+                                        // After updating phone number, check and update email
+                                        checkAndUpdateEmail(user, updatedEmail);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // Handle error
+                                }
+                            });
+                        } else {
+                            // If phone number is not changing, check and update email
+                            checkAndUpdateEmail(user, updatedEmail);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle error
+                }
+            });
+        }
+    }
+
+    private void checkAndUpdateEmail(FirebaseUser user, String updatedEmail) {
+        String userEmail = user.getEmail();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+        // Check if the email is changing
+        if (!userEmail.equals(updatedEmail)) {
+            // Check if the new email already exists
+            mDatabase.orderByChild("email").equalTo(updatedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        StyleableToast.makeText(Profile.this, "Email already exists!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    } else {
+                        // Update the email in Firebase Authentication
+                        user.updateEmail(updatedEmail)
+                                .addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         // Profile update successful
-                                        StyleableToast.makeText(Profile.this, "Profile updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        showCompletionMessage();
                                     } else {
                                         // Profile update failed
                                         String errorMessage = task.getException().getMessage();
                                         StyleableToast.makeText(Profile.this, "Failed to update profile: " + errorMessage, Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     }
-                                }
-                            });
+                                });
+                    }
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Error occurred while fetching data
-                    StyleableToast.makeText(Profile.this, "Failed to update profile", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle error
                 }
             });
+        } else {
+            // If email is not changing, show completion message
+            showCompletionMessage();
         }
     }
-}
 
+    private void showCompletionMessage() {
+        StyleableToast.makeText(Profile.this, "Profile updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+    }
+}
 
