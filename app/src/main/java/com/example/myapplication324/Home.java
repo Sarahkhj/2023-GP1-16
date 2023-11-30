@@ -330,7 +330,6 @@ private String password;
             // Handle the case where the user is not authenticated
             return;
         }
-
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         String userEmail = currentUser.getEmail();
