@@ -43,6 +43,7 @@ public class SpinnerAdapter extends ArrayAdapter<Custom_spinner> {
         if (items != null) {
             spinnerImage.setImageResource(items.getSpinnerImage());
             spinnername.setText(items.getSpinnerText());
+           spinnername.setTextSize(16);
         }
         return convertView;
     }

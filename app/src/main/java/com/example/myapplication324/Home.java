@@ -28,6 +28,7 @@ import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,10 @@ import com.google.firebase.storage.UploadTask;
 import io.github.muddz.styleabletoast.StyleableToast;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +68,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     private static final String TAG = "Home";
      private ActivityHomeBinding activityHomeBinding;
-
+private String password;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
@@ -170,32 +175,15 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                 callChooseWordFile();
             }
         });
-        // end of FloatingActionButton
-        //t1 = findViewById(R.id.name);
+
         auth = FirebaseAuth.getInstance();
         rootNode = FirebaseDatabase.getInstance();
-
-       // chooseFile_btn = findViewById(R.id.choose_file_btn);
-        //filePath = findViewById(R.id.file_path);
-
-
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         currentUserId = auth.getCurrentUser().getUid(); // You should have a unique identifier for each user.
 
-       /* chooseFile_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callChoosePdfFile();
-            }
-        });
-        findViewById(R.id.choose_word_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callChooseWordFile();
-            }
-        });*/
+
 
         if (auth.getCurrentUser() != null) {
             rtvFullName = auth.getCurrentUser().getEmail();
@@ -306,64 +294,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
 
 
-//    private void fetchFilesAndFoldersFromFirebase() {
-//        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
-//        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
-//
-//        // Clear the items list before populating it again
-//        fileMetadataList.clear();
-//        folderMetadataList.clear();
-//        itemsList.clear();
-//
-//        filesRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
-//                    if (fileMetadata != null) {
-//                        fileMetadataList.add(fileMetadata);
-//                        itemsList.add(fileMetadata); // Add file to combined list
-//                    }
-//                }
-//
-//                // Update RecyclerView
-//                updateRecyclerView();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//                Toast.makeText(Home.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        foldersRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
-//                    if (folderMetadata != null) {
-//                        folderMetadataList.add(folderMetadata);
-//                        itemsList.add(folderMetadata); // Add folder to combined list
-//                    }
-//                }
-//
-//                // Update RecyclerView
-//                updateRecyclerView();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//                Toast.makeText(Home.this, "Failed to fetch folders: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-
-
-
-
     private void updateRecyclerView() {
         // Notify the adapter about changes in the combined list
         fileAdapter.setItemsList(itemsList);
@@ -391,67 +321,115 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-    //    private void callChooseTXTfFile(){
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//        intent.setType("text/plain");
-//        startActivityForResult(intent,CHOSE_PDF_FROM_DEVICE);
-//    }
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == CHOSE_PDF_FROM_DEVICE && resultCode == Activity.RESULT_OK) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-            if (resultData != null) {
-                Uri fileUri = resultData.getData();
-                if (fileUri != null) {
-                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
-                    StorageReference fileReference = storageReference.child(currentUserId + "/" + fileName);
-
-                    UploadTask uploadTask = fileReference.putFile(fileUri);
-                    uploadTask.addOnSuccessListener(taskSnapshot -> {
-                        StyleableToast.makeText(Home.this, "PDF uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-                        // Get the download URL of the uploaded file
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String fileDownloadUrl = uri.toString();
-
-                            // Store file metadata in the Realtime Database
-                            FileMetadata fileMetadata = new FileMetadata(fileName, fileDownloadUrl);
-                            databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
-                        });
-                    }).addOnFailureListener(e -> {
-                        StyleableToast.makeText(Home.this, "Failed to upload PDF: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    });
-
-                }
-            }
-        } else if (requestCode == PICK_WORD_FILE && resultCode == Activity.RESULT_OK) {
-            if (resultData != null) {
-                Uri fileUri = resultData.getData();
-                if (fileUri != null) {
-                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
-                    StorageReference fileReference = storageReference.child(currentUserId + "/" + fileName);
-
-                    UploadTask uploadTask = fileReference.putFile(fileUri);
-                    uploadTask.addOnSuccessListener(taskSnapshot -> {
-                        StyleableToast.makeText(Home.this, "Word file uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
-
-                        // Get the download URL of the uploaded file
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String fileDownloadUrl = uri.toString();
-
-                            // Store file metadata in the Realtime Database
-                            FileMetadata fileMetadata = new FileMetadata(fileName, fileDownloadUrl);
-                            databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
-                        });
-                    }).addOnFailureListener(e -> {
-                        StyleableToast.makeText(Home.this, "Failed to upload Word file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    });
-                }
-            }
+        if (currentUser == null) {
+            // Handle the case where the user is not authenticated
+            return;
         }
-    }
 
+        DatabaseReference mDatabase;
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        String userEmail = currentUser.getEmail();
+        mDatabase.orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    password = dataSnapshot.child("password").getValue(String.class);
+                    if (requestCode == CHOSE_PDF_FROM_DEVICE && resultCode == Activity.RESULT_OK) {
+                        if (resultData != null) {
+                            Uri fileUri = resultData.getData();
+                            if (fileUri != null) {
+                                try {
+                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
+                                    // Encrypt the file
+                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "password");
+                                    if (encryptedBytes != null) {
+                                        // Upload the encrypted file to Firebase Storage
+                                        String encryptedFileName = "encrypted_" + fileName;
+                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
+
+                                        UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
+                                        uploadTask.addOnSuccessListener(taskSnapshot -> {
+                                            StyleableToast.makeText(Home.this, "Encrypted file uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                                            // Get the download URL of the uploaded file
+                                            fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                                String fileDownloadUrl = uri.toString();
+
+                                                // Store file metadata in the Realtime Database
+                                                FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
+                                                databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
+                                            });
+                                        }).addOnFailureListener(e -> {
+                                            StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        });
+                                    } else {
+                                        // Encryption failed
+                                        StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    } else if (requestCode == PICK_WORD_FILE && resultCode == Activity.RESULT_OK) {
+                        if (resultData != null) {
+                            Uri fileUri = resultData.getData();
+                            if (fileUri != null) {
+                                try{
+                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
+
+                                    // Encrypt the file
+                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "password");
+                                    if (encryptedBytes != null) {
+                                        // Upload the encrypted file to Firebase Storage
+                                        String encryptedFileName = "encrypted_" + fileName;
+                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
+
+                                        UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
+                                        uploadTask.addOnSuccessListener(taskSnapshot -> {
+                                            StyleableToast.makeText(Home.this, "Encrypted file uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                                            // Get the download URL of the uploaded file
+                                            fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                                String fileDownloadUrl = uri.toString();
+
+                                                // Store file metadata in the Realtime Database
+                                                FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
+                                                databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
+                                            });
+                                        }).addOnFailureListener(e -> {
+                                            StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        });
+                                    } else {
+                                        // Encryption failed
+                                        StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                StyleableToast.makeText(Home.this, "No password?.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+            }
+        });
+
+    }
     private String getFileNameFromUri(Uri uri) {
         String fileName = "unknown";
         Cursor cursor = null;
@@ -573,81 +551,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         // Show the dialog
         dialog.show();
     }
-//    private void createFolder() {
-//        String folderName = FolderName.getText().toString().trim();
-//
-//        if (!folderName.isEmpty()) {
-//
-//            // Access the StorageReference
-//            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//
-//            // Path for the new folder
-//            String folderPath = currentUserId + "/" + folderName + "/";
-//
-//            // Reference to the folder path
-//            StorageReference folderRef = storageRef.child(folderPath);
-//
-//            // This creates an empty file in the folder to signify its creation
-//            folderRef.child("New File").putBytes(new byte[0])
-//                    .addOnSuccessListener(taskSnapshot -> {
-//                        // Folder has been created
-//                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                    })
-//                    .addOnFailureListener(e -> {
-//                        // Folder creation failed
-//                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                    });
-//        } else {
-//            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//        }
-//    }
-//
-//    private void ShowDialog() {
-//        // Create a Dialog object
-//        Dialog dialog = new Dialog(this);
-//
-//        // Set the content view of the dialog by inflating folder_dialog.xml
-//        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
-//        dialog.setContentView(dialogView);
-//
-//        // Now, you can find and use the views inside the dialogView
-//        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
-//        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
-//
-//        // Set click listener for the create folder button
-//        createFolderBtn.setOnClickListener(v -> {
-//            String folderName = folderNameEditText.getText().toString().trim();
-//
-//            // Perform folder creation logic here
-//            if (!folderName.isEmpty()) {
-//                // Access the StorageReference
-//                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//
-//                // Path for the new folder
-//                String folderPath = currentUserId + "/" + folderName + "/";
-//
-//                // Reference to the folder path
-//                StorageReference folderRef = storageRef.child(folderPath);
-//
-//                // This creates an empty file in the folder to signify its creation
-//                folderRef.child("New File").putBytes(new byte[0])
-//                        .addOnSuccessListener(taskSnapshot -> {
-//                            // Folder has been created
-//                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                            dialog.dismiss(); // Dismiss the dialog after creating the folder
-//                        })
-//                        .addOnFailureListener(e -> {
-//                            // Folder creation failed
-//                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                        });
-//            } else {
-//                folderNameEditText.setError("Please enter a folder name");
-//            }
-//        });
-//
-//        // Show the dialog
-//        dialog.show();
-//    }
+
 
     private static class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<Object> itemsList = new ArrayList<>();
