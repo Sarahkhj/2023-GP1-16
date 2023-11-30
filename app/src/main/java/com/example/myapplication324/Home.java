@@ -1,15 +1,12 @@
 package com.example.myapplication324;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +39,9 @@ import io.github.muddz.styleabletoast.StyleableToast;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.muddz.styleabletoast.StyleableToast;
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
-    private TextView t1;
+
     private FirebaseAuth auth;
     private FirebaseDatabase rootNode;
     private String rtvFullName;
@@ -54,14 +50,12 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     protected final int shared = 3;
     protected final int search = 4;
 
-    private Button chooseFile_btn, CreateFolderBtn;
-    private TextView filePath;
     private Intent intent;
 
     private final int CHOSE_PDF_FROM_DEVICE = 1001;
     private final int PICK_WORD_FILE = 1002;
 
-    private static final String TAG = "Home";
+
      private ActivityHomeBinding activityHomeBinding;
 
     private FirebaseStorage storage;
@@ -170,13 +164,10 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                 callChooseWordFile();
             }
         });
-        // end of FloatingActionButton
-        //t1 = findViewById(R.id.name);
+
         auth = FirebaseAuth.getInstance();
         rootNode = FirebaseDatabase.getInstance();
 
-       // chooseFile_btn = findViewById(R.id.choose_file_btn);
-        //filePath = findViewById(R.id.file_path);
 
 
         storage = FirebaseStorage.getInstance();
@@ -184,18 +175,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         databaseReference = FirebaseDatabase.getInstance().getReference();
         currentUserId = auth.getCurrentUser().getUid(); // You should have a unique identifier for each user.
 
-       /* chooseFile_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callChoosePdfFile();
-            }
-        });
-        findViewById(R.id.choose_word_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callChooseWordFile();
-            }
-        });*/
 
         if (auth.getCurrentUser() != null) {
             rtvFullName = auth.getCurrentUser().getEmail();
@@ -305,65 +284,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
 
 
-
-//    private void fetchFilesAndFoldersFromFirebase() {
-//        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
-//        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
-//
-//        // Clear the items list before populating it again
-//        fileMetadataList.clear();
-//        folderMetadataList.clear();
-//        itemsList.clear();
-//
-//        filesRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
-//                    if (fileMetadata != null) {
-//                        fileMetadataList.add(fileMetadata);
-//                        itemsList.add(fileMetadata); // Add file to combined list
-//                    }
-//                }
-//
-//                // Update RecyclerView
-//                updateRecyclerView();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//                Toast.makeText(Home.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        foldersRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
-//                    if (folderMetadata != null) {
-//                        folderMetadataList.add(folderMetadata);
-//                        itemsList.add(folderMetadata); // Add folder to combined list
-//                    }
-//                }
-//
-//                // Update RecyclerView
-//                updateRecyclerView();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//                Toast.makeText(Home.this, "Failed to fetch folders: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-
-
-
-
     private void updateRecyclerView() {
         // Notify the adapter about changes in the combined list
         fileAdapter.setItemsList(itemsList);
@@ -391,12 +311,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-    //    private void callChooseTXTfFile(){
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//        intent.setType("text/plain");
-//        startActivityForResult(intent,CHOSE_PDF_FROM_DEVICE);
-//    }
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
         if (requestCode == CHOSE_PDF_FROM_DEVICE && resultCode == Activity.RESULT_OK) {
@@ -501,33 +415,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-    private void createFolder() {
-        String folderName = FolderName.getText().toString().trim();
-
-        if (!folderName.isEmpty()) {
-            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
-
-            // Generate a unique key for the folder
-            String folderId = foldersRef.push().getKey();
-
-            // Store folder metadata in the Realtime Database
-            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
-
-            // Save folder metadata using the unique key
-            foldersRef.child(folderId).setValue(folderMetadata)
-                    .addOnSuccessListener(aVoid -> {
-                        // Folder created successfully
-                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Folder creation failed
-                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    });
-        } else {
-            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
-        }
-    }
-
     private void ShowDialog() {
         // Create a Dialog object
         Dialog dialog = new Dialog(this);
@@ -573,86 +460,9 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         // Show the dialog
         dialog.show();
     }
-//    private void createFolder() {
-//        String folderName = FolderName.getText().toString().trim();
-//
-//        if (!folderName.isEmpty()) {
-//
-//            // Access the StorageReference
-//            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//
-//            // Path for the new folder
-//            String folderPath = currentUserId + "/" + folderName + "/";
-//
-//            // Reference to the folder path
-//            StorageReference folderRef = storageRef.child(folderPath);
-//
-//            // This creates an empty file in the folder to signify its creation
-//            folderRef.child("New File").putBytes(new byte[0])
-//                    .addOnSuccessListener(taskSnapshot -> {
-//                        // Folder has been created
-//                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                    })
-//                    .addOnFailureListener(e -> {
-//                        // Folder creation failed
-//                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                    });
-//        } else {
-//            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//        }
-//    }
-//
-//    private void ShowDialog() {
-//        // Create a Dialog object
-//        Dialog dialog = new Dialog(this);
-//
-//        // Set the content view of the dialog by inflating folder_dialog.xml
-//        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
-//        dialog.setContentView(dialogView);
-//
-//        // Now, you can find and use the views inside the dialogView
-//        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
-//        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
-//
-//        // Set click listener for the create folder button
-//        createFolderBtn.setOnClickListener(v -> {
-//            String folderName = folderNameEditText.getText().toString().trim();
-//
-//            // Perform folder creation logic here
-//            if (!folderName.isEmpty()) {
-//                // Access the StorageReference
-//                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//
-//                // Path for the new folder
-//                String folderPath = currentUserId + "/" + folderName + "/";
-//
-//                // Reference to the folder path
-//                StorageReference folderRef = storageRef.child(folderPath);
-//
-//                // This creates an empty file in the folder to signify its creation
-//                folderRef.child("New File").putBytes(new byte[0])
-//                        .addOnSuccessListener(taskSnapshot -> {
-//                            // Folder has been created
-//                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                            dialog.dismiss(); // Dismiss the dialog after creating the folder
-//                        })
-//                        .addOnFailureListener(e -> {
-//                            // Folder creation failed
-//                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
-//                        });
-//            } else {
-//                folderNameEditText.setError("Please enter a folder name");
-//            }
-//        });
-//
-//        // Show the dialog
-//        dialog.show();
-//    }
 
     private static class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<Object> itemsList = new ArrayList<>();
-        private static final int FILE_TYPE = 0;
-        private static final int FOLDER_TYPE = 1;
 
         public void setItemsList(List<Object> itemsList) {
             this.itemsList = itemsList;
