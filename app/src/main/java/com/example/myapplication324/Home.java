@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import io.github.muddz.styleabletoast.StyleableToast;
@@ -87,6 +89,7 @@ private String password;
     private List<FolderMetadata> folderMetadataList = new ArrayList<>();
 
     private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
+    private ProgressBar progressBar;
 
 
     @Override
@@ -112,6 +115,9 @@ private String password;
         text = findViewById(R.id.pdf);
 
         FolderName = findViewById(R.id.FolderName);
+
+        progressBar = findViewById(R.id.par);
+        progressBar.setVisibility(View.GONE);
 
 
 
@@ -354,10 +360,12 @@ private String password;
 
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
                                         uploadTask.addOnSuccessListener(taskSnapshot -> {
-                                            StyleableToast.makeText(Home.this, "Encrypted file uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                            progressBar.setVisibility(View.GONE);
+                                            StyleableToast.makeText(Home.this, "File uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
                                             // Get the download URL of the uploaded file
                                             fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                                progressBar.setVisibility(View.GONE);
                                                 String fileDownloadUrl = uri.toString();
 
                                                 // Store file metadata in the Realtime Database
@@ -366,6 +374,11 @@ private String password;
                                             });
                                         }).addOnFailureListener(e -> {
                                             StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                                progressBar.setVisibility(View.VISIBLE);
+                                            }
                                         });
                                     } else {
                                         // Encryption failed
@@ -393,7 +406,8 @@ private String password;
 
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
                                         uploadTask.addOnSuccessListener(taskSnapshot -> {
-                                            StyleableToast.makeText(Home.this, "Encrypted file uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                            progressBar.setVisibility(View.GONE);
+                                            StyleableToast.makeText(Home.this, "File uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
                                             // Get the download URL of the uploaded file
                                             fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -405,6 +419,11 @@ private String password;
                                             });
                                         }).addOnFailureListener(e -> {
                                             StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                                progressBar.setVisibility(View.VISIBLE);
+                                            }
                                         });
                                     } else {
                                         // Encryption failed
