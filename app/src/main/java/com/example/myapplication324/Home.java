@@ -349,7 +349,7 @@ private String password;
                                     byte[] encryptedBytes = Crypto.encryptFile(inputStream, "password");
                                     if (encryptedBytes != null) {
                                         // Upload the encrypted file to Firebase Storage
-                                        String encryptedFileName = "encrypted_" + fileName;
+                                        String encryptedFileName = fileName;
                                         StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
 
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
@@ -388,7 +388,7 @@ private String password;
                                     byte[] encryptedBytes = Crypto.encryptFile(inputStream, "password");
                                     if (encryptedBytes != null) {
                                         // Upload the encrypted file to Firebase Storage
-                                        String encryptedFileName = "encrypted_" + fileName;
+                                        String encryptedFileName =  fileName;
                                         StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
 
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
