@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,15 +13,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import io.github.muddz.styleabletoast.StyleableToast;
@@ -30,7 +25,7 @@ import io.github.muddz.styleabletoast.StyleableToast;
 public class Login2 extends AppCompatActivity {
     private TextView userEmailTextView,pass, forget;
     private WheelView wheelView;
-    private String password,userpass,userfinal;
+    private String password,userfinal;
     private Button login;
     private FirebaseAuth auth;
     private DatabaseReference reference;
@@ -39,7 +34,7 @@ public class Login2 extends AppCompatActivity {
 
 
 
-    private int scolor,usercolor;
+    private int scolor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +48,10 @@ public class Login2 extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         wheelView.setTextView(pass); // Set the TextView in the WheelView
         reference = FirebaseDatabase.getInstance().getReference("users");
-        fingerprintAuthenticator = new FingerPrintAuthenticator(Login2.this, new FingerPrintAuthenticator.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSuccess() {
-                startActivity(new Intent(Login2.this, Home.class));
-
-            }
-        });
+        fingerprintAuthenticator = new FingerPrintAuthenticator(Login2.this, () -> startActivity(new Intent(Login2.this, Home.class)));
 
 
-        forget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openforget();
-            }
-        });
+        forget.setOnClickListener(view -> openforget());
 
         // Retrieve the user's email from the Intent
         Intent intent = getIntent();
@@ -77,86 +61,74 @@ public class Login2 extends AppCompatActivity {
             if (userEmail != null) {
                 // Display the user's email in a TextView or perform other actions
                 userEmailTextView.setText(userEmail);
-                // password = "Ss123456.";
+                /// password = "Ss123456.";
                 //scolor = Color.RED;
                 //
-                getUserData(userEmail, new UserDataCallback() {
-                    @Override
-                    public void onUserDataReceived(String userName, String userColor) {
-                        if (userName != null&& userColor!=null) {
-                            // Do something with the color
-                            scolor = getColorInt(userColor);
-                            password = userName;
-                            //  StyleableToast.makeText(Login2.this, userName, Toast.LENGTH_SHORT, R.style.mytoast).show();
-                            // StyleableToast.makeText(Login2.this, userColor, Toast.LENGTH_SHORT, R.style.mytoast).show();
-                            // Set onTouchListener for the WheelView
-                            wheelView.setOnTouchListener((v, event) -> {
-                                wheelView.onTouchEvent(event, scolor,password);
-                                return true; // Return true to indicate that the event has been handled
-                            });
+                getUserData(userEmail, (userName, userColor) -> {
+                    if (userName != null&& userColor!=null) {
+                        // Do something with the color
+                        scolor = getColorInt(userColor);
+                        password = userName;
+                        //  StyleableToast.makeText(Login2.this, userName, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                        // StyleableToast.makeText(Login2.this, userColor, Toast.LENGTH_SHORT, R.style.mytoast).show();
+                        // Set onTouchListener for the WheelView
+                        wheelView.setOnTouchListener((v, event) -> {
+                            wheelView.onTouchEvent(event, scolor,password);
+                            return true; // Return true to indicate that the event has been handled
+                        });
 
 
-                            login.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    // Check if the password is not empty
-                                    if (!TextUtils.isEmpty(pass.getText())) {
-                                        userfinal = pass.getText().toString().trim();
-                                        if (userfinal.equals(password)) {
-                                            // Use Firebase Authentication to sign in
-                                            auth.signInWithEmailAndPassword(userEmail, password)
-                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                        @Override
-                                                        public void onSuccess(AuthResult authResult) {
-                                                            // Handle successful login
-                                                            fingerprintAuthenticator.showSignInBiometricPrompt();
-                                                            //startActivity(new Intent(Login2.this, Home.class));
+                        login.setOnClickListener(view -> {
+                            // Check if the password is not empty
+                            if (!TextUtils.isEmpty(pass.getText())) {
+                                userfinal = pass.getText().toString().trim();
+                                if (userfinal.equals(password)) {
+                                    // Use Firebase Authentication to sign in
+                                    auth.signInWithEmailAndPassword(userEmail, password)
+                                            .addOnSuccessListener(authResult -> {
+                                                // Handle successful login
+                                                fingerprintAuthenticator.showSignInBiometricPrompt();
+                                                //startActivity(new Intent(Login2.this, Home.class));
 
-                                                            // Show the biometric prompt on success
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            // Handle login failure
-                                                            usertry++;
-                                                            if (usertry == 3) {
-                                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
+                                                // Show the biometric prompt on success
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Handle login failure
+                                                usertry++;
+                                                if (usertry == 3) {
+                                                    wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
 
-                                                            } else {
-                                                                pass.setText("");
-                                                                userfinal = "";
-                                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                                            }
-                                                        }
-                                                    });
-                                        } else {
-                                            usertry++;
-                                            if (usertry == 3) {
-                                                wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
+                                                } else {
+                                                    pass.setText("");
+                                                    userfinal = "";
+                                                    StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                                }
+                                            });
+                                } else {
+                                    usertry++;
+                                    if (usertry == 3) {
+                                        wheelView.showAlertDialog("Max Attempts Exceeded", "You have exceeded the maximum number of login attempts. Do you want to reset your password?",Forgetpassword.class);
 
-                                            } else {
-                                                pass.setText("");
-                                                userfinal = "";
-                                                StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                                            }
-
-                                        }
                                     } else {
-                                        // Handle the case where the password is empty
-                                        // You might want to show an error message or do something else
-                                        StyleableToast.makeText(Login2.this, "Please enter a password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        pass.setText("");
+                                        userfinal = "";
+                                        StyleableToast.makeText(Login2.this, "Incorrect password", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     }
+
                                 }
-                            });
+                            } else {
+                                // Handle the case where the password is empty
+                                // You might want to show an error message or do something else
+                                StyleableToast.makeText(Login2.this, "Please enter a password", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
+                        });
 
 
 
-                        } else {
-                            StyleableToast.makeText(Login2.this, "No color", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    } else {
+                        StyleableToast.makeText(Login2.this, "No color", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
 
-                        }
                     }
                 });
 

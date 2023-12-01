@@ -1,6 +1,5 @@
 package com.example.myapplication324;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,19 +27,12 @@ public class Favorite extends DrawerBaseActivity {
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.show(2,true);
         MeowBottomNavigationShow(bottomNavigation);
-        bottomNavigation.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
-            @Override
-            public void onClickItem(MeowBottomNavigation.Model item) {
-                // chose which class to go
-                MeowBottomNavigationClick(item.getId());
-            }
+        bottomNavigation.setOnClickMenuListener(item -> {
+            // chose which class to go
+            MeowBottomNavigationClick(item.getId());
         });
 
-        bottomNavigation.setOnShowListener(new MeowBottomNavigation.ShowListener() {
-            @Override
-            public void onShowItem(MeowBottomNavigation.Model item) {
-
-            }
+        bottomNavigation.setOnShowListener(item -> {
 
         });
 
