@@ -1,12 +1,12 @@
 package com.example.myapplication324;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
-import com.example.myapplication324.databinding.ActivityFavoriteBinding;
+
 import com.example.myapplication324.databinding.ActivitySearchBinding;
 
 public class Search extends DrawerBaseActivity {

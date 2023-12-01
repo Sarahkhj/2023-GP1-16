@@ -1,15 +1,15 @@
 package com.example.myapplication324;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+
 import android.app.Dialog;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,16 +40,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import io.github.muddz.styleabletoast.StyleableToast;
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.muddz.styleabletoast.StyleableToast;
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
     private TextView t1;

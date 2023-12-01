@@ -31,24 +31,4 @@ public class FolderMetadata {
     }
 
 }
-//    private String folderName;
-//    private String folderPath;
-//
-//    public FolderMetadata() {
-//        // Default constructor required for Firebase
-//    }
-//
-//    public FolderMetadata(String folderName, String folderPath) {
-//        this.folderName = folderName;
-//        this.folderPath = folderPath;
-//    }
-//
-//    public String getFolderName() {
-//        return folderName;
-//    }
-//
-//    public String getFolderPath() {
-//        return folderPath;
-//    }
-//}
-//
+
