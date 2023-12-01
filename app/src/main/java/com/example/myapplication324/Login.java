@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,11 +25,11 @@ import io.github.muddz.styleabletoast.StyleableToast;
 public class Login extends AppCompatActivity {
 
     private TextView t1;
-    private TextView t2;
+
 
     Button SignInButton;
 
-    private EditText email, password;
+    private EditText email;
     private FirebaseAuth auth;
 
     private DatabaseReference reference;
@@ -46,12 +45,7 @@ public class Login extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference("users");
 
 
-        t1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                opensignup();
-            }
-        });
+        t1.setOnClickListener(view -> opensignup());
 
 
         // Initialize Firebase Authentication
@@ -59,32 +53,26 @@ public class Login extends AppCompatActivity {
 
         SignInButton = findViewById(R.id.sign);
         email = findViewById(R.id.email);
-        //password = findViewById(R.id.password);
+        ///password = findViewById(R.id.password);
 
 //        db = new DBHelper(this);
-        SignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCredentialsValid()) {
-                    doesEmailExist(new EmailCheckListener() {
-                        @Override
-                        public void onEmailCheckResult(boolean emailExists) {
-                            if (emailExists) {
-                                String emailAsText = email.getText().toString().trim();
-                                // Create an Intent to start the OtherActivity
-                                Intent intent = new Intent(Login.this, Login2.class);
+        SignInButton.setOnClickListener(view -> {
+            if (isCredentialsValid()) {
+                doesEmailExist(emailExists -> {
+                    if (emailExists) {
+                        String emailAsText = email.getText().toString().trim();
+                        // Create an Intent to start the OtherActivity
+                        Intent intent = new Intent(Login.this, Login2.class);
 
-                                // Put the user's email as an extra in the Intent
-                                intent.putExtra("USER_EMAIL", emailAsText);
+                        // Put the user's email as an extra in the Intent
+                        intent.putExtra("USER_EMAIL", emailAsText);
 
-                                // Start the OtherActivity
-                                startActivity(intent);
-                            } else {
-                                StyleableToast.makeText(Login.this, "Email does not exist! Please enter an existing email.", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                            }
-                        }
-                    });
-                }
+                        // Start the OtherActivity
+                        startActivity(intent);
+                    } else {
+                        StyleableToast.makeText(Login.this, "Email does not exist! Please enter an existing email.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    }
+                });
             }
         });
 
@@ -104,10 +92,7 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(this, Sign_up.class);
         startActivity(intent);
     }
-    public void openforget() {
-        Intent intent = new Intent(this, Forgetpassword.class);
-        startActivity(intent);
-    }
+
 
     private void doesEmailExist(final EmailCheckListener listener) {
         String userEmail = email.getText().toString().trim();
