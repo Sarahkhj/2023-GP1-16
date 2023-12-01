@@ -28,23 +28,21 @@ public class Forgetpassword extends AppCompatActivity {
         setContentView(R.layout.activity_forgetpassword);
         rest = findViewById(R.id.update_pass);
         email = findViewById(R.id.email);
-        rest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String textemail = email.getText().toString();
-                if (TextUtils.isEmpty(textemail)) {
-                    email.setError("Enter email!");
-                }
-                else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(textemail).matches()){
-                    email.setError("Enter a valid email address");
 
+        rest.setOnClickListener(v -> {
+            String textemail = email.getText().toString();
+            if (TextUtils.isEmpty(textemail)) {
+                email.setError("Enter email!");
+            }
+            else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(textemail).matches()){
+                email.setError("Enter a valid email address");
 
-                }
-                else {
-                    forgetpassword(textemail);
-                }
 
             }
+            else {
+                forgetpassword(textemail);
+            }
+
         });
     }
 

@@ -1,12 +1,15 @@
 package com.example.myapplication324;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,32 +36,41 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import io.github.muddz.styleabletoast.StyleableToast;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.muddz.styleabletoast.StyleableToast;
+
 public class Home extends DrawerBaseActivity { //i changed the extends class
-
+    private TextView t1;
     private FirebaseAuth auth;
-
+    private FirebaseDatabase rootNode;
     private String rtvFullName;
     protected final int home = 1;
     protected final int favo = 2;
     protected final int shared = 3;
     protected final int search = 4;
 
+    private Button chooseFile_btn, CreateFolderBtn;
+    private TextView filePath;
     private Intent intent;
 
     private final int CHOSE_PDF_FROM_DEVICE = 1001;
     private final int PICK_WORD_FILE = 1002;
 
+    private static final String TAG = "Home";
      private ActivityHomeBinding activityHomeBinding;
-    private String password;
+private String password;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
@@ -110,54 +122,68 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
 
 
-        fab_main.setOnClickListener(view -> {
+        fab_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-            if (isOpen) {
+                if (isOpen) {
 
-                textview_mail.setVisibility(View.INVISIBLE);
-                textview_share.setVisibility(View.INVISIBLE);
-                text.setVisibility(View.INVISIBLE);
-                fab2_share.startAnimation(fab_close);
-                fab1_mail.startAnimation(fab_close);
-                pdf.startAnimation(fab_close);
-                fab_main.startAnimation(fab_anticlock);
-                fab2_share.setClickable(false);
-                fab1_mail.setClickable(false);
-                pdf.setClickable(false);
+                    textview_mail.setVisibility(View.INVISIBLE);
+                    textview_share.setVisibility(View.INVISIBLE);
+                    text.setVisibility(View.INVISIBLE);
+                    fab2_share.startAnimation(fab_close);
+                    fab1_mail.startAnimation(fab_close);
+                    pdf.startAnimation(fab_close);
+                    fab_main.startAnimation(fab_anticlock);
+                    fab2_share.setClickable(false);
+                    fab1_mail.setClickable(false);
+                    pdf.setClickable(false);
 
-                isOpen = false;
-            } else {
-                textview_mail.setVisibility(View.VISIBLE);
-                textview_share.setVisibility(View.VISIBLE);
-                text.setVisibility(View.VISIBLE);
-                fab2_share.startAnimation(fab_open);
-                fab1_mail.startAnimation(fab_open);
-                pdf.startAnimation(fab_open);
-                fab_main.startAnimation(fab_clock);
-                fab2_share.setClickable(true);
-                pdf.setClickable(true);
-                fab1_mail.setClickable(true);
-                isOpen = true;
+                    isOpen = false;
+                } else {
+                    textview_mail.setVisibility(View.VISIBLE);
+                    textview_share.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.VISIBLE);
+                    fab2_share.startAnimation(fab_open);
+                    fab1_mail.startAnimation(fab_open);
+                    pdf.startAnimation(fab_open);
+                    fab_main.startAnimation(fab_clock);
+                    fab2_share.setClickable(true);
+                    pdf.setClickable(true);
+                    fab1_mail.setClickable(true);
+                    isOpen = true;
+                }
+
             }
-
         });
 
 
-        fab2_share.setOnClickListener(view -> {
-            //Toast.makeText(getApplicationContext(), "upload file", Toast.LENGTH_SHORT).show();
-            callChoosePdfFile();
+        fab2_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getApplicationContext(), "upload file", Toast.LENGTH_SHORT).show();
+                callChoosePdfFile();
 
+            }
         });
 
-        fab1_mail.setOnClickListener(view -> {
-           // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
-            ShowDialog();
+        fab1_mail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
+                ShowDialog();
 
+            }
         });
-        pdf.setOnClickListener(v -> callChooseWordFile());
+        pdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callChooseWordFile();
+            }
+        });
 
         auth = FirebaseAuth.getInstance();
-
+        rootNode = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -180,12 +206,19 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         bottomNavigation.show(1, true);
         MeowBottomNavigationShow(bottomNavigation);
 
-        bottomNavigation.setOnClickMenuListener(item -> {
-            // chose which class to go
-            MeowBottomNavigationClick(item.getId());
+        bottomNavigation.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
+            @Override
+            public void onClickItem(MeowBottomNavigation.Model item) {
+                // chose which class to go
+                MeowBottomNavigationClick(item.getId());
+            }
         });
 
-        bottomNavigation.setOnShowListener(item -> {
+        bottomNavigation.setOnShowListener(new MeowBottomNavigation.ShowListener() {
+            @Override
+            public void onShowItem(MeowBottomNavigation.Model item) {
+
+            }
 
         });
 
@@ -339,7 +372,14 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                                 FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
                                                 databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
                                             });
-                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot1 -> progressBar.setVisibility(View.VISIBLE));
+                                        }).addOnFailureListener(e -> {
+                                            StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                                progressBar.setVisibility(View.VISIBLE);
+                                            }
+                                        });
                                     } else {
                                         // Encryption failed
                                         StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
@@ -377,7 +417,14 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                                 FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
                                                 databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
                                             });
-                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot12 -> progressBar.setVisibility(View.VISIBLE));
+                                        }).addOnFailureListener(e -> {
+                                            StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                                progressBar.setVisibility(View.VISIBLE);
+                                            }
+                                        });
                                     } else {
                                         // Encryption failed
                                         StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
@@ -403,12 +450,18 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     }
     private String getFileNameFromUri(Uri uri) {
         String fileName = "unknown";
-        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 if (displayNameIndex != -1) {
                     fileName = cursor.getString(displayNameIndex);
                 }
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
             }
         }
         return fileName;
@@ -442,6 +495,33 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                 break;
         }
 
+    }
+
+    private void createFolder() {
+        String folderName = FolderName.getText().toString().trim();
+
+        if (!folderName.isEmpty()) {
+            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+
+            // Generate a unique key for the folder
+            String folderId = foldersRef.push().getKey();
+
+            // Store folder metadata in the Realtime Database
+            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
+
+            // Save folder metadata using the unique key
+            foldersRef.child(folderId).setValue(folderMetadata)
+                    .addOnSuccessListener(aVoid -> {
+                        // Folder created successfully
+                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        // Folder creation failed
+                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    });
+        } else {
+            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
+        }
     }
 
     private void ShowDialog() {
@@ -493,6 +573,9 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     private static class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<Object> itemsList = new ArrayList<>();
+        private static final int FILE_TYPE = 0;
+        private static final int FOLDER_TYPE = 1;
+
         public void setItemsList(List<Object> itemsList) {
             this.itemsList = itemsList;
         }

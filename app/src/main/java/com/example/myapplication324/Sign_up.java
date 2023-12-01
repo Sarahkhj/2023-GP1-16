@@ -1,12 +1,10 @@
 package com.example.myapplication324;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricPrompt;
-import androidx.core.content.ContextCompat;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -14,9 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 
@@ -76,7 +72,6 @@ public class Sign_up extends AppCompatActivity  {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                    clickedcolor= (Custom_spinner)adapterView.getSelectedItem();
-                 //   StyleableToast.makeText(Sign_up.this, clickedcolor.getSpinnerText()+" selected",Toast.LENGTH_SHORT, R.style.mytoast).show();
                 }
 
                 @Override
@@ -204,12 +199,3 @@ public class Sign_up extends AppCompatActivity  {
 
 
 }
-
-//<item>RED</item>
-//<item>YELLOW</item>
-//<item>BLUE</item>
-//<item>GREEN</item>
-//<item>BLACK</item>
-//<item>MAGENTA</item>
-//<item>DKGRAY</item>
-//<item>CYAN</item>

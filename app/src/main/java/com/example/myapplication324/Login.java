@@ -3,7 +3,7 @@ package com.example.myapplication324;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,13 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricPrompt;
-import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,8 +20,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
@@ -35,7 +27,7 @@ public class Login extends AppCompatActivity {
 
     private TextView t1;
     private TextView t2;
-    private FingerPrintAuthenticator fingerprintAuthenticator;
+
     Button SignInButton;
 
     private EditText email, password;
@@ -53,12 +45,7 @@ public class Login extends AppCompatActivity {
        // t2 = findViewById(R.id.forget);
         reference = FirebaseDatabase.getInstance().getReference("users");
 
-        fingerprintAuthenticator = new FingerPrintAuthenticator(Login.this, new FingerPrintAuthenticator.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSuccess() {
-                // Action already handled within the FingerPrintAuthenticator class
-            }
-        });
+
         t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
