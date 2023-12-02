@@ -14,14 +14,15 @@ import androidx.fragment.app.FragmentActivity;
 import java.util.concurrent.Executor;
 
 import io.github.muddz.styleabletoast.StyleableToast;
-
+// Implement biometric authentication dialog based on the guidelines from:
+// "Show a biometric authentication dialog | Android Developers"
+// URL: https://developer.android.com/training/sign-in/biometric-auth
 public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCallback
-
-
 {
     private AuthenticationCallback authenticationCallback;
 
     public interface AuthenticationCallback {
+        // Callback interface for authentication success
         void onAuthenticationSuccess();
     }
     private Context context;
@@ -31,9 +32,10 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
     }
 
     public void showSignInBiometricPrompt() {
+        // Build the prompt info for sign-in
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Sign in")
-                .setSubtitle("Touch the fingerprint sensor to continue")
+                .setSubtitle("Touch the fingerprint sensor to sign in")
                 .setNegativeButtonText("Cancel")
                 .build();
 
@@ -41,6 +43,7 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
     }
 
     public void showSignUpBiometricPrompt() {
+        // Build the prompt info for sign-up
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Sign up")
                 .setSubtitle("Register your fingerprint to sign up")
@@ -78,6 +81,7 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
     @Override
     public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
         super.onAuthenticationError(errorCode, errString);
+
         StyleableToast.makeText(context, "Authentication error: you haven't set your fingerprint" , Toast.LENGTH_SHORT, R.style.mytoast).show();
     }
 
@@ -88,11 +92,12 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
 
         // Check if the context is Sign_up activity
         if (context instanceof Sign_up) {
+            // Call the authentication success callback in the sign up
             authenticationCallback.onAuthenticationSuccess();
         }
         // Check if the context is Login activity
         else if (context instanceof Login2) {
-
+            // Start the Home activity
           context.startActivity(new Intent(context, Home.class));
         }
     }
@@ -100,6 +105,7 @@ public class FingerPrintAuthenticator extends BiometricPrompt.AuthenticationCall
     @Override
     public void onAuthenticationFailed() {
         super.onAuthenticationFailed();
+        // Show a failed authentication toast message
         StyleableToast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
     }
 }
