@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+import com.example.myapplication324.databinding.ActivityFolderBinding;
 import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,8 +58,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private final int CHOSE_PDF_FROM_DEVICE = 1001;
     private final int PICK_WORD_FILE = 1002;
 
-     private ActivityHomeBinding activityHomeBinding;
-private String password;
+    private ActivityHomeBinding activityHomeBinding;
+    private String password;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
@@ -109,7 +110,6 @@ private String password;
 
 
 
-
         fab_main.setOnClickListener(view -> {
 
             if (isOpen) {
@@ -150,8 +150,8 @@ private String password;
         });
 
         fab1_mail.setOnClickListener(view -> {
-           // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
-            ShowDialog();
+            // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
+            createFolder();
 
         });
         pdf.setOnClickListener(v -> callChooseWordFile());
@@ -193,6 +193,18 @@ private String password;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fileAdapter = new FileAdapter();
         recyclerView.setAdapter(fileAdapter);
+
+        // Initialize fileAdapter before using it
+        fileAdapter = new FileAdapter();
+        recyclerView.setAdapter(fileAdapter);
+
+        // Move the setOnFolderClickListener after the fileAdapter initialization
+        fileAdapter.setOnFolderClickListener(folder -> {
+            // Handle folder click
+            Intent intent = new Intent(Home.this, FolderActivity.class);
+            intent.putExtra("folderId", folder.getFolderId()); // Assuming you have a getFolderId method in your FolderMetadata class
+            startActivity(intent);
+        });
 
         // Call method to fetch files and folders from Firebase
         fetchFilesAndFoldersFromFirebase();
@@ -276,7 +288,7 @@ private String password;
 
 
     ////Uploading files////
-    private void callChoosePdfFile() {
+    public void callChoosePdfFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/pdf");
@@ -287,7 +299,7 @@ private String password;
 
         Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent1.addCategory(Intent.CATEGORY_OPENABLE);
-        intent1.setType("*/*");
+        intent1.setType("/");
         String[] mimetype = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
         intent1.putExtra(Intent.EXTRA_MIME_TYPES, mimetype);
         startActivityForResult(intent1, PICK_WORD_FILE);
@@ -391,7 +403,7 @@ private String password;
                     }
                 }
 
-                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -450,34 +462,9 @@ private String password;
 
     }
 
-    private void createFolder() {
-        String folderName = FolderName.getText().toString().trim();
 
-        if (!folderName.isEmpty()) {
-            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
-            // Generate a unique key for the folder
-            String folderId = foldersRef.push().getKey();
-
-            // Store folder metadata in the Realtime Database
-            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
-
-            // Save folder metadata using the unique key
-            foldersRef.child(folderId).setValue(folderMetadata)
-                    .addOnSuccessListener(aVoid -> {
-                        // Folder created successfully
-                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Folder creation failed
-                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    });
-        } else {
-            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
-        }
-    }
-
-    private void ShowDialog() {
+    public void createFolder() {
         // Create a Dialog object
         Dialog dialog = new Dialog(this);
 
@@ -528,6 +515,22 @@ private String password;
         private List<Object> itemsList = new ArrayList<>();
 
 
+
+
+        private OnFolderClickListener folderClickListener; // Add this listener
+
+        public interface OnFolderClickListener {
+            void onFolderClick(FolderMetadata folder);
+        }
+
+        // Set the click listener for folder items
+        public void setOnFolderClickListener(OnFolderClickListener listener) {
+            this.folderClickListener = listener;
+        }
+
+
+
+
         public void setItemsList(List<Object> itemsList) {
             this.itemsList = itemsList;
         }
@@ -573,11 +576,20 @@ private String password;
             Object item = itemsList.get(position);
 
             if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
+                // Bind file item
                 FileMetadata fileMetadata = (FileMetadata) item;
                 ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
             } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
+                // Bind folder item
                 FolderMetadata folderMetadata = (FolderMetadata) item;
                 ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
+
+                // Set click listener for folder item
+                holder.itemView.setOnClickListener(v -> {
+                    if (folderClickListener != null) {
+                        folderClickListener.onFolderClick(folderMetadata);
+                    }
+                });
             }
         }
 
@@ -607,8 +619,4 @@ private String password;
         }
     }
 }
-
-
-
-
 
