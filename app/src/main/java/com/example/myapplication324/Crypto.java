@@ -54,16 +54,16 @@ public class Crypto {
     // Method to encrypt data using AES/GCM
     public static byte[] encryptFile(InputStream inputFile, String password) {
         try {
-            byte[] salt = generateSalt();
-            SecretKeySpec secretKey = generateKey(password, salt);
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            byte[] salt = generateSalt(); // Generate a random salt
+            SecretKeySpec secretKey = generateKey(password, salt); // Generate the secret key using PBKDF2
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION); // Create a cipher instance
 
             SecureRandom random = new SecureRandom();
-            byte[] iv = new byte[GCM_NONCE_LENGTH];
+            byte[] iv = new byte[GCM_NONCE_LENGTH]; // Generate a random initialization vector (IV)
             random.nextBytes(iv);
 
             GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec); // Initialize the cipher for encryption
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(salt); // Write the salt to the output stream
@@ -72,25 +72,26 @@ public class Crypto {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
-                    byte[] encryptedBytes = cipher.update(buffer, 0, bytesRead);
+                    byte[] encryptedBytes = cipher.update(buffer, 0, bytesRead); // Encrypt the input data
                     if (encryptedBytes != null) {
-                        outputStream.write(encryptedBytes);
+                        outputStream.write(encryptedBytes); // Write the encrypted data to the output stream
                     }
                 }
             }
 
-            byte[] finalBytes = cipher.doFinal();
+            byte[] finalBytes = cipher.doFinal(); // Finalize the encryption process
             if (finalBytes != null) {
-                outputStream.write(finalBytes);
+                outputStream.write(finalBytes); // Write the final encrypted data to the output stream
             }
 
             return outputStream.toByteArray(); // Return the encrypted file as byte[]
         } catch (Exception e) {
             e.printStackTrace();
         }
-////
+
         return null; // Return null if encryption fails
     }
+
     public static void decryptFile(byte[] encryptedFile, String password, OutputStream outputFile) {
         try {
             byte[] salt = Arrays.copyOfRange(encryptedFile, 0, SALT_LENGTH);

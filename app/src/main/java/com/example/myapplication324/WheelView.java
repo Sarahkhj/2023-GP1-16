@@ -244,7 +244,7 @@ public class WheelView extends View {
 
                     String message = "Selected letters: " + selectedLetters + ", Color: " + colorName;
 
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
                     if (textView != null) {
                         String currentText = textView.getText().toString();
@@ -257,7 +257,7 @@ public class WheelView extends View {
                                 currentText += realPass.charAt(I);
                                 textView.setText(currentText);
                                 if (realPass.length() - 1 <= I) {
-                                    Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+                                  //  Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                                     //textView.post(() -> textView.setText(realPass));
 
                                 } else {
