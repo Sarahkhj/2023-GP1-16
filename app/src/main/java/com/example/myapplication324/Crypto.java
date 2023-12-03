@@ -88,7 +88,7 @@ public class Crypto {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+////
         return null; // Return null if encryption fails
     }
     public static void decryptFile(byte[] encryptedFile, String password, OutputStream outputFile) {
