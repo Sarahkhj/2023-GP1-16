@@ -57,8 +57,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private final int CHOSE_PDF_FROM_DEVICE = 1001;
     private final int PICK_WORD_FILE = 1002;
 
-    private ActivityHomeBinding activityHomeBinding;
-    private String password;
+     private ActivityHomeBinding activityHomeBinding;
+private String password;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
@@ -150,7 +150,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         });
 
         fab1_mail.setOnClickListener(view -> {
-            // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
             ShowDialog();
 
         });
@@ -391,7 +391,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                     }
                 }
 
-            }
+                }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -607,3 +607,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         }
     }
 }
+
+
+
+
+

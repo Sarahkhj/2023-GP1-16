@@ -4,6 +4,8 @@ public class FolderMetadata {
 
     private String folderId;
     private String folderName;
+    private String parentFolderId; // Add this field
+
 
     public FolderMetadata() {
         // Default constructor required for Firebase
@@ -34,6 +36,12 @@ public class FolderMetadata {
     public void setFolderName(String folderName) {
         this.folderName = folderName;
     }
+
+    public void setParentFolderId(String parentFolderId) {
+        this.parentFolderId = parentFolderId;
+    }
+
+
 
 }
 
