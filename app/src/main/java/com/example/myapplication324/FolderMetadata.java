@@ -14,6 +14,11 @@ public class FolderMetadata {
         this.folderName = folderName;
     }
 
+    public FolderMetadata(String subFolderId, String subFolderName, Object o) {
+
+    }
+
+
     public String getFolderId() {
         return folderId;
     }
