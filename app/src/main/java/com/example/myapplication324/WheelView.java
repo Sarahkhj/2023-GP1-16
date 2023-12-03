@@ -231,7 +231,7 @@ public class WheelView extends View {
                 int sectorColor = SECTOR_COLORS[colorIndex % SECTOR_COLORS.length];
 
                 if (sectorColor == Color) {
-                    String colorName = getColorName(sectorColor);
+                   // String colorName = getColorName(sectorColor);
 
                     // Calculate the starting index of the selected sector in ALPHABETS
                     int sectorStartIndex = newlySelectedSector * 8;
@@ -242,7 +242,7 @@ public class WheelView extends View {
                         selectedLetters.append(ALPHABETS[letterIndex]+"-");
                     }
 
-                    String message = "Selected letters: " + selectedLetters + ", Color: " + colorName;
+                   // String message = "Selected letters: " + selectedLetters + ", Color: " + colorName;
 
                    // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
@@ -257,7 +257,7 @@ public class WheelView extends View {
                                 currentText += realPass.charAt(I);
                                 textView.setText(currentText);
                                 if (realPass.length() - 1 <= I) {
-                                  //  Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+                                   // Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                                     //textView.post(() -> textView.setText(realPass));
 
                                 } else {
