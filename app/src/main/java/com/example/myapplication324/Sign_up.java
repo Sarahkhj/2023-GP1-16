@@ -163,7 +163,7 @@ public class Sign_up extends AppCompatActivity  {
                     PhoneNum.setError("Phone number must be 10 digits and start with 05");
                 }
                 if (!isValidPassword(pass)) {
-                    password.setError("Password must be at least 8 characters and meet certain criteria");
+                    password.setError("Password must be at least 8 characters\nAt least one uppercase letter\nAt least one number\nEither a forward slash ('/') or a dot ('.')");
                 }
             }
         }

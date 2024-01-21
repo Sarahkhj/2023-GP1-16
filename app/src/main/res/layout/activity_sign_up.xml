@@ -17,7 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="100dp"
         android:layout_marginEnd="84dp"
-        android:layout_marginBottom="618dp"
+        android:layout_marginBottom="658dp"
         app:srcCompat="@drawable/logoremove"
         />
 
@@ -31,7 +31,7 @@
 
         <LinearLayout
             android:layout_width="407dp"
-            android:layout_height="630dp"
+            android:layout_height="655dp"
             android:orientation="vertical"
             android:padding="40dp">
 
@@ -152,7 +152,7 @@
 
                 <TextView
                     android:id="@+id/login1"
-                    android:layout_width="145dp"
+                    android:layout_width="158dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="65dp"
                     android:text="I'm already a member,"
@@ -161,7 +161,7 @@
 
                 <TextView
                     android:id="@+id/login"
-                    android:layout_width="45dp"
+                    android:layout_width="50dp"
                     android:layout_height="30dp"
 
                     android:text="Sign in"
