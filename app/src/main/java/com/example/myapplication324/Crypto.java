@@ -26,7 +26,7 @@ public class Crypto {
 
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
     private static final int GCM_NONCE_LENGTH = 12; // 96 bits
-    private static final String key = "Sbox8fh849rewuf9wos3edfg>lfs<ffs";
+   // private static final String key = "Sbox8fh849rewuf9wos3edfg>lfs<ffs";
     private static final int SALT_LENGTH = 0;   ///idk next semster
 
     // Method to generate a SecretKeySpec from a given password using PBKDF2
@@ -34,12 +34,15 @@ public class Crypto {
         String algorithm = "PBKDF2WithHmacSHA256";
         int keyLength = 256; // in bits
         int iterations = 10000; // adjust based on your security requirements
-
+// Convert the password string to a character array
         char[] passwordChars = password.toCharArray();
+        // Create a PBEKeySpec object with the password characters, salt, iterations, and key length
         PBEKeySpec spec = new PBEKeySpec(passwordChars, salt, iterations, keyLength);
+        // Get an instance of the SecretKeyFactory using the specified algorithm
         SecretKeyFactory factory = SecretKeyFactory.getInstance(algorithm);
+        // Generate the secret key using the PBEKeySpec
         byte[] keyBytes = factory.generateSecret(spec).getEncoded();
-
+// Create a SecretKeySpec object from the key bytes using the AES algorithm
         return new SecretKeySpec(keyBytes, "AES");
     }
 
