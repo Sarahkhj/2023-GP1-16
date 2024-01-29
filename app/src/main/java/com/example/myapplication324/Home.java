@@ -523,8 +523,30 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         dialog.show();
     }
 
+    private void openFolder(int position) {
+        if (position >= 0 && position < folderMetadataList.size()) {
+            FolderMetadata clickedFolder = folderMetadataList.get(position);
+            String folderId = clickedFolder.getFolderId();
 
-    private static class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+//            // Implement your logic for handling folder click here
+//            // You can show options to create a subfolder or upload a file
+//
+//            // For example, you can call the method to create a subfolder
+//            createSubfolder(folderId);
+//
+//            // Or, you can call the method to upload a file
+//            callChoosePdfFile(); // Change this to the appropriate method for file upload
+//        }
+//    }
+            // Start FolderActivity and pass the folderId
+            Intent folderIntent = new Intent(Home.this, FolderActivity.class);
+            folderIntent.putExtra("folderId", folderId);
+            startActivity(folderIntent);
+        }
+    }
+
+
+    private class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<Object> itemsList = new ArrayList<>();
 
 
@@ -588,7 +610,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             return itemsList.size();
         }
 
-        static class FileViewHolder extends RecyclerView.ViewHolder {
+         class FileViewHolder extends RecyclerView.ViewHolder {
             TextView fileNameTextView;
 
             public FileViewHolder(@NonNull View itemView) {
@@ -597,13 +619,13 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             }
         }
 
-        static class FolderViewHolder extends RecyclerView.ViewHolder {
+        class FolderViewHolder extends RecyclerView.ViewHolder {
             TextView folderNameTextView;
 
             public FolderViewHolder(@NonNull View itemView) {
                 super(itemView);
                 folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
+                // Add click listener for the folder item
+                itemView.setOnClickListener(v -> openFolder(getAdapterPosition()));
             }
-        }
-    }
-}
+        }}}

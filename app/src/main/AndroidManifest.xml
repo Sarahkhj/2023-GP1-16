@@ -43,7 +43,6 @@
         <activity
             android:name=".Home"
             android:exported="false" />
-
         <activity
             android:name=".Login2"
             android:exported="false" />
@@ -62,7 +61,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
