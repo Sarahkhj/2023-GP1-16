@@ -528,16 +528,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             FolderMetadata clickedFolder = folderMetadataList.get(position);
             String folderId = clickedFolder.getFolderId();
 
-//            // Implement your logic for handling folder click here
-//            // You can show options to create a subfolder or upload a file
-//
-//            // For example, you can call the method to create a subfolder
-//            createSubfolder(folderId);
-//
-//            // Or, you can call the method to upload a file
-//            callChoosePdfFile(); // Change this to the appropriate method for file upload
-//        }
-//    }
+
             // Start FolderActivity and pass the folderId
             Intent folderIntent = new Intent(Home.this, FolderActivity.class);
             folderIntent.putExtra("folderId", folderId);

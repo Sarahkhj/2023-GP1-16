@@ -1,10 +1,12 @@
 package com.example.myapplication324;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.icu.text.CaseMap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,10 @@ import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.UUID;
 
 import io.github.muddz.styleabletoast.StyleableToast;
 
@@ -89,15 +95,6 @@ public class FolderActivity extends DrawerBaseActivity {
         if (intent != null && intent.hasExtra("folderId")) {
             folderId = intent.getStringExtra("folderId");
 
-//            // Set up your buttons
-//            FloatingActionButton uploadPdfButton = findViewById(R.id.fab2);
-//            FloatingActionButton uploadWordButton = findViewById(R.id.fab3);
-//            FloatingActionButton createFolderButton = findViewById(R.id.fab1);
-//
-//            // Set click listeners for the buttons
-//            uploadPdfButton.setOnClickListener(v -> callChoosePdfFile());
-//            uploadWordButton.setOnClickListener(v -> callChooseWordFile());
-//            createFolderButton.setOnClickListener(v -> createSubfolder(folderId));
 
 
 
@@ -174,6 +171,128 @@ public class FolderActivity extends DrawerBaseActivity {
         startActivityForResult(intent1, PICK_WORD_FILE);
 
     }
+
+
+    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode == RESULT_OK) {
+//            switch (requestCode) {
+//                case CHOSE_PDF_FROM_DEVICE:
+//                    // Handle the PDF file selected from device
+//                    if (data != null) {
+//                        // Get the URI of the selected PDF file
+//                        Uri pdfUri = data.getData();
+//
+//                        // Perform the necessary actions with the selected PDF file
+//                        // For example, you might want to upload it to Firebase Storage
+//                        uploadFileToFirebase(pdfUri);
+//                    }
+//                    break;
+//
+//                case PICK_WORD_FILE:
+//                    // Handle the Word file selected from device
+//                    if (data != null) {
+//                        // Get the URI of the selected Word file
+//                        Uri wordUri = data.getData();
+//
+//                        // Perform the necessary actions with the selected Word file
+//                        // For example, you might want to upload it to Firebase Storage
+//                        uploadFileToFirebase(wordUri);
+//                    }
+//                    break;
+//
+//                // Add more cases if needed for other request codes
+//            }
+//        }
+//    }
+
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            String folderId = getFolderId(); // Replace this with the actual method to get the folderId
+
+            switch (requestCode) {
+                case CHOSE_PDF_FROM_DEVICE:
+                    // Handle the PDF file selected from device
+                    if (data != null) {
+                        // Get the URI of the selected PDF file
+                        Uri pdfUri = data.getData();
+
+                        // Perform the necessary actions with the selected PDF file
+                        // For example, you might want to upload it to Firebase Storage
+                        uploadFileToFirebase(pdfUri, folderId);
+                    }
+                    break;
+
+                case PICK_WORD_FILE:
+                    // Handle the Word file selected from device
+                    if (data != null) {
+                        // Get the URI of the selected Word file
+                        Uri wordUri = data.getData();
+
+                        // Perform the necessary actions with the selected Word file
+                        // For example, you might want to upload it to Firebase Storage
+                        uploadFileToFirebase(wordUri, folderId);
+                    }
+                    break;
+
+                // Add more cases if needed for other request codes
+            }
+        }
+    }
+
+    // Replace this method with the actual method to get the current folderId
+    private String getFolderId() {
+        return folderId;
+    }
+
+
+    private void uploadFileToFirebase(Uri fileUri, String folderId) {
+        // Sample logic for uploading a file to Firebase Storage within a specific folder
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to the folder in Firebase Storage
+        StorageReference folderRef = storageRef.child("folders/" + folderId);
+
+        // Create a reference to the file within the folder
+        StorageReference fileRef = folderRef.child(UUID.randomUUID().toString());
+
+        // Upload the file to Firebase Storage
+        fileRef.putFile(fileUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // File uploaded successfully
+                    StyleableToast.makeText(FolderActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                })
+                .addOnFailureListener(e -> {
+                    // File upload failed
+                    StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                });
+    }
+
+//    private void uploadFileToFirebase(Uri fileUri) {
+//        // Sample logic for uploading a file to Firebase Storage
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference storageRef = storage.getReference();
+//
+//        // Create a reference to the file in Firebase Storage
+//        StorageReference fileRef = storageRef.child("uploads/" + UUID.randomUUID().toString());
+//
+//        // Upload the file to Firebase Storage
+//        fileRef.putFile(fileUri)
+//                .addOnSuccessListener(taskSnapshot -> {
+//                    // File uploaded successfully
+//                    StyleableToast.makeText(FolderActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                })
+//                .addOnFailureListener(e -> {
+//                    // File upload failed
+//                    StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                });
+//    }
+
     private void ShowDialog() {
         // Create a Dialog object
         Dialog dialog = new Dialog(this);
