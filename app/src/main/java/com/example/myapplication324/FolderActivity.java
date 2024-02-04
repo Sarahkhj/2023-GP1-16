@@ -25,8 +25,12 @@ import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.myapplication324.databinding.ActivityFolderBinding;
 import com.example.myapplication324.databinding.ActivityHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -58,6 +62,8 @@ public class FolderActivity extends DrawerBaseActivity {
     private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
     private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
+    private List<FileMetadata> fileMetadataList = new ArrayList<>();
+    private FirebaseAuth auth;
 
 
 
@@ -83,6 +89,13 @@ public class FolderActivity extends DrawerBaseActivity {
         textview_mail = (TextView) findViewById(R.id.textview_mail);
         textview_share = (TextView) findViewById(R.id.textview_share);
         text = findViewById(R.id.pdf);
+        auth = FirebaseAuth.getInstance();
+
+        currentUserId = auth.getCurrentUser().getUid(); // You should have a unique identifier for each user.
+
+
+
+
         //Bottom nav
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.show(1, true);
@@ -191,39 +204,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
 
     @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode == RESULT_OK) {
-//            switch (requestCode) {
-//                case CHOSE_PDF_FROM_DEVICE:
-//                    // Handle the PDF file selected from device
-//                    if (data != null) {
-//                        // Get the URI of the selected PDF file
-//                        Uri pdfUri = data.getData();
-//
-//                        // Perform the necessary actions with the selected PDF file
-//                        // For example, you might want to upload it to Firebase Storage
-//                        uploadFileToFirebase(pdfUri);
-//                    }
-//                    break;
-//
-//                case PICK_WORD_FILE:
-//                    // Handle the Word file selected from device
-//                    if (data != null) {
-//                        // Get the URI of the selected Word file
-//                        Uri wordUri = data.getData();
-//
-//                        // Perform the necessary actions with the selected Word file
-//                        // For example, you might want to upload it to Firebase Storage
-//                        uploadFileToFirebase(wordUri);
-//                    }
-//                    break;
-//
-//                // Add more cases if needed for other request codes
-//            }
-//        }
-//    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,6 +248,33 @@ public class FolderActivity extends DrawerBaseActivity {
     }
 
 
+//    private void uploadFileToFirebase(Uri fileUri, String folderId) {
+//        // Sample logic for uploading a file to Firebase Storage within a specific folder
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference storageRef = storage.getReference();
+//
+//        // Create a reference to the folder in Firebase Storage
+//        StorageReference folderRef = storageRef.child("folders/" + folderId);
+//
+//        // Create a reference to the file within the folder
+//        StorageReference fileRef = folderRef.child(UUID.randomUUID().toString());
+//
+//        // Upload the file to Firebase Storage
+//        fileRef.putFile(fileUri)
+//                .addOnSuccessListener(taskSnapshot -> {
+//                    // File uploaded successfully
+//                    StyleableToast.makeText(FolderActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                })
+//                .addOnFailureListener(e -> {
+//                    // File upload failed
+//                    StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                });
+//    }
+
+    private void onFolderItemClick(String folderId) {
+        // Fetch and display files for the clicked folder
+        fetchFilesFromFirebase(folderId);
+    }
     private void uploadFileToFirebase(Uri fileUri, String folderId) {
         // Sample logic for uploading a file to Firebase Storage within a specific folder
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -282,33 +290,74 @@ public class FolderActivity extends DrawerBaseActivity {
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     // File uploaded successfully
+
+                    // Get the download URL of the uploaded file
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Save file metadata to Firebase Realtime Database
+                        saveFileMetadataToDatabase( fileRef.getName(),uri.toString() , folderId);
+                    }).addOnFailureListener(e -> {
+                        // Handle failure to get download URL
+                        StyleableToast.makeText(FolderActivity.this, "Failed to get download URL", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    });
+
                     StyleableToast.makeText(FolderActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
                 })
                 .addOnFailureListener(e -> {
                     // File upload failed
                     StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
                 });
+        fetchFilesFromFirebase(folderId);
+
     }
 
-//    private void uploadFileToFirebase(Uri fileUri) {
-//        // Sample logic for uploading a file to Firebase Storage
-//        FirebaseStorage storage = FirebaseStorage.getInstance();
-//        StorageReference storageRef = storage.getReference();
+//    private void saveFileMetadataToDatabase( String fileName,String fileDownloadUrl) {
+//        DatabaseReference filesMetadataRef = FirebaseDatabase.getInstance().getReference().child("filesinsideFolders").child(currentUserId);
 //
-//        // Create a reference to the file in Firebase Storage
-//        StorageReference fileRef = storageRef.child("uploads/" + UUID.randomUUID().toString());
+//        // Generate a unique key for the file
+//        String fileId = filesMetadataRef.push().getKey();
 //
-//        // Upload the file to Firebase Storage
-//        fileRef.putFile(fileUri)
-//                .addOnSuccessListener(taskSnapshot -> {
-//                    // File uploaded successfully
-//                    StyleableToast.makeText(FolderActivity.this, "File uploaded successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//        // Create a FileMetadata object
+//        FileMetadata fileMetadata = new FileMetadata( fileName, fileDownloadUrl);
+//
+//        // Save file metadata using the unique key
+//        filesMetadataRef.child(fileId).setValue(fileMetadata)
+//                .addOnSuccessListener(aVoid -> {
+//                    // File metadata saved successfully
+//                    StyleableToast.makeText(FolderActivity.this, "File metadata saved successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//
+//                    // Fetch and display updated files and folders
+//                    fetchFilesAndFoldersFromFirebase();
 //                })
 //                .addOnFailureListener(e -> {
-//                    // File upload failed
-//                    StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                    // File metadata saving failed
+//                    StyleableToast.makeText(FolderActivity.this, "File metadata saving failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
 //                });
 //    }
+
+    private void saveFileMetadataToDatabase(String fileName, String fileDownloadUrl, String folderId) {
+        DatabaseReference filesMetadataRef = FirebaseDatabase.getInstance().getReference().child("filesinsideFolders").child(currentUserId);
+
+        // Generate a unique key for the file
+        String fileId = filesMetadataRef.push().getKey();
+
+        // Create a FileMetadata object with folder ID
+        FileMetadata fileMetadata = new FileMetadata(fileName, fileDownloadUrl, folderId);
+
+        // Save file metadata using the unique key
+        filesMetadataRef.child(fileId).setValue(fileMetadata)
+                .addOnSuccessListener(aVoid -> {
+                    // File metadata saved successfully
+                    StyleableToast.makeText(FolderActivity.this, "File metadata saved successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                    // Fetch and display updated files and folders
+                    fetchFilesFromFirebase(folderId);  // Pass the folderId when fetching files
+                })
+                .addOnFailureListener(e -> {
+                    // File metadata saving failed
+                    StyleableToast.makeText(FolderActivity.this, "File metadata saving failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                });
+    }
+
 
     private void ShowDialog() {
         // Create a Dialog object
@@ -374,7 +423,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
             // Perform subfolder creation logic here
             if (!folderName.isEmpty()) {
-                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("Subfolders").child(currentUserId);
 
                 // Generate a unique key for the subfolder
                 String subfolderId = foldersRef.push().getKey();
@@ -435,7 +484,11 @@ public class FolderActivity extends DrawerBaseActivity {
 
     }
 
-
+    private void displayFilesAndFolders(List<Object> itemsList) {
+        // Set the updated list to the adapter
+        fileAdapter.setItemsList(itemsList);
+        fileAdapter.notifyDataSetChanged();
+    }
 
     private void openFolder(int position) {
         if (position >= 0 && position < folderMetadataList.size()) {
@@ -447,103 +500,113 @@ public class FolderActivity extends DrawerBaseActivity {
         }
     }
 
-
-//    private void openFolder(int position) {
-//        if (position >= 0 && position < folderMetadataList.size()) {
-//            FolderMetadata clickedFolder = folderMetadataList.get(position);
-//            String folderId = clickedFolder.getFolderId();
+//    private void fetchFilesAndFoldersFromFirebase() {
+//        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
+//        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 //
+//        // Clear the items list before populating it again
+//        itemsList.clear();
+//        fileMetadataList.clear(); // Clear file metadata list
+//        folderMetadataList.clear(); // Clear folder metadata list
 //
-//            // Start FolderActivity and pass the folderId
-//            Intent folderIntent = new Intent(this, FolderActivity.class);
-//            folderIntent.putExtra("folderId", folderId);
-//            startActivity(folderIntent);
-//        }
+//        filesRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                fileMetadataList.clear(); // Clear file metadata list before populating
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
+//                    if (fileMetadata != null) {
+//                        fileMetadataList.add(fileMetadata);
+//                        itemsList.add(fileMetadata); // Add file to combined list
+//                    }
+//                }
+//                // Clear and re-add items to the combined list
+//                itemsList.clear();
+//                itemsList.addAll(fileMetadataList);
+//                itemsList.addAll(folderMetadataList);
+//
+//                // Update RecyclerView
+//                updateRecyclerView();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle error
+//                Toast.makeText(FolderActivity.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        foldersRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                folderMetadataList.clear(); // Clear folder metadata list before populating
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
+//                    if (folderMetadata != null) {
+//                        folderMetadataList.add(folderMetadata);
+//                        itemsList.add(folderMetadata); // Add folder to combined list
+//                    }
+//                }
+//
+//                // Clear and re-add items to the combined list
+//                itemsList.clear();
+//                itemsList.addAll(fileMetadataList);
+//                itemsList.addAll(folderMetadataList);
+//
+//                // Update RecyclerView
+//                updateRecyclerView();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle error
+//                Toast.makeText(FolderActivity.this, "Failed to fetch folders: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 //    }
 
+    private void fetchFilesFromFirebase(String currentFolderId) {
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("filesinsideFolders").child(currentUserId);
+
+        // Clear the items list before populating it again
+        itemsList.clear();
+
+        filesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                fileMetadataList.clear(); // Clear file metadata list before populating
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
+                    if (fileMetadata != null) {
+                        // Check if the file belongs to the current folder
+                        if (fileMetadata.getFolderId().equals(currentFolderId)) {
+                            fileMetadataList.add(fileMetadata);
+                            itemsList.add(fileMetadata); // Add file to combined list
+                        }
+                    }
+                }
+
+                // Clear and re-add items to the combined list
+                itemsList.clear();
+                itemsList.addAll(fileMetadataList);
+
+                // Update RecyclerView
+                updateRecyclerView();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error
+                Toast.makeText(FolderActivity.this, "Failed to fetch files: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateRecyclerView() {
+        // Notify the adapter about changes in the combined list
+        fileAdapter.setItemsList(itemsList);
+        fileAdapter.notifyDataSetChanged();
+    }
 
 
-//    private class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-//        private List<Object> itemsList = new ArrayList<>();
-//
-//
-//        public void setItemsList(List<Object> itemsList) {
-//            this.itemsList = itemsList;
-//        }
-//
-//        @Override
-//        public int getItemViewType(int position) {
-//            Object item = itemsList.get(position);
-//
-//            if (item instanceof FileMetadata) {
-//                return 0;
-//            } else if (item instanceof FolderMetadata) {
-//                return 1;
-//            }
-//
-//            return -1;
-//        }
-//
-//
-//
-//        @NonNull
-//        @Override
-//        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-//            RecyclerView.ViewHolder viewHolder;
-//
-//            switch (viewType) {
-//                case 0:
-//                    View fileView = inflater.inflate(R.layout.item_file, parent, false);
-//                    viewHolder = new FileAdapter.FileViewHolder(fileView);
-//                    break;
-//                case 1:
-//                    View folderView = inflater.inflate(R.layout.item_folder, parent, false);
-//                    viewHolder = new FileAdapter.FolderViewHolder(folderView);
-//                    break;
-//                default:
-//                    throw new IllegalStateException("Unexpected value: " + viewType);
-//            }
-//            return viewHolder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-//            Object item = itemsList.get(position);
-//
-//            if (holder instanceof FileAdapter.FileViewHolder && item instanceof FileMetadata) {
-//                FileMetadata fileMetadata = (FileMetadata) item;
-//                ((FileAdapter.FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
-//            } else if (holder instanceof FileAdapter.FolderViewHolder && item instanceof FolderMetadata) {
-//                FolderMetadata folderMetadata = (FolderMetadata) item;
-//                ((FileAdapter.FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
-//            }
-//        }
-//
-//
-//
-//        @Override
-//        public int getItemCount() {
-//            return itemsList.size();
-//        }
-//
-//        class FileViewHolder extends RecyclerView.ViewHolder {
-//            TextView fileNameTextView;
-//
-//            public FileViewHolder(@NonNull View itemView) {
-//                super(itemView);
-//                fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
-//            }
-//        }
-//
-//        class FolderViewHolder extends RecyclerView.ViewHolder {
-//            TextView folderNameTextView;
-//
-//            public FolderViewHolder(@NonNull View itemView) {
-//                super(itemView);
-//                folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
-//                // Add click listener for the folder item
-//                itemView.setOnClickListener(v -> openFolder(getAdapterPosition()));
-//            }
-//        }
 }
