@@ -562,15 +562,15 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 //        }
 //    }
 
-    private void openFolder(int position) {
-        if (position >= 0 && position < folderMetadataList.size()) {
-            FolderMetadata clickedFolder = folderMetadataList.get(position);
-            String folderId = clickedFolder.getFolderId();
-
-            // Use the utility method from FolderUtils
-            FolderUtils.openFolder(this, folderId);
-        }
-    }
+//    private void openFolder(int position) {
+//        if (position >= 0 && position < folderMetadataList.size()) {
+//            FolderMetadata clickedFolder = folderMetadataList.get(position);
+//            String folderId = clickedFolder.getFolderId();
+//
+//            // Use the utility method from FolderUtils
+//            FolderUtils.openFolder(this, folderId);
+//        }
+//    }
 
 
 //    private class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

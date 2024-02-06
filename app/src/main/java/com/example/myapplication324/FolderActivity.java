@@ -118,7 +118,8 @@ public class FolderActivity extends DrawerBaseActivity {
         if (intent != null && intent.hasExtra("folderId")) {
             folderId = intent.getStringExtra("folderId");
 
-
+            // Fetch and display files for the clicked folder
+            fetchFilesFromFirebase(folderId);
 
 
             fab_main.setOnClickListener(view -> {
@@ -271,10 +272,7 @@ public class FolderActivity extends DrawerBaseActivity {
 //                });
 //    }
 
-    private void onFolderItemClick(String folderId) {
-        // Fetch and display files for the clicked folder
-        fetchFilesFromFirebase(folderId);
-    }
+
     private void uploadFileToFirebase(Uri fileUri, String folderId) {
         // Sample logic for uploading a file to Firebase Storage within a specific folder
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -490,15 +488,15 @@ public class FolderActivity extends DrawerBaseActivity {
         fileAdapter.notifyDataSetChanged();
     }
 
-    private void openFolder(int position) {
-        if (position >= 0 && position < folderMetadataList.size()) {
-            FolderMetadata clickedFolder = folderMetadataList.get(position);
-            String folderId = clickedFolder.getFolderId();
-
-            // Use the utility method from FolderUtils
-            FolderUtils.openFolder(this, folderId);
-        }
-    }
+//    private void openFolder(int position) {
+//        if (position >= 0 && position < folderMetadataList.size()) {
+//            FolderMetadata clickedFolder = folderMetadataList.get(position);
+//            String folderId = clickedFolder.getFolderId();
+//
+//            // Use the utility method from FolderUtils
+//            FolderUtils.openFolder(this, folderId);
+//        }
+//    }
 
 //    private void fetchFilesAndFoldersFromFirebase() {
 //        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
@@ -565,7 +563,7 @@ public class FolderActivity extends DrawerBaseActivity {
 //        });
 //    }
 
-    private void fetchFilesFromFirebase(String currentFolderId) {
+    protected void fetchFilesFromFirebase(String currentFolderId) {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("filesinsideFolders").child(currentUserId);
 
         // Clear the items list before populating it again
