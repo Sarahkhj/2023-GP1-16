@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:drawableRight="@drawable/lock_icon"
-                android:text="Nn.123123"
+
                 />
 
 
