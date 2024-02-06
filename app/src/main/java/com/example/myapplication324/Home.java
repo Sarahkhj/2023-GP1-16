@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -78,6 +80,9 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
     private ProgressBar progressBar;
+    FirebaseFirestore db;
+    ArrayList<DownModel> downModelArrayList = new ArrayList<>();
+
 
 
     @Override
@@ -106,6 +111,14 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         progressBar = findViewById(R.id.par);
         progressBar.setVisibility(View.GONE);
+
+        db=FirebaseFirestore.getInstance();
+
+        SetUpRV();
+        SetUpFB();
+        //dataFromFirebase();
+
+
 
 
         fab_main.setOnClickListener(view -> {
@@ -196,6 +209,22 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
+    private void SetUpFB(){
+
+        db=FirebaseFirestore.getInstance();
+
+    }
+
+    private void SetUpRV(){
+
+        recyclerView=findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+    }
+
+
     private void fetchFilesAndFoldersFromFirebase() {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
         DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
@@ -204,6 +233,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         itemsList.clear();
         fileMetadataList.clear(); // Clear file metadata list
         folderMetadataList.clear(); // Clear folder metadata list
+
 
         filesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -214,6 +244,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                     if (fileMetadata != null) {
                         fileMetadataList.add(fileMetadata);
                         itemsList.add(fileMetadata); // Add file to combined list
+
                     }
                 }
                 // Clear and re-add items to the combined list

@@ -101,16 +101,22 @@
 //}
 package com.example.myapplication324;
 
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.net.URL;
 import java.util.List;
 
 public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -167,6 +173,14 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
             FileMetadata fileMetadata = (FileMetadata) item;
             ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
+          // ((FileViewHolder) holder).fileLinkTextView.setText(fileMetadata.getFileDownloadUrl()); // شلته عشان ماينعرض  اسم الرابط بالصفحه
+            ((FileViewHolder) holder).buttonDownLoad.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
+                }
+            });
+
         } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
             FolderMetadata folderMetadata = (FolderMetadata) item;
             ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
@@ -183,18 +197,40 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // FileViewHolder and FolderViewHolder classes remain the same
     // ...
+    public void downLoadFile(Context context, String fileName,String fileExtension,String destinationDirectory,String url){
+
+        DownloadManager downloadManager= (DownloadManager)context.
+                getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri=Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+ fileExtension);
+
+        downloadManager.enqueue(request);
+
+    }
 
     static class FileViewHolder extends RecyclerView.ViewHolder {
-        TextView fileNameTextView;
+        TextView fileNameTextView,fileLinkTextView;
+        Button buttonDownLoad;
+
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);
             fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
+            fileLinkTextView = itemView.findViewById(R.id.fileLinkTextView);
+            buttonDownLoad = itemView.findViewById(R.id.buttonDownLoad);
+
+
         }
     }
 
+
+
     static class FolderViewHolder extends RecyclerView.ViewHolder {
         TextView folderNameTextView;
+
         private Context context;
         private String folderId;
 

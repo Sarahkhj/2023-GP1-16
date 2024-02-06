@@ -22,6 +22,15 @@
         android:textColor="@color/black"
         android:textSize="20dp"
         tools:text="Name"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fileLinkTextView"
+        android:layout_toEndOf="@id/imageview"
+        android:layout_below="@id/fileNameTextView"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        tools:text="Link"/>
 
 
 
@@ -31,6 +40,13 @@
         android:layout_below="@id/imageview"
         android:layout_marginTop="10dp"
         android:background="#DAD8D8"/>
+
+    <Button
+        android:id="@+id/buttonDownLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Down Load" />
 
 
 </RelativeLayout>
