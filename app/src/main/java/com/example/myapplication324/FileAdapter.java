@@ -103,14 +103,21 @@ package com.example.myapplication324;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -214,6 +221,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     static class FileViewHolder extends RecyclerView.ViewHolder {
         TextView fileNameTextView,fileLinkTextView;
         Button buttonDownLoad;
+        ImageButton options;
 
 
         public FileViewHolder(@NonNull View itemView) {
@@ -221,9 +229,64 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
             fileLinkTextView = itemView.findViewById(R.id.fileLinkTextView);
             buttonDownLoad = itemView.findViewById(R.id.buttonDownLoad);
-
+            options=itemView.findViewById(R.id.optionsButton);
+            options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showPopupMenu();
+                }
+            });
 
         }
+        private void showRenameDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+            builder.setTitle("Rename File");
+
+            // Create the input field for the new name
+            final EditText input = new EditText(itemView.getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            // Set the positive button and its click listener
+            builder.setPositiveButton("Rename", (dialog, which) -> {
+                String newName = input.getText().toString().trim();
+                // Perform rename action using the new name
+                if (!TextUtils.isEmpty(newName)) {
+                    // Handle the file rename logic here
+                }
+            });
+
+            // Set the negative button and its click listener
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+        }
+        private void showPopupMenu() {
+            PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
+            MenuInflater inflater = popupMenu.getMenuInflater();
+            inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
+
+            // Set a click listener on the popup menu items
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_rename:
+                        showRenameDialog();
+                        break;
+                    case R.id.menu_download:
+                        // Perform download action
+
+                        break;
+                    case R.id.menu_delete:
+                        // Perform delete action
+                        break;
+                }
+                return true;
+            });
+
+            popupMenu.show();
+        }
+
+
     }
 
 

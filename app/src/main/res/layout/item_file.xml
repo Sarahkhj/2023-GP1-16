@@ -42,11 +42,23 @@
         android:background="#DAD8D8"/>
 
     <Button
+
         android:id="@+id/buttonDownLoad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:text="Down Load" />
 
+    <ImageButton
+        android:id="@+id/optionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/drawable_three_dots"
+        android:contentDescription="Options"
+        android:background="@color/white"
+
+
+        />
 
 </RelativeLayout>
