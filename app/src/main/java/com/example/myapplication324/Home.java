@@ -344,7 +344,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                     String fileName = getFileNameFromUri(fileUri); // Get the original file name
                                     // Encrypt the file
                                     InputStream inputStream = getContentResolver().openInputStream(fileUri);
-                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "password");
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, password);
                                     if (encryptedBytes != null) {
                                         // Upload the encrypted file to Firebase Storage
                                         String encryptedFileName = fileName;
