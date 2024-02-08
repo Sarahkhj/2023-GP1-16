@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.icu.text.CaseMap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,6 +214,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
         if (resultCode == RESULT_OK) {
             String folderId = getFolderId(); // Replace this with the actual method to get the folderId
+            String fileName = ""; // Initialize file name variable
 
             switch (requestCode) {
                 case CHOSE_PDF_FROM_DEVICE:
@@ -219,10 +222,11 @@ public class FolderActivity extends DrawerBaseActivity {
                     if (data != null) {
                         // Get the URI of the selected PDF file
                         Uri pdfUri = data.getData();
+                        fileName = getFileNameFromUri(pdfUri);
 
                         // Perform the necessary actions with the selected PDF file
                         // For example, you might want to upload it to Firebase Storage
-                        uploadFileToFirebase(pdfUri, folderId);
+                        uploadFileToFirebase(pdfUri, folderId,fileName);
                     }
                     break;
 
@@ -231,10 +235,11 @@ public class FolderActivity extends DrawerBaseActivity {
                     if (data != null) {
                         // Get the URI of the selected Word file
                         Uri wordUri = data.getData();
+                        fileName = getFileNameFromUri(wordUri);
 
                         // Perform the necessary actions with the selected Word file
                         // For example, you might want to upload it to Firebase Storage
-                        uploadFileToFirebase(wordUri, folderId);
+                        uploadFileToFirebase(wordUri, folderId,fileName);
                     }
                     break;
 
@@ -273,7 +278,7 @@ public class FolderActivity extends DrawerBaseActivity {
 //    }
 
 
-    private void uploadFileToFirebase(Uri fileUri, String folderId) {
+    private void uploadFileToFirebase(Uri fileUri, String folderId, String fileName) {
         // Sample logic for uploading a file to Firebase Storage within a specific folder
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -282,7 +287,7 @@ public class FolderActivity extends DrawerBaseActivity {
         StorageReference folderRef = storageRef.child("folders/" + folderId);
 
         // Create a reference to the file within the folder
-        StorageReference fileRef = folderRef.child(UUID.randomUUID().toString());
+        StorageReference fileRef = folderRef.child(fileName); // Use the provided file name
 
         // Upload the file to Firebase Storage
         fileRef.putFile(fileUri)
@@ -292,7 +297,7 @@ public class FolderActivity extends DrawerBaseActivity {
                     // Get the download URL of the uploaded file
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         // Save file metadata to Firebase Realtime Database
-                        saveFileMetadataToDatabase( fileRef.getName(),uri.toString() , folderId);
+                        saveFileMetadataToDatabase( fileName,uri.toString() , folderId);
                     }).addOnFailureListener(e -> {
                         // Handle failure to get download URL
                         StyleableToast.makeText(FolderActivity.this, "Failed to get download URL", Toast.LENGTH_SHORT, R.style.mytoast).show();
@@ -356,6 +361,24 @@ public class FolderActivity extends DrawerBaseActivity {
                 });
     }
 
+    private String getFileNameFromUri(Uri uri) {
+        String fileName = "unknown";
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (displayNameIndex != -1) {
+                    fileName = cursor.getString(displayNameIndex);
+                }
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return fileName;
+    }
 
     private void ShowDialog() {
         // Create a Dialog object
