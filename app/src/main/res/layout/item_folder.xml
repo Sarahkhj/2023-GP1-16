@@ -23,7 +23,17 @@
         android:textSize="20dp"
         tools:text="Name"/>
 
+    <ImageButton
+        android:id="@+id/optionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="-13dp"
+        android:background="@color/white"
+        android:contentDescription="Options"
 
+
+        android:src="@drawable/drawable_three_dots" />
 
     <LinearLayout
         android:layout_width="match_parent"

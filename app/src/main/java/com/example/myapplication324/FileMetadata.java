@@ -32,4 +32,8 @@ public class FileMetadata {
     public String getFolderId() {
         return folderId;
     }
+
+    public void setFileName(String newName) {
+        fileName=newName;
+    }
 }
