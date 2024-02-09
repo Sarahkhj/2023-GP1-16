@@ -12,7 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="665dp" >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="661dp"
+            android:padding="12dp" />
+        </ScrollView>
         <include layout="@layout/content_main" />
+
         <com.etebarian.meowbottomnavigation.MeowBottomNavigation
             android:layout_width="match_parent"
             android:id="@+id/meow"
@@ -28,13 +40,5 @@
             app:mbn_shadowColor="#1f212121">
 
         </com.etebarian.meowbottomnavigation.MeowBottomNavigation>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="324dp"
-            android:layout_height="652dp"
-            android:padding="12dp" />
-
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

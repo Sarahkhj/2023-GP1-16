@@ -10,5 +10,6 @@
     <color name="bluelogo">#2A64B1</color>
     <color name="lightblue">#A7D5F4</color>
     <color name="darkblue">#708DF9</color>
+    <color name="darkgar">#A9A9A9</color>
     <color name="gray">#D8E2E8</color>
 </resources>

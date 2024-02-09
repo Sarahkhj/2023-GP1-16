@@ -15,25 +15,25 @@
         app:tint="@color/lightblue" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/folderNameTextView"
+        android:layout_width="309dp"
+        android:layout_height="wrap_content"
         android:layout_toEndOf="@id/imageview"
         android:textColor="@color/black"
         android:textSize="20dp"
-        tools:text="Name"/>
+        tools:text="Name" />
 
     <ImageButton
         android:id="@+id/optionsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="47dp"
+        android:layout_height="49dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="-13dp"
+        android:layout_marginRight="-9dp"
         android:background="@color/white"
         android:contentDescription="Options"
-
-
-        android:src="@drawable/drawable_three_dots" />
+        android:src="@drawable/baseline_drag_indicator_24"
+        app:tint="@color/darkgar"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
