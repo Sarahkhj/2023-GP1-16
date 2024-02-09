@@ -206,10 +206,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     break;
                                 case R.id.menu_download:
                                     // Perform download action
-
                                     downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
-
-
                                     break;
                                 case R.id.menu_delete:
                                     // Perform delete action
@@ -267,6 +264,68 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             // Pass the context and folderId to FolderViewHolder
             ((FolderViewHolder) holder).setContextAndFolderId(context, folderMetadata.getFolderId());
+            ((FolderViewHolder) holder).options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentPosition = holder.getAdapterPosition();
+                    showPopupMenu(v);        }
+
+                private void showPopupMenu(View itemView) {
+                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
+                    MenuInflater inflater = popupMenu.getMenuInflater();
+                    inflater.inflate(R.menu.folder_popup_menu, popupMenu.getMenu());
+
+                    // Set a click listener on the popup menu items
+                    popupMenu.setOnMenuItemClickListener(item -> {
+                        switch (item.getItemId()) {
+                            case R.id.menu_rename:
+                                showRenameDialog(itemView);
+                                break;
+                            case R.id.menu_delete:
+                                // Perform delete action for folders
+                                break;
+                        }
+                        return true;
+                    });
+
+                    popupMenu.show();
+                }
+
+                private void showRenameDialog(View itemView) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+                    builder.setTitle("Rename Folder");
+                    FolderMetadata currentFolderMetadata = (FolderMetadata) itemsList.get(currentPosition); // Access the folder metadata from the list
+                    String currentFolderName = currentFolderMetadata.getFolderName(); // Get the current folder name
+
+                    // Create the input field for the new name
+                    final EditText input = new EditText(itemView.getContext());
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setText(currentFolderName); // Set the current folder name as the initial text
+                    input.setSelection(currentFolderName.length()); // Set cursor position at the end of the text
+                    builder.setView(input);
+
+                    // Set the positive button and its click listener
+                    builder.setPositiveButton("Rename", (dialog, which) -> {
+                        String newName = input.getText().toString().trim();
+                        if (!newName.equals(currentFolderName)) {
+                            // Handle the folder rename logic here
+                            currentFolderMetadata.setFolderName(newName);
+
+                            // Update the name in the UI
+                            ((FolderViewHolder) holder).folderNameTextView.setText(newName);
+
+                            // Update the name in Firebase or your data source
+                            DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentFolderMetadata.getFolderId());
+                            folderRef.child("folderName").setValue(newName);
+                        }
+                    });
+
+                    // Set the negative button and its click listener
+                    builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+                    builder.show();
+                }
+            });
         }
     }
 
@@ -317,12 +376,13 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private Context context;
         private String folderId;
-
+        ImageButton options;
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
             folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
             // Add click listener for the folder item
             itemView.setOnClickListener(v -> FolderUtils.openFolder(context, folderId));
+            options=itemView.findViewById(R.id.optionsButton);
         }
 
         // Method to set the context and folderId
