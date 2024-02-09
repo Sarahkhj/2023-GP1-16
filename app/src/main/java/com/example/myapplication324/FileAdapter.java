@@ -207,6 +207,9 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 case R.id.menu_download:
                                     // Perform download action
 
+                                    downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
+
+
                                     break;
                                 case R.id.menu_delete:
                                     // Perform delete action
@@ -298,7 +301,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
             fileLinkTextView = itemView.findViewById(R.id.fileLinkTextView);
-            buttonDownLoad = itemView.findViewById(R.id.buttonDownLoad);
+
             options=itemView.findViewById(R.id.optionsButton);
 
         }
