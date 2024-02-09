@@ -129,7 +129,7 @@ import java.util.List;
 public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> itemsList;
     private Context context; // Add a reference to the context
-
+    private int currentPosition = -1; // Initialize currentPosition to -1
     public FileAdapter(List<Object> itemsList, Context context) {
         this.itemsList = itemsList;
         this.context = context;
@@ -181,10 +181,67 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             FileMetadata fileMetadata = (FileMetadata) item;
             ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
           // ((FileViewHolder) holder).fileLinkTextView.setText(fileMetadata.getFileDownloadUrl()); // شلته عشان ماينعرض  اسم الرابط بالصفحه
-            ((FileViewHolder) holder).buttonDownLoad.setOnClickListener(new View.OnClickListener() {
+            ((FileViewHolder) holder).options.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
+                     currentPosition = holder.getAdapterPosition();
+                    showPopupMenu(v);        }
+
+                private void showPopupMenu(View itemView) {
+
+
+                 //   AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+                        PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
+                        MenuInflater inflater = popupMenu.getMenuInflater();
+                        inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
+
+                        // Set a click listener on the popup menu items
+                        popupMenu.setOnMenuItemClickListener(item -> {
+                            switch (item.getItemId()) {
+                                case R.id.menu_rename:
+                                    showRenameDialog(itemView);
+                                    break;
+                                case R.id.menu_download:
+                                    // Perform download action
+
+                                    break;
+                                case R.id.menu_delete:
+                                    // Perform delete action
+                                    break;
+                            }
+                            return true;
+                        });
+
+                        popupMenu.show();
+
+                }
+
+                private void showRenameDialog(View itemView) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+                    builder.setTitle("Rename File");
+                    FileMetadata fileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
+                    String currentFileName = fileMetadata.getFileName(); // Get the current file name
+
+                    // Create the input field for the new name
+                    final EditText input = new EditText(itemView.getContext());
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setText(currentFileName); // Set the current file name as the initial text
+                    input.setSelection(currentFileName.length()); // Set cursor position at the end of the text
+                    builder.setView(input);
+
+                    // Set the positive button and its click listener
+                    builder.setPositiveButton("Rename", (dialog, which) -> {
+                        String newName = input.getText().toString().trim();
+                        // Perform rename action using the new name
+                        if (!TextUtils.isEmpty(newName)) {
+                            // Handle the file rename logic here
+                        }
+                    });
+
+                    // Set the negative button and its click listener
+                    builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+                    builder.show();
                 }
             });
 
@@ -230,61 +287,9 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             fileLinkTextView = itemView.findViewById(R.id.fileLinkTextView);
             buttonDownLoad = itemView.findViewById(R.id.buttonDownLoad);
             options=itemView.findViewById(R.id.optionsButton);
-            options.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showPopupMenu();
-                }
-            });
 
         }
-        private void showRenameDialog() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
-            builder.setTitle("Rename File");
 
-            // Create the input field for the new name
-            final EditText input = new EditText(itemView.getContext());
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-
-            // Set the positive button and its click listener
-            builder.setPositiveButton("Rename", (dialog, which) -> {
-                String newName = input.getText().toString().trim();
-                // Perform rename action using the new name
-                if (!TextUtils.isEmpty(newName)) {
-                    // Handle the file rename logic here
-                }
-            });
-
-            // Set the negative button and its click listener
-            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-            builder.show();
-        }
-        private void showPopupMenu() {
-            PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
-            MenuInflater inflater = popupMenu.getMenuInflater();
-            inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
-
-            // Set a click listener on the popup menu items
-            popupMenu.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.menu_rename:
-                        showRenameDialog();
-                        break;
-                    case R.id.menu_download:
-                        // Perform download action
-
-                        break;
-                    case R.id.menu_delete:
-                        // Perform delete action
-                        break;
-                }
-                return true;
-            });
-
-            popupMenu.show();
-        }
 
 
     }
