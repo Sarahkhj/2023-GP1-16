@@ -123,6 +123,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.net.URL;
 import java.util.List;
 
@@ -219,26 +222,36 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 private void showRenameDialog(View itemView) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
                     builder.setTitle("Rename File");
-                    FileMetadata fileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
-                    String currentFileName = fileMetadata.getFileName(); // Get the current file name
+                    FileMetadata currentFileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
+                    String currentFileName = currentFileMetadata.getFileName(); // Get the current file name
 
-                    // Create the input field for the new name
+// Create the input field for the new name
                     final EditText input = new EditText(itemView.getContext());
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
                     input.setText(currentFileName); // Set the current file name as the initial text
                     input.setSelection(currentFileName.length()); // Set cursor position at the end of the text
                     builder.setView(input);
 
-                    // Set the positive button and its click listener
+// Set the positive button and its click listener
                     builder.setPositiveButton("Rename", (dialog, which) -> {
                         String newName = input.getText().toString().trim();
-                        // Perform rename action using the new name
-                        if (!TextUtils.isEmpty(newName)) {
+                        if (!newName.equals(currentFileName)) {
                             // Handle the file rename logic here
+                            String fileId = currentFileMetadata.getFileDownloadUrl(); // Get the file ID from the metadata
+
+                            // Update the file name in the metadata
+                            currentFileMetadata.setFileName(newName);
+
+                            // Update the file name in the UI
+                            ((FileViewHolder) holder).fileNameTextView.setText(newName);
+
+                            // Update the file name in Firebase
+                            DatabaseReference fileRef = FirebaseDatabase.getInstance().getReference().child("files");
+                            fileRef.child("fileName").setValue(newName);
                         }
                     });
 
-                    // Set the negative button and its click listener
+// Set the negative button and its click listener
                     builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
                     builder.show();
