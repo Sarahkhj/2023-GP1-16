@@ -243,6 +243,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                     FileMetadata fileMetadata = dataSnapshot.getValue(FileMetadata.class);
                     if (fileMetadata != null) {
                         fileMetadataList.add(fileMetadata);
+                        fileMetadata.setKey(dataSnapshot.getKey());
                         itemsList.add(fileMetadata); // Add file to combined list
 
                     }

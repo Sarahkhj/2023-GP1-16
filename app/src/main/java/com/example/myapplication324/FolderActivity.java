@@ -602,6 +602,7 @@ public class FolderActivity extends DrawerBaseActivity {
                         // Check if the file belongs to the current folder
                         if (fileMetadata.getFolderId().equals(currentFolderId)) {
                             fileMetadataList.add(fileMetadata);
+                            fileMetadata.setKey(dataSnapshot.getKey());
                             itemsList.add(fileMetadata); // Add file to combined list
                         }
                     }

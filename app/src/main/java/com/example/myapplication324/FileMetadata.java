@@ -1,7 +1,14 @@
 package com.example.myapplication324;
 
+import com.google.firebase.database.Exclude;
+
 public class FileMetadata {
 
+
+
+
+    @Exclude
+    private String key;
     private String fileName;
     private String fileDownloadUrl;
     private String folderId;
@@ -35,5 +42,13 @@ public class FileMetadata {
 
     public void setFileName(String newName) {
         fileName=newName;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

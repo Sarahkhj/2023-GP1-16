@@ -106,10 +106,12 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -119,15 +121,29 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.common.base.MoreObjects;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.net.URL;
 import java.util.List;
+
+import io.github.muddz.styleabletoast.StyleableToast;
 
 public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> itemsList;
@@ -210,6 +226,10 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     break;
                                 case R.id.menu_delete:
                                     // Perform delete action
+                                    FileMetadata currentFileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
+                                    String table = checkSubstring(context.toString());
+                                    getParentKeyByChildKey(currentFileMetadata.getKey(),table);
+
                                     break;
                             }
                             return true;
@@ -218,6 +238,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         popupMenu.show();
 
                 }
+
+
 
                 private void showRenameDialog(View itemView) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
@@ -333,6 +355,100 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemCount() {
         return itemsList.size();
     }
+
+
+    private void deleteFile(String fileKey) {
+        // Create a storage reference from our app
+         Toast.makeText(context, fileKey, Toast.LENGTH_SHORT).show();
+
+
+    }
+    private void deleteData(final String parentKey, final String username,String table) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Are you sure you want to delete this file?");
+
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked Yes button
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(table);
+                reference.child(parentKey).child(username).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            StyleableToast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                        } else {
+                            StyleableToast.makeText(context, "Failed", Toast.LENGTH_SHORT,R.style.mytoast).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked No button
+
+                dialog.dismiss();
+            }
+        });
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+
+        // Show the dialog
+        dialog.show();
+    }
+
+
+    private void getParentKeyByChildKey(String childKey,String table) { // take the parants id
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
+
+        filesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.child(childKey).exists()) {
+                        String parentKey = userSnapshot.getKey();
+
+                        // Now you have the parent key
+                        Log.d("PARENT_KEY", parentKey);
+                        deleteData(parentKey,childKey,table);
+
+                        return; // Exit the loop after finding the first match
+                    }
+                }
+
+                // Handle the case when the child key is not found
+                Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    public static String checkSubstring(String word) {
+        String substring = "home"; // Specify your substring here
+        String lowercaseWord = word.toLowerCase();
+
+        if (lowercaseWord.contains(substring)) {
+            Log.e("Yes", " file ");
+            return "files";
+        } else {
+            Log.e("No", " filesinsideFolders ");
+            return "filesinsideFolders";
+        }
+    }
+
+
+
+
+
 
     // FileViewHolder and FolderViewHolder classes remain the same
     // ...
