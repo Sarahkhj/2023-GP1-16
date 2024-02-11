@@ -390,13 +390,15 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         fileRef.child("fileName").setValue(newName)
                 .addOnSuccessListener(aVoid -> {
                     // File name update in Firebase Realtime Database successful
-                    Log.d("FILE_NAME_UPDATED", "File name updated successfully");
+
+                    StyleableToast.makeText(context, "File name updated successfully", Toast.LENGTH_SHORT,R.style.mytoast).show();
 
                     // Perform any additional actions after updating the file name
                 })
                 .addOnFailureListener(e -> {
                     // File name update in Firebase Realtime Database failed
-                    Log.e("FILE_NAME_UPDATE_FAILED", "Failed to update file name: " + e.getMessage());
+                    StyleableToast.makeText(context, "Failed to update file name", Toast.LENGTH_SHORT,R.style.mytoast).show();
+
 
                     // Handle the failure case
                 });
