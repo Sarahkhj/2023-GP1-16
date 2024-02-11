@@ -268,8 +268,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             ((FileViewHolder) holder).fileNameTextView.setText(newName);
 
                             // Update the file name in Firebase
-                            DatabaseReference fileRef = FirebaseDatabase.getInstance().getReference().child("files");
-                            fileRef.child("fileName").setValue(newName);
+                            String table = checkSubstring(context.toString());
+                            getParentKeyByChildKeyRENAME(currentFileMetadata.getKey(), table, newName);
                         }
                     });
 
@@ -280,7 +280,10 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
-        } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
+        }     //file renaming done
+
+
+        else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
             FolderMetadata folderMetadata = (FolderMetadata) item;
             ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
 
@@ -339,6 +342,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             // Update the name in Firebase or your data source
                             DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentFolderMetadata.getFolderId());
                             folderRef.child("folderName").setValue(newName);
+
+
                         }
                     });
 
@@ -349,6 +354,52 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
         }
+    }
+    private void getParentKeyByChildKeyRENAME(String childKey, String table, String newName) {
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
+
+        filesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.child(childKey).exists()) {
+                        String parentKey = userSnapshot.getKey();
+
+                        // Now you have the parent key
+                        Log.d("PARENT_KEY", parentKey);
+                        // Update the file name
+                        updateFileName(parentKey, childKey, newName, table);
+
+                        return; // Exit the loop after finding the first match
+                    }
+                }
+
+                // Handle the case when the child key is not found
+                Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void updateFileName(String parentKey, String childKey, String newName, String table) {
+        DatabaseReference fileRef = FirebaseDatabase.getInstance().getReference().child(table).child(parentKey).child(childKey);
+        fileRef.child("fileName").setValue(newName)
+                .addOnSuccessListener(aVoid -> {
+                    // File name update in Firebase Realtime Database successful
+                    Log.d("FILE_NAME_UPDATED", "File name updated successfully");
+
+                    // Perform any additional actions after updating the file name
+                })
+                .addOnFailureListener(e -> {
+                    // File name update in Firebase Realtime Database failed
+                    Log.e("FILE_NAME_UPDATE_FAILED", "Failed to update file name: " + e.getMessage());
+
+                    // Handle the failure case
+                });
     }
 
     @Override
