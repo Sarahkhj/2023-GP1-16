@@ -1,9 +1,14 @@
 package com.example.myapplication324;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Map;
 
 public class FolderMetadata {
 
+
+    @Exclude
+    private String key;
     private String folderId;
     private String folderName;
     private Map<String, Boolean> subfolders; // Map to store subfolders
@@ -42,6 +47,13 @@ public class FolderMetadata {
     public FolderMetadata(String subFolderId, String subFolderName, Object o) {
 
     }
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
 
     public String getFolderId() {
@@ -63,6 +75,8 @@ public class FolderMetadata {
     public void setParentFolderId(String parentFolderId) {
         this.parentFolderId = parentFolderId;
     }
+
+
 
 
 

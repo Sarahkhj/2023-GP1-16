@@ -131,6 +131,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.base.MoreObjects;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -308,6 +309,11 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 break;
                             case R.id.menu_delete:
                                 // Perform delete action for folders
+                                FolderMetadata currentFolderMetadata = (FolderMetadata) itemsList.get(currentPosition); // Access the folder metadata from the list
+                                //checkKey(currentFolderMetadata.getKey());
+                                String table = "folders";
+                                //getParentKeyByChildKeyfolder(currentFolderMetadata.getKey(),table);
+                                showDeleteConfirmationDialog(currentFolderMetadata.getKey(),table);
                                 break;
                         }
                         return true;
@@ -410,7 +416,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    private void deleteFile(String fileKey) {
+    private void checkKey(String fileKey) {
         // Create a storage reference from our app
          Toast.makeText(context, fileKey, Toast.LENGTH_SHORT).show();
 
@@ -497,6 +503,119 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return "filesinsideFolders";
         }
     }
+    private void getParentKeyByChildKeyfolder(String childKey,String table) { // take the parants id
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
+
+        filesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.child(childKey).exists()) {
+                        String parentKey = userSnapshot.getKey();
+
+                        // Now you have the parent key
+                        Log.d("PARENT_KEY", parentKey);
+                      //  deleteDatafolder(parentKey,childKey,table);
+                        removeChildrenAndFolder(parentKey,childKey);
+
+                        return; // Exit the loop after finding the first match
+                    }
+                }
+
+                // Handle the case when the child key is not found
+                Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    public void removeChildrenAndFolder(String parentKey, final String targetFolderId) {
+        // Reference to the parent node
+        String fileTable = "filesinsideFolders";
+        DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference(fileTable).child(parentKey);
+        // Attach a listener to read the data at the parent node
+        parentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Check if the parent node exists
+                if (dataSnapshot.exists()) {
+                    // Iterate through the children of the parent node
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        // Access the "folder id" attribute inside each child
+                        String folderId = childSnapshot.child("folderId").getValue(String.class);
+
+                        // Check if the folder id matches the target folder id
+                        if (folderId != null && folderId.equals(targetFolderId)) {
+                            // Remove the child node
+                            childSnapshot.getRef().removeValue();
+                        }
+                    }
+                    // Remove the folder
+                    deleteFolderOnly(parentKey, targetFolderId);
+                } else {
+                    // Parent node with the given key does not exist
+                    System.out.println("Parent not found for key: " + parentKey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors, if any
+                System.out.println("Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void deleteFolderOnly(final String parentKey, final String username) {
+        String folderTable = "folders";
+
+        // Delete the folder without confirmation
+        DatabaseReference folderReference = FirebaseDatabase.getInstance().getReference(folderTable).child(parentKey).child(username);
+
+        // Delete the folder itself
+        folderReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    StyleableToast.makeText(context, "Successfully Deleted Folder", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                } else {
+                    StyleableToast.makeText(context, "Failed to delete the folder", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+            }
+        });
+    }
+
+    private void showDeleteConfirmationDialog(String childKey,String table) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Are you sure you want to delete this folder?");
+
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked Yes button
+                getParentKeyByChildKeyfolder(childKey, table);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked No button
+                dialog.dismiss();
+            }
+        });
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+
+        // Show the dialog
+        dialog.show();
+    }
+
+
 
 
 

@@ -272,6 +272,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                     FolderMetadata folderMetadata = dataSnapshot.getValue(FolderMetadata.class);
                     if (folderMetadata != null) {
                         folderMetadataList.add(folderMetadata);
+                        folderMetadata.setKey(dataSnapshot.getKey());
                         itemsList.add(folderMetadata); // Add folder to combined list
                     }
                 }
