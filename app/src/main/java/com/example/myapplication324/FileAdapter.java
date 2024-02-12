@@ -1,104 +1,4 @@
-//package com.example.myapplication324;
-//
-//import android.content.Intent;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.TextView;
-//
-//import androidx.annotation.NonNull;
-//import androidx.recyclerview.widget.RecyclerView;
-//
-//import java.util.List;
-//
-//public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-//    private List<Object> itemsList;
-//
-//    public FileAdapter(List<Object> itemsList) {
-//        this.itemsList = itemsList;
-//    }
-//
-//
-//    public void setItemsList(List<Object> itemsList) {
-//            this.itemsList = itemsList;
-//      }
-//    @Override
-//    public int getItemViewType(int position) {
-//        Object item = itemsList.get(position);
-//
-//        if (item instanceof FileMetadata) {
-//            return 0;
-//        } else if (item instanceof FolderMetadata) {
-//            return 1;
-//        }
-//
-//        return -1;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-//        RecyclerView.ViewHolder viewHolder;
-//
-//        switch (viewType) {
-//            case 0:
-//                View fileView = inflater.inflate(R.layout.item_file, parent, false);
-//                viewHolder = new FileViewHolder(fileView);
-//                break;
-//            case 1:
-//                View folderView = inflater.inflate(R.layout.item_folder, parent, false);
-//                viewHolder = new FolderViewHolder(folderView);
-//                break;
-//            default:
-//                throw new IllegalStateException("Unexpected value: " + viewType);
-//        }
-//        return viewHolder;
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-//        Object item = itemsList.get(position);
-//
-//        if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
-//            FileMetadata fileMetadata = (FileMetadata) item;
-//            ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
-//        } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
-//            FolderMetadata folderMetadata = (FolderMetadata) item;
-//            ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
-//        }
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return itemsList.size();
-//    }
-//
-//    // FileViewHolder and FolderViewHolder classes remain the same
-//    // ...
-//
-//    static class FileViewHolder extends RecyclerView.ViewHolder {
-//        TextView fileNameTextView;
-//
-//        public FileViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
-//        }
-//    }
-//
-//    static class FolderViewHolder extends RecyclerView.ViewHolder {
-//        TextView folderNameTextView;
-//
-//        public FolderViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
-//            // Add click listener for the folder item
-//            itemView.setOnClickListener(v -> FolderUtils.openFolder(getAdapterPosition()));
-//        }
-//    }
-//
-//
-//}
+
 package com.example.myapplication324;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
@@ -182,7 +82,15 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         return viewHolder;
     }
-
+    private boolean containsInvalidCharacters(String name) {
+        String invalidCharacters = "[]{}()/\\:?\"<>|*";
+        for (int i = 0; i < name.length(); i++) {
+            if (invalidCharacters.contains(String.valueOf(name.charAt(i)))) {
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Object item = itemsList.get(position);
@@ -230,15 +138,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 }
 
-                private boolean containsInvalidCharacters(String name) {
-                    String invalidCharacters = "[]{}()/\\:?\"<>|*";
-                    for (int i = 0; i < name.length(); i++) {
-                        if (invalidCharacters.contains(String.valueOf(name.charAt(i)))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
+
 
                 private void showRenameDialog(View itemView) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
@@ -246,36 +146,48 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     FileMetadata currentFileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
                     String currentFileName = currentFileMetadata.getFileName(); // Get the current file name
 
-// Create the input field for the new name
+                    // Create the input field for the new name
                     final EditText input = new EditText(itemView.getContext());
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
                     input.setText(currentFileName); // Set the current file name as the initial text
                     input.setSelection(currentFileName.length()); // Set cursor position at the end of the text
                     builder.setView(input);
 
-// Set the positive button and its click listener
-                    builder.setPositiveButton("Rename", (dialog, which) -> {
+                    // Set the positive button and its click listener
+                    builder.setPositiveButton("Rename", null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    // Get the positive button from the dialog
+                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    positiveButton.setOnClickListener(view -> {
                         String newName = input.getText().toString().trim();
                         if (!newName.equals(currentFileName)) {
-                            // Handle the file rename logic here
-                            String fileId = currentFileMetadata.getFileDownloadUrl(); // Get the file ID from the metadata
+                            // Check if the new name contains invalid characters
+                            if (containsInvalidCharacters(newName)) {
+                                input.setError("File name contains invalid characters");
+                            } else {
+                                // Handle the file rename logic here
+                                String fileId = currentFileMetadata.getFileDownloadUrl(); // Get the file ID from the metadata
 
-                            // Update the file name in the metadata
-                            currentFileMetadata.setFileName(newName);
+                                // Update the file name in the metadata
+                                currentFileMetadata.setFileName(newName);
 
-                            // Update the file name in the UI
-                       ((FileViewHolder) holder).fileNameTextView.setText(newName);
+                                // Update the file name in the UI
+                                ((FileViewHolder) holder).fileNameTextView.setText(newName);
 
-                            // Update the file name in Firebase
-                            String table = checkSubstring(context.toString());
-                            getParentKeyByChildKeyRENAME(currentFileMetadata.getKey(), table, newName);
+                                // Update the file name in Firebase
+                                String table = checkSubstring(context.toString());
+                                getParentKeyByChildKeyRENAME(currentFileMetadata.getKey(), table, newName);
+
+                                dialog.dismiss(); // Close the dialog
+                            }
                         }
                     });
 
-// Set the negative button and its click listener
-                    builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-                    builder.show();
+                    // Set the negative button and its click listener
+                    builder.setNegativeButton("Cancel", (dialog1, which) -> dialog.cancel());
                 }
             });
 
@@ -334,30 +246,41 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     builder.setView(input);
 
                     // Set the positive button and its click listener
-                    builder.setPositiveButton("Rename", (dialog, which) -> {
+                    builder.setPositiveButton("Rename", null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    // Get the positive button from the dialog
+                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    positiveButton.setOnClickListener(view -> {
                         String newName = input.getText().toString().trim();
                         if (!newName.equals(currentFolderName)) {
-                            // Handle the folder rename logic here
-                            currentFolderMetadata.setFolderName(newName);
+                            // Check if the new name contains invalid characters
+                            if (containsInvalidCharacters(newName)) {
+                                input.setError("Folder name contains invalid characters");
+                                Toast.makeText(itemView.getContext(), "Folder name contains invalid characters", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Handle the folder rename logic here
+                                currentFolderMetadata.setFolderName(newName);
 
-                            // Update the name in the UI
-                            ((FolderViewHolder) holder).folderNameTextView.setText(newName);
-                            String folderkey=currentFolderMetadata.getKey();
+                                // Update the name in the UI
+                                ((FolderViewHolder) holder).folderNameTextView.setText(newName);
+                                String folderKey = currentFolderMetadata.getKey();
 
-                            // Update the name in Firebase or your data source
-                            DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("Jrkw3wCNFLXLsu84KhqNNhB6qCQ2").child("-NqClyALLvCTUdNSLrcD");
-                            folderRef.child("folderName").setValue(newName);
-                            //for now folders then sub folder->>>getting from a method which table
-                            getParentKeyByChildKeyFolder(folderkey,"folders",newName );
+                                // Update the name in Firebase or your data source
+                                DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("Jrkw3wCNFLXLsu84KhqNNhB6qCQ2").child("-NqClyALLvCTUdNSLrcD");
+                                folderRef.child("folderName").setValue(newName);
+                                //for now folders then sub folder->>>getting from a method which table
+                                getParentKeyByChildKeyFolder(folderKey, "folders", newName);
 
-
+                                dialog.dismiss(); // Close the dialog
+                            }
                         }
                     });
 
                     // Set the negative button and its click listener
-                    builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-                    builder.show();
+                    builder.setNegativeButton("Cancel", (dialog1, which) -> dialog1.cancel());
                 }
             });
         }

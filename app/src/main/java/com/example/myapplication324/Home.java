@@ -521,27 +521,32 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         createFolderBtn.setOnClickListener(v -> {
             String folderName = folderNameEditText.getText().toString().trim();
 
-            // Perform folder creation logic here
+            // Perform folder name validation
             if (!folderName.isEmpty()) {
-                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+                // Check if the folder name contains invalid characters
+                if (containsInvalidCharacters(folderName)) {
+                    folderNameEditText.setError("Folder name contains invalid characters");
+                } else {
+                    DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
-                // Generate a unique key for the folder
-                String folderId = foldersRef.push().getKey();
+                    // Generate a unique key for the folder
+                    String folderId = foldersRef.push().getKey();
 
-                // Store folder metadata in the Realtime Database
-                FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
+                    // Store folder metadata in the Realtime Database
+                    FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
 
-                // Save folder metadata using the unique key
-                foldersRef.child(folderId).setValue(folderMetadata)
-                        .addOnSuccessListener(aVoid -> {
-                            // Folder created successfully
-                            StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                            dialog.dismiss(); // Dismiss the dialog after creating the folder
-                        })
-                        .addOnFailureListener(e -> {
-                            // Folder creation failed
-                            StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                        });
+                    // Save folder metadata using the unique key
+                    foldersRef.child(folderId).setValue(folderMetadata)
+                            .addOnSuccessListener(aVoid -> {
+                                // Folder created successfully
+                                StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                dialog.dismiss(); // Dismiss the dialog after creating the folder
+                            })
+                            .addOnFailureListener(e -> {
+                                // Folder creation failed
+                                StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            });
+                }
             } else {
                 folderNameEditText.setError("Please enter a folder name");
             }
@@ -549,6 +554,17 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         // Show the dialog
         dialog.show();
+    }
+
+    // Function to check if the folder name contains invalid characters
+    private boolean containsInvalidCharacters(String name) {
+        String invalidCharacters = "[]{}()/\\:?\"<>|*";
+        for (int i = 0; i < name.length(); i++) {
+            if (invalidCharacters.contains(String.valueOf(name.charAt(i)))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
