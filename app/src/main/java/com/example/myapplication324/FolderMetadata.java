@@ -16,6 +16,9 @@ public class FolderMetadata {
 
     private String parentFolderId; // Add this field
 
+    public String getParentFolderId() {
+        return parentFolderId;
+    }
 
     public Map<String, Boolean> getSubfolders() {
         return subfolders;
