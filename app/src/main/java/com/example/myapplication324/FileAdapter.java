@@ -107,10 +107,8 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -127,21 +125,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.common.base.MoreObjects;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.net.URL;
 import java.util.List;
 
 import io.github.muddz.styleabletoast.StyleableToast;
@@ -240,7 +230,15 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 }
 
-
+                private boolean containsInvalidCharacters(String name) {
+                    String invalidCharacters = "[]{}()/\\:?\"<>|*";
+                    for (int i = 0; i < name.length(); i++) {
+                        if (invalidCharacters.contains(String.valueOf(name.charAt(i)))) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
 
                 private void showRenameDialog(View itemView) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
@@ -266,7 +264,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             currentFileMetadata.setFileName(newName);
 
                             // Update the file name in the UI
-                            ((FileViewHolder) holder).fileNameTextView.setText(newName);
+                       ((FileViewHolder) holder).fileNameTextView.setText(newName);
 
                             // Update the file name in Firebase
                             String table = checkSubstring(context.toString());
@@ -344,10 +342,13 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                             // Update the name in the UI
                             ((FolderViewHolder) holder).folderNameTextView.setText(newName);
+                            String folderkey=currentFolderMetadata.getKey();
 
                             // Update the name in Firebase or your data source
-                            DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentFolderMetadata.getFolderId());
+                            DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("Jrkw3wCNFLXLsu84KhqNNhB6qCQ2").child("-NqClyALLvCTUdNSLrcD");
                             folderRef.child("folderName").setValue(newName);
+                            //for now folders then sub folder->>>getting from a method which table
+                            getParentKeyByChildKeyFolder(folderkey,"folders",newName );
 
 
                         }
@@ -360,6 +361,54 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
         }
+    }
+    private void getParentKeyByChildKeyFolder(String childKey, String table, String newName) {
+        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child(table);
+        foldersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot folderSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot childSnapshot : folderSnapshot.getChildren()) {
+                        if (childSnapshot.getKey().equals(childKey)) {
+                            String parentKey = folderSnapshot.getKey();
+
+
+                            // Now you have the parent key
+                            Log.d("PARENT_KEY", parentKey);
+                            updateFolderName(parentKey,childKey,newName,"folders");
+                            // Perform any additional actions with the parent key
+                            // ...
+
+                            return; // Exit the loop after finding the first match
+                        }
+                    }
+                }
+                // Handle the case when the child key is not found
+                Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void updateFolderName(String parentKey, String childKey, String newName, String table) {
+        DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child(table).child(parentKey).child(childKey);
+        folderRef.child("folderName").setValue(newName)
+                .addOnSuccessListener(aVoid -> {
+                    // Folder name update in Firebase Realtime Database successful
+                    StyleableToast.makeText(context, "Folder name updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+
+                    // Perform any additional actions after updating the folder name
+                })
+                .addOnFailureListener(e -> {
+                    // Folder name update in Firebase Realtime Database failed
+                    StyleableToast.makeText(context, "Failed to update folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    // Handle the failure case
+                });
     }
     private void getParentKeyByChildKeyRENAME(String childKey, String table, String newName) {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
