@@ -477,32 +477,32 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
-    private void createFolder() {
-        String folderName = FolderName.getText().toString().trim();
-
-        if (!folderName.isEmpty()) {
-            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
-
-            // Generate a unique key for the folder
-            String folderId = foldersRef.push().getKey();
-
-            // Store folder metadata in the Realtime Database
-            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
-
-            // Save folder metadata using the unique key
-            foldersRef.child(folderId).setValue(folderMetadata)
-                    .addOnSuccessListener(aVoid -> {
-                        // Folder created successfully
-                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Folder creation failed
-                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                    });
-        } else {
-            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
-        }
-    }
+//    private void createFolder() {
+//        String folderName = FolderName.getText().toString().trim();
+//
+//        if (!folderName.isEmpty()) {
+//            DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+//
+//            // Generate a unique key for the folder
+//            String folderId = foldersRef.push().getKey();
+//
+//            // Store folder metadata in the Realtime Database
+//            FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
+//
+//            // Save folder metadata using the unique key
+//            foldersRef.child(folderId).setValue(folderMetadata)
+//                    .addOnSuccessListener(aVoid -> {
+//                        // Folder created successfully
+//                        StyleableToast.makeText(Home.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        // Folder creation failed
+//                        StyleableToast.makeText(Home.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                    });
+//        } else {
+//            StyleableToast.makeText(Home.this, "Please enter a folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//        }
+//    }
 
     private void ShowDialog() {
         // Create a Dialog object
@@ -550,111 +550,5 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         dialog.show();
     }
 
-//    private void openFolder(int position) {
-//        if (position >= 0 && position < folderMetadataList.size()) {
-//            FolderMetadata clickedFolder = folderMetadataList.get(position);
-//            String folderId = clickedFolder.getFolderId();
-//
-//
-//            // Start FolderActivity and pass the folderId
-//            Intent folderIntent = new Intent(Home.this, FolderActivity.class);
-//            folderIntent.putExtra("folderId", folderId);
-//            startActivity(folderIntent);
-//        }
-//    }
 
-//    private void openFolder(int position) {
-//        if (position >= 0 && position < folderMetadataList.size()) {
-//            FolderMetadata clickedFolder = folderMetadataList.get(position);
-//            String folderId = clickedFolder.getFolderId();
-//
-//            // Use the utility method from FolderUtils
-//            FolderUtils.openFolder(this, folderId);
-//        }
-//    }
-
-
-//    private class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-//        private List<Object> itemsList = new ArrayList<>();
-//
-//
-//        public void setItemsList(List<Object> itemsList) {
-//            this.itemsList = itemsList;
-//        }
-//
-//        @Override
-//        public int getItemViewType(int position) {
-//            Object item = itemsList.get(position);
-//
-//            if (item instanceof FileMetadata) {
-//                return 0;
-//            } else if (item instanceof FolderMetadata) {
-//                return 1;
-//            }
-//
-//            return -1;
-//        }
-//
-//
-//
-//        @NonNull
-//        @Override
-//        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-//            RecyclerView.ViewHolder viewHolder;
-//
-//            switch (viewType) {
-//                case 0:
-//                    View fileView = inflater.inflate(R.layout.item_file, parent, false);
-//                    viewHolder = new FileViewHolder(fileView);
-//                    break;
-//                case 1:
-//                    View folderView = inflater.inflate(R.layout.item_folder, parent, false);
-//                    viewHolder = new FolderViewHolder(folderView);
-//                    break;
-//                default:
-//                    throw new IllegalStateException("Unexpected value: " + viewType);
-//            }
-//            return viewHolder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-//            Object item = itemsList.get(position);
-//
-//            if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
-//                FileMetadata fileMetadata = (FileMetadata) item;
-//                ((FileViewHolder) holder).fileNameTextView.setText(fileMetadata.getFileName());
-//            } else if (holder instanceof FolderViewHolder && item instanceof FolderMetadata) {
-//                FolderMetadata folderMetadata = (FolderMetadata) item;
-//                ((FolderViewHolder) holder).folderNameTextView.setText(folderMetadata.getFolderName());
-//            }
-//        }
-//
-//
-//
-//        @Override
-//        public int getItemCount() {
-//            return itemsList.size();
-//        }
-//
-//         class FileViewHolder extends RecyclerView.ViewHolder {
-//            TextView fileNameTextView;
-//
-//            public FileViewHolder(@NonNull View itemView) {
-//                super(itemView);
-//                fileNameTextView = itemView.findViewById(R.id.fileNameTextView); // Replace with your file item view
-//            }
-//        }
-//
-//        class FolderViewHolder extends RecyclerView.ViewHolder {
-//            TextView folderNameTextView;
-//
-//            public FolderViewHolder(@NonNull View itemView) {
-//                super(itemView);
-//                folderNameTextView = itemView.findViewById(R.id.folderNameTextView); // Replace with your folder item view
-//                // Add click listener for the folder item
-//                itemView.setOnClickListener(v -> openFolder(getAdapterPosition()));
-//            }
-//        }}}
 }

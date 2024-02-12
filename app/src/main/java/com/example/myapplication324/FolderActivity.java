@@ -380,6 +380,102 @@ public class FolderActivity extends DrawerBaseActivity {
         return fileName;
     }
 
+//    private void ShowDialog() {
+//        // Create a Dialog object
+//        Dialog dialog = new Dialog(this);
+//
+//        // Set the content view of the dialog by inflating folder_dialog.xml
+//        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
+//        dialog.setContentView(dialogView);
+//
+//        // Now, you can find and use the views inside the dialogView
+//        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
+//        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
+//
+//        // Set click listener for the create folder button
+//        createFolderBtn.setOnClickListener(v -> {
+//            String folderName = folderNameEditText.getText().toString().trim();
+//
+//            // Perform folder creation logic here
+//            if (!folderName.isEmpty()) {
+//                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+//
+//                // Generate a unique key for the folder
+//                String folderId = foldersRef.push().getKey();
+//
+//                // Store folder metadata in the Realtime Database
+//                FolderMetadata folderMetadata = new FolderMetadata(folderId, folderName);
+//
+//                // Save folder metadata using the unique key
+//                foldersRef.child(folderId).setValue(folderMetadata)
+//                        .addOnSuccessListener(aVoid -> {
+//                            // Folder created successfully
+//                            StyleableToast.makeText(FolderActivity.this, "Folder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                            dialog.dismiss(); // Dismiss the dialog after creating the folder
+//                        })
+//                        .addOnFailureListener(e -> {
+//                            // Folder creation failed
+//                            StyleableToast.makeText(FolderActivity.this, "Folder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                        });
+//            } else {
+//                folderNameEditText.setError("Please enter a folder name");
+//            }
+//        });
+//
+//        // Show the dialog
+//        dialog.show();
+//    }
+//
+//    private void createSubfolder(String parentFolderId) {
+//        // Create a Dialog object
+//        Dialog dialog = new Dialog(this);
+//
+//        // Set the content view of the dialog by inflating folder_dialog.xml
+//        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
+//        dialog.setContentView(dialogView);
+//
+//        // Now, you can find and use the views inside the dialogView
+//        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
+//        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
+//
+//        // Set click listener for the create folder button
+//        createFolderBtn.setOnClickListener(v -> {
+//            String folderName = folderNameEditText.getText().toString().trim();
+//
+//            // Perform subfolder creation logic here
+//            if (!folderName.isEmpty()) {
+//                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("Subfolders").child(currentUserId);
+//
+//                // Generate a unique key for the subfolder
+//                String subfolderId = foldersRef.push().getKey();
+//
+//                // Store subfolder metadata in the Realtime Database
+//                FolderMetadata subfolderMetadata = new FolderMetadata(subfolderId, folderName);
+//
+//                // Save subfolder metadata using the unique key
+//                foldersRef.child(subfolderId).setValue(subfolderMetadata)
+//                        .addOnSuccessListener(aVoid -> {
+//                            // Subfolder created successfully
+//                            StyleableToast.makeText(FolderActivity.this, "Subfolder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                            dialog.dismiss(); // Dismiss the dialog after creating the subfolder
+//
+//                            // Update the parent folder's metadata to include the subfolder
+//                            DatabaseReference parentFolderRef = foldersRef.child(parentFolderId);
+//                            parentFolderRef.child("subfolders").child(subfolderId).setValue(true);
+//                        })
+//                        .addOnFailureListener(e -> {
+//                            // Subfolder creation failed
+//                            StyleableToast.makeText(FolderActivity.this, "Subfolder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                        });
+//            } else {
+//                folderNameEditText.setError("Please enter a folder name");
+//            }
+//        });
+//
+//        // Show the dialog
+//        dialog.show();
+//    }
+
     private void ShowDialog() {
         // Create a Dialog object
         Dialog dialog = new Dialog(this);
@@ -398,7 +494,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
             // Perform folder creation logic here
             if (!folderName.isEmpty()) {
-                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("Subfolders").child(currentUserId);
 
                 // Generate a unique key for the folder
                 String folderId = foldersRef.push().getKey();
@@ -426,54 +522,27 @@ public class FolderActivity extends DrawerBaseActivity {
         dialog.show();
     }
 
-    private void createSubfolder(String parentFolderId) {
-        // Create a Dialog object
-        Dialog dialog = new Dialog(this);
+    private void createSubfolder(String folderName) {
+        DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
+        String parentFolderId = getFolderId(); // Get the ID of the parent folder
+        String subfolderId = foldersRef.push().getKey();
+        FolderMetadata subfolderMetadata = new FolderMetadata(subfolderId, folderName);
+        foldersRef.child(subfolderId).setValue(subfolderMetadata)
+                .addOnSuccessListener(aVoid -> {
+                    // Subfolder created successfully
+                    StyleableToast.makeText(FolderActivity.this, "Subfolder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
-        // Set the content view of the dialog by inflating folder_dialog.xml
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.folder_dialog, null);
-        dialog.setContentView(dialogView);
+                    // Update the parent folder's metadata to include the subfolder
+                    DatabaseReference parentFolderRef = foldersRef.child(parentFolderId);
+                    parentFolderRef.child("subfolders").child(subfolderId).setValue(true);
 
-        // Now, you can find and use the views inside the dialogView
-        EditText folderNameEditText = dialogView.findViewById(R.id.FolderName);
-        Button createFolderBtn = dialogView.findViewById(R.id.CreateFolderBtn);
-
-        // Set click listener for the create folder button
-        createFolderBtn.setOnClickListener(v -> {
-            String folderName = folderNameEditText.getText().toString().trim();
-
-            // Perform subfolder creation logic here
-            if (!folderName.isEmpty()) {
-                DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("Subfolders").child(currentUserId);
-
-                // Generate a unique key for the subfolder
-                String subfolderId = foldersRef.push().getKey();
-
-                // Store subfolder metadata in the Realtime Database
-                FolderMetadata subfolderMetadata = new FolderMetadata(subfolderId, folderName);
-
-                // Save subfolder metadata using the unique key
-                foldersRef.child(subfolderId).setValue(subfolderMetadata)
-                        .addOnSuccessListener(aVoid -> {
-                            // Subfolder created successfully
-                            StyleableToast.makeText(FolderActivity.this, "Subfolder created successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                            dialog.dismiss(); // Dismiss the dialog after creating the subfolder
-
-                            // Update the parent folder's metadata to include the subfolder
-                            DatabaseReference parentFolderRef = foldersRef.child(parentFolderId);
-                            parentFolderRef.child("subfolders").child(subfolderId).setValue(true);
-                        })
-                        .addOnFailureListener(e -> {
-                            // Subfolder creation failed
-                            StyleableToast.makeText(FolderActivity.this, "Subfolder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
-                        });
-            } else {
-                folderNameEditText.setError("Please enter a folder name");
-            }
-        });
-
-        // Show the dialog
-        dialog.show();
+                    // Optionally, refresh the UI to display the newly created subfolder
+                    fetchFilesFromFirebase(parentFolderId);
+                })
+                .addOnFailureListener(e -> {
+                    // Subfolder creation failed
+                    StyleableToast.makeText(FolderActivity.this, "Subfolder creation failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                });
     }
 
     private void MeowBottomNavigationShow(MeowBottomNavigation bottomNavigation) {
