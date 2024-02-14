@@ -162,7 +162,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         fab1_mail.setOnClickListener(view -> {
             // Toast.makeText(getApplicationContext(), "creat folder", Toast.LENGTH_SHORT).show();
-            ShowDialog();
+            CreateFolder();//new name instead of (ShowDialog())
 
         });
         pdf.setOnClickListener(v -> callChooseWordFile());
@@ -205,7 +205,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         recyclerView.setAdapter(fileAdapter);
 
         // Call method to fetch files and folders from Firebase
-        fetchFilesAndFoldersFromFirebase();
+        fetchFilesFromFirebase();
 
     }
 
@@ -225,7 +225,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     }
 
 
-    private void fetchFilesAndFoldersFromFirebase() {
+    private void fetchFilesFromFirebase() {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
         DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child("folders").child(currentUserId);
 
@@ -505,7 +505,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 //        }
 //    }
 
-    private void ShowDialog() {
+    private void CreateFolder() {
         // Create a Dialog object
         Dialog dialog = new Dialog(this);
 
