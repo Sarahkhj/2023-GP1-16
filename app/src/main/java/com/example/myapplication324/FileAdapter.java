@@ -268,9 +268,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 ((FolderViewHolder) holder).folderNameTextView.setText(newName);
                                 String folderKey = currentFolderMetadata.getKey();
 
-                                // Update the name in Firebase or your data source
-                                DatabaseReference folderRef = FirebaseDatabase.getInstance().getReference().child("Jrkw3wCNFLXLsu84KhqNNhB6qCQ2").child("-NqClyALLvCTUdNSLrcD");
-                                folderRef.child("folderName").setValue(newName);
+
                                 //for now folders then sub folder->>>getting from a method which table
                                 getParentKeyByChildKeyFolder(folderKey, "folders", newName);
 
@@ -285,7 +283,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             });
         }
     }
-    private void getParentKeyByChildKeyFolder(String childKey, String table, String newName) {
+    private void getParentKeyByChildKeyFolder(String childKey, String table, String newName) { ///folder renaming
         DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child(table);
         foldersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
