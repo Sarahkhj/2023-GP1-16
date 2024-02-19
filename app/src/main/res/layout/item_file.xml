@@ -20,6 +20,8 @@
         android:layout_toEndOf="@id/imageview"
         android:textColor="@color/black"
         android:textSize="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="4dp"
         tools:text="Name" />
 
     <TextView
@@ -30,6 +32,7 @@
         android:layout_toEndOf="@id/imageview"
         android:textColor="@color/black"
         android:textSize="20dp"
+        android:layout_marginStart="4dp"
         tools:text="Link" />
 
 

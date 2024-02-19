@@ -457,6 +457,7 @@ public class FolderActivity extends DrawerBaseActivity {
                     if (folderMetadata != null) {
                         folderMetadata.setFolderId(dataSnapshot.getKey());
                         folderMetadataList.add(folderMetadata); // Add folder to folder metadata list
+                        folderMetadata.setKey(dataSnapshot.getKey());
                         itemsList.add(folderMetadata); // Add folder to combined list
                     }
                 }
