@@ -223,7 +223,15 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 //checkKey(currentFolderMetadata.getKey());
                                 String table = "folders";
                                 //getParentKeyByChildKeyfolder(currentFolderMetadata.getKey(),table);
-                                showDeleteConfirmationDialog(currentFolderMetadata.getKey(),table);
+                                String page = checkSubstringfolder(context.toString());
+                                if(page.equalsIgnoreCase("folders")){
+                                showDeleteConfirmationDialog(currentFolderMetadata.getKey(),table);}
+                                else {
+                                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                                    String tableName = "Subfolders"; // Replace with your actual table name
+                                    String childKey = currentFolderMetadata.getKey(); // The child key you're looking for
+                                    showDeleteConfirmationDialoginside(rootRef, tableName, childKey);
+                                }
                                 break;
                         }
                         return true;
@@ -524,11 +532,53 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             childSnapshot.getRef().removeValue();
                         }
                     }
+                    // remove folder that inside folder
+                    removeChildAndItsChildren(parentKey,targetFolderId);
                     // Remove the folder
                     deleteFolderOnly(parentKey, targetFolderId);
                 } else {
+                    removeChildAndItsChildren(parentKey,targetFolderId);
+                    // Remove the folder
+                    deleteFolderOnly(parentKey, targetFolderId);
                     // Parent node with the given key does not exist
-                    System.out.println("Parent not found for key: " + parentKey);
+                    //System.out.println("Parent not found for key: " + parentKey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors, if any
+                System.out.println("Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    public void removeChildAndItsChildren(String parentKey, final String childKey) {
+        // Reference to the Subfolders table under the specified parent key
+        String tableSubfolders = "Subfolders";
+        DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference(tableSubfolders).child(parentKey);
+
+        // Attach a listener to read the data at the specified child node
+        parentRef.child(childKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Check if the child node exists
+                if (dataSnapshot.exists()) {
+                    // Remove the child node and its children
+                    dataSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError != null) {
+                                // Handle the case where the delete operation failed
+                                System.out.println("Error deleting child: " + databaseError.getMessage());
+                            } else {
+                                // Operation was successful
+                                System.out.println("Child and its children successfully deleted");
+                            }
+                        }
+                    });
+                } else {
+                    // Child node with the given key does not exist
+                    System.out.println("Child not found for key: " + childKey);
                 }
             }
 
@@ -557,7 +607,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
     }
-
+////////////////
     private void showDeleteConfirmationDialog(String childKey,String table) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirmation");
@@ -586,7 +636,152 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
+    //folderinsidemfolder
+    private void findParentKeys(DatabaseReference databaseRef, final String tableName, final String childKey) {
+        // Get a reference to the specific table
+        DatabaseReference tableRef = databaseRef.child(tableName);
 
+        // Listen for a single snapshot of the data at this table path
+        tableRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Flag to check if the child key is found
+                boolean isChildKeyFound = false;
+
+                // Iterate over the top-level children (root parent keys)
+                for (DataSnapshot rootParentSnapshot : dataSnapshot.getChildren()) {
+                    String rootParentKey = rootParentSnapshot.getKey();
+
+                    // Iterate over the children of each root parent (sub parent keys)
+                    for (DataSnapshot subParentSnapshot : rootParentSnapshot.getChildren()) {
+                        String subParentKey = subParentSnapshot.getKey();
+
+                        // Check if this is the immediate parent of the childKey
+                        if (subParentSnapshot.hasChild(childKey)) {
+                            // We've found the immediate parent and root parent of the childKey
+                            Log.d("PARENT_KEYS_FOUND", "Root Parent Key: " + rootParentKey + ", Immediate Parent Key: " + subParentKey);
+                            isChildKeyFound = true;
+                            removeChildrenAndFolderinside(rootParentKey,childKey);
+                            deleteFolderOnlyinsidefolder(rootParentKey,subParentKey,childKey);
+                            break;
+                        }
+                    }
+
+                    // If the child key has been found, break out of the loop
+                    if (isChildKeyFound) {
+                        break;
+                    }
+                }
+
+                // If we get here, it means the child key was not found under any sub parents
+                if (!isChildKeyFound) {
+                    Log.d("PARENT_KEYS_NOT_FOUND", "Could not find parent keys for the child key: " + childKey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("DB_ERROR", "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+    private void deleteFolderOnlyinsidefolder(final String rootparentKey, final String parentKey,final String username) {
+        String folderTable = "Subfolders";
+
+        // Delete the folder without confirmation
+        DatabaseReference folderReference = FirebaseDatabase.getInstance().getReference(folderTable).child(rootparentKey).child(parentKey).child(username);
+
+        // Delete the folder itself
+        folderReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    StyleableToast.makeText(context, "Successfully Deleted Folder", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                } else {
+                    StyleableToast.makeText(context, "Failed to delete the folder", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+            }
+        });
+    }
+    public static String checkSubstringfolder(String word) {
+        String substring = "home"; // Specify your substring here
+        String lowercaseWord = word.toLowerCase();
+
+        if (lowercaseWord.contains(substring)) {
+            Log.e("Yes", " file ");
+            return "folders";
+        } else {
+            Log.e("No", " filesinsideFolders ");
+            return "Subfolders";
+        }
+    }
+    public void removeChildrenAndFolderinside(String parentKey, final String targetFolderId) {
+        // Reference to the parent node
+        String fileTable = "filesinsideFolders";
+        DatabaseReference parentRef = FirebaseDatabase.getInstance().getReference(fileTable).child(parentKey);
+        // Attach a listener to read the data at the parent node
+        parentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Check if the parent node exists
+                if (dataSnapshot.exists()) {
+                    // Iterate through the children of the parent node
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        // Access the "folder id" attribute inside each child
+                        String folderId = childSnapshot.child("folderId").getValue(String.class);
+
+                        // Check if the folder id matches the target folder id
+                        if (folderId != null && folderId.equals(targetFolderId)) {
+                            // Remove the child node
+                            childSnapshot.getRef().removeValue();
+                        }
+                    }
+                    // remove folder that inside folder
+                    removeChildAndItsChildren(parentKey,targetFolderId);
+                    // Remove the folder
+                } else {
+                    removeChildAndItsChildren(parentKey,targetFolderId);
+                    // Remove the folder
+                    // Parent node with the given key does not exist
+                    //System.out.println("Parent not found for key: " + parentKey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors, if any
+                System.out.println("Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void showDeleteConfirmationDialoginside(DatabaseReference rootRef,String tableName,String childKey) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Are you sure you want to delete this folder?");
+
+
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked Yes button
+                findParentKeys(rootRef, tableName, childKey);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked No button
+                dialog.dismiss();
+            }
+        });
+
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+
+        // Show the dialog
+        dialog.show();
+    }
 
 
 

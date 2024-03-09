@@ -20,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,8 @@ public class FolderActivity extends DrawerBaseActivity {
     private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
     private List<FileMetadata> fileMetadataList = new ArrayList<>();
     private FirebaseAuth auth;
+    private ProgressBar progressBar;
+
 
 
 
@@ -94,6 +97,9 @@ public class FolderActivity extends DrawerBaseActivity {
         auth = FirebaseAuth.getInstance();
 
         currentUserId = auth.getCurrentUser().getUid(); // You should have a unique identifier for each user.
+        progressBar = findViewById(R.id.par);
+        progressBar.setVisibility(View.GONE);
+
 
 
 
@@ -266,11 +272,14 @@ public class FolderActivity extends DrawerBaseActivity {
 
         // Create a reference to the file within the folder
         StorageReference fileRef = folderRef.child(fileName); // Use the provided file name
+        progressBar.setVisibility(View.VISIBLE); // Show progressBar when upload starts
+
 
         // Upload the file to Firebase Storage
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     // File uploaded successfully
+                    progressBar.setVisibility(View.GONE); // Hide progressBar on success
 
                     // Get the download URL of the uploaded file
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -285,8 +294,15 @@ public class FolderActivity extends DrawerBaseActivity {
                 })
                 .addOnFailureListener(e -> {
                     // File upload failed
+                    progressBar.setVisibility(View.GONE); // Hide progressBar on failure
                     StyleableToast.makeText(FolderActivity.this, "File upload failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                })
+                .addOnProgressListener(snapshot -> {
+                    // Update progress bar
+                    double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    progressBar.setProgress((int) progress);
                 });
+
         fetchFilesFromFirebase(folderId);
 
     }
