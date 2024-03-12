@@ -2,9 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_rename"
+        android:icon="@drawable/baseline_drive_file_rename_outline_24"
+        android:iconTint="@color/bluelight"
         android:title="Rename" />
 
     <item
         android:id="@+id/menu_delete"
+        android:icon="@drawable/baseline_auto_delete_24"
+        android:iconTint="@color/bluelight"
         android:title="Delete" />
 </menu>

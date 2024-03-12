@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import io.github.muddz.styleabletoast.StyleableToast;
@@ -112,6 +113,14 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
                         MenuInflater inflater = popupMenu.getMenuInflater();
                         inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
+                    try {
+                        Field mPopupField = PopupMenu.class.getDeclaredField("mPopup");
+                        mPopupField.setAccessible(true);
+                        Object mPopup = mPopupField.get(popupMenu);
+                        mPopup.getClass().getDeclaredMethod("setForceShowIcon", boolean.class).invoke(mPopup, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                         // Set a click listener on the popup menu items
                         popupMenu.setOnMenuItemClickListener(item -> {
@@ -210,6 +219,14 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
                     MenuInflater inflater = popupMenu.getMenuInflater();
                     inflater.inflate(R.menu.folder_popup_menu, popupMenu.getMenu());
+                    try {
+                        Field mPopupField = PopupMenu.class.getDeclaredField("mPopup");
+                        mPopupField.setAccessible(true);
+                        Object mPopup = mPopupField.get(popupMenu);
+                        mPopup.getClass().getDeclaredMethod("setForceShowIcon", boolean.class).invoke(mPopup, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     // Set a click listener on the popup menu items
                     popupMenu.setOnMenuItemClickListener(item -> {
