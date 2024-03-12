@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menu_favorite"
+        android:icon="@drawable/baseline_favorite_24"
+        android:iconTint="@color/pink"
+        android:title="Add To Favorite " />
+    <item
         android:id="@+id/menu_rename"
         android:icon="@drawable/baseline_drive_file_rename_outline_24"
         android:iconTint="@color/bluelight"
@@ -12,12 +17,8 @@
         android:title="Download" />
     <item
         android:id="@+id/menu_delete"
-        android:icon="@drawable/baseline_auto_delete_24"
+        android:icon="@drawable/baseline_delete_24"
         android:iconTint="@color/bluelight"
         android:title="Delete" />
-    <item
-        android:id="@+id/menu_favorite"
-        android:icon="@drawable/baseline_favorite_24"
-        android:iconTint="@color/pink"
-        android:title="Add To Favorite " />
+
 </menu>
