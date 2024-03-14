@@ -13,13 +13,29 @@ public class FileMetadata {
     private String fileDownloadUrl;
     private String folderId;
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    private boolean favorite;
+
     public FileMetadata() {
         // Default constructor is required for Firebase
     }
 
+//    public FileMetadata(String fileName, String fileDownloadUrl, boolean favorite) {
+//        this.fileName = fileName;
+//        this.fileDownloadUrl = fileDownloadUrl;
+//        this.favorite=false;
+//    }
     public FileMetadata(String fileName, String fileDownloadUrl) {
         this.fileName = fileName;
         this.fileDownloadUrl = fileDownloadUrl;
+        this.favorite=false;
     }
 
     public FileMetadata(String fileName, String fileDownloadUrl, String folderId) {
