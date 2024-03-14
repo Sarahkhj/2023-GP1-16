@@ -232,7 +232,19 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     popupMenu.setOnMenuItemClickListener(item -> {
                         switch (item.getItemId()) {
                             case R.id.menu_rename:
-                                showRenameDialog(itemView);
+                                FolderMetadata currentFolderMetadata1 = (FolderMetadata) itemsList.get(currentPosition); // Access the folder metadata from the list
+                                //checkKey(currentFolderMetadata.getKey());
+                                String table1 = "folders";
+                                //getParentKeyByChildKeyfolder(currentFolderMetadata.getKey(),table);
+                                String page1 = checkSubstringfolder(context.toString());
+                                if(page1.equalsIgnoreCase("folders")){
+                                    showRenameDialog(itemView);   }
+                                else {
+                                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                                    String tableName = "Subfolders"; // Replace with your actual table name
+                                    String childKey = currentFolderMetadata1.getKey(); // The child key you're looking for
+                                    showRenameDialogSub(itemView,rootRef,tableName,childKey);
+                                }
                                 break;
                             case R.id.menu_delete:
                                 // Perform delete action for folders
@@ -305,9 +317,126 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     // Set the negative button and its click listener
                     builder.setNegativeButton("Cancel", (dialog1, which) -> dialog1.cancel());
                 }
+                private void showRenameDialogSub(View itemView, DatabaseReference rootRef, String tableName, String childKey) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+                    builder.setTitle("Rename Folder");
+
+                    FolderMetadata currentFolderMetadata = (FolderMetadata) itemsList.get(currentPosition); // Access the folder metadata from the list
+                    String currentFolderName = currentFolderMetadata.getFolderName(); // Get the current folder name
+
+                    // Create the input field for the new name
+                    final EditText input = new EditText(itemView.getContext());
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setText(currentFolderName); // Set the current folder name as the initial text
+                    input.setSelection(currentFolderName.length()); // Set cursor position at the end of the text
+                    builder.setView(input);
+
+                    // Set the positive button and its click listener
+                    builder.setPositiveButton("Rename", null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    // Get the positive button from the dialog
+                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    positiveButton.setOnClickListener(view -> {
+                        String newName = input.getText().toString().trim();
+                        if (!newName.equals(currentFolderName)) {
+                            // Check if the new name contains invalid characters
+                            if (containsInvalidCharacters(newName)) {
+                                input.setError("Folder name contains invalid characters");
+                                Toast.makeText(itemView.getContext(), "Folder name contains invalid characters", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Handle the folder rename logic here
+                                currentFolderMetadata.setFolderName(newName);
+
+                                // Update the name in the UI
+                                ((FolderViewHolder) holder).folderNameTextView.setText(newName);
+                                String folderId = currentFolderMetadata.getFolderId();
+
+                                // Call the updateSubFolderName method with appropriate parameters
+                                findParentKeysSub(rootRef, tableName, childKey, newName, itemView);
+                                dialog.dismiss(); // Close the dialog
+                            }
+                        }
+                    });
+
+                    // Set the negative button and its click listener
+                    builder.setNegativeButton("Cancel", (dialog1, which) -> dialog1.cancel());
+                }
+
+                private void findParentKeysSub(DatabaseReference databaseRef, final String tableName, final String childKey, final String newName, final View itemView) {
+                    // Get a reference to the specific table
+                    DatabaseReference tableRef = databaseRef.child(tableName);
+
+                    // Listen for a single snapshot of the data at this table path
+                    tableRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // Flag to check if the child key is found
+                            boolean isChildKeyFound = false;
+
+                            // Iterate over the top-level children (root parent keys)
+                            for (DataSnapshot rootParentSnapshot : dataSnapshot.getChildren()) {
+                                String rootParentKey = rootParentSnapshot.getKey();
+
+                                // Iterate over the children of each root parent (sub parent keys)
+                                for (DataSnapshot subParentSnapshot : rootParentSnapshot.getChildren()) {
+                                    String subParentKey = subParentSnapshot.getKey();
+
+                                    // Check if this is the immediate parent of the childKey
+                                    if (subParentSnapshot.hasChild(childKey)) {
+                                        // We've found the immediate parent and root parent of the childKey
+                                        Log.d("PARENT_KEYS_FOUND", "Root Parent Key: " + rootParentKey + ", Immediate Parent Key: " + subParentKey);
+                                        isChildKeyFound = true;
+                                        // Rename the sub parent key
+                                        updateSubFolderName(databaseRef, tableName, rootParentKey, subParentKey, childKey, newName, itemView);
+
+                                        break;
+                                    }
+                                }
+
+                                // If the child key has been found, break out of the loop
+                                if (isChildKeyFound) {
+                                    break;
+                                }
+                            }
+
+                            // If we get here, it means the child key was not found under any sub parents
+                            if (!isChildKeyFound) {
+                                Log.d("PARENT_KEYS_NOT_FOUND", "Could not find parent keys for the child key: " + childKey);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Handle the database error
+                        }
+                    });
+                }
+
+
+
+                private void updateSubFolderName(DatabaseReference databaseRef, String tableName, String rootParentKey, String subParentKey, String childKey, String newName, View itemView) {
+                    DatabaseReference folderRef = databaseRef.child(tableName).child(rootParentKey).child(subParentKey).child(childKey);
+                    folderRef.child("folderName").setValue(newName)
+                            .addOnSuccessListener(aVoid -> {
+                                // Folder name update in Firebase Realtime Database successful
+                                StyleableToast.makeText(itemView.getContext(), "Folder name updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+
+                                // Perform any additional actions after updating the folder name
+                            })
+                            .addOnFailureListener(e -> {
+                                // Folder name update in Firebase Realtime Database failed
+                                StyleableToast.makeText(itemView.getContext(), "Failed to update folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                                // Handle the failure case
+                            });
+                }
             });
         }
     }
+
+
     private void getParentKeyByChildKeyFolder(String childKey, String table, String newName) { ///folder renaming
         DatabaseReference foldersRef = FirebaseDatabase.getInstance().getReference().child(table);
         foldersRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -356,6 +485,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     // Handle the failure case
                 });
     }
+
     private void getParentKeyByChildKeyRENAME(String childKey, String table, String newName) {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
 
@@ -651,7 +781,21 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // Show the dialog
         dialog.show();
     }
+    private void updateSubFolderName(DatabaseReference rootRef, String parentKey, String childKey, String newName, String table) {
+        DatabaseReference folderRef = rootRef.child(table).child(parentKey).child(childKey);
+        folderRef.child("folderName").setValue(newName)
+                .addOnSuccessListener(aVoid -> {
+                    // Folder name update in Firebase Realtime Database successful
+                    StyleableToast.makeText(context, "Folder name updated successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
+                    // Perform any additional actions after updating the folder name
+                })
+                .addOnFailureListener(e -> {
+                    // Folder name update in Firebase Realtime Database failed
+                    StyleableToast.makeText(context, "Failed to update folder name", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                    // Handle the failure case
+                });
+    }
 
     //folderinsidemfolder
     private void findParentKeys(DatabaseReference databaseRef, final String tableName, final String childKey) {
