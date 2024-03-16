@@ -33,7 +33,7 @@
         android:layout_marginRight="-9dp"
         android:background="@color/white"
         android:contentDescription="Options"
-        android:src="@drawable/baseline_drag_indicator_24"
+        android:src="@drawable/baseline_drag_handle_24"
         app:tint="@color/darkgar"
         />
 

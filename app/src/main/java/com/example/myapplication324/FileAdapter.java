@@ -41,6 +41,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> itemsList;
     private Context context; // Add a reference to the context
     private int currentPosition = -1; // Initialize currentPosition to -1
+    String currentActivityName;
+
     public FileAdapter(List<Object> itemsList, Context context) {
         this.itemsList = itemsList;
         this.context = context;
@@ -95,6 +97,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Object item = itemsList.get(position);
+        currentActivityName =context.toString();
 
         if (holder instanceof FileViewHolder && item instanceof FileMetadata) {
             FileMetadata fileMetadata = (FileMetadata) item;
@@ -113,6 +116,16 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         PopupMenu popupMenu = new PopupMenu(itemView.getContext(), itemView);
                         MenuInflater inflater = popupMenu.getMenuInflater();
                         inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
+                    if (currentActivityName.toLowerCase().contains("favorite")) {
+                        popupMenu.getMenu().removeItem(R.id.menu_favorite);
+                        popupMenu.getMenu().removeItem(R.id.menu_download);
+                        popupMenu.getMenu().removeItem(R.id.menu_rename);
+
+
+                    }
+                    else{
+                        popupMenu.getMenu().removeItem(R.id.menu_removefavorite);
+                    }
                     try {
                         Field mPopupField = PopupMenu.class.getDeclaredField("mPopup");
                         mPopupField.setAccessible(true);
@@ -132,10 +145,23 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     // Perform download action
                                     downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
                                     break;
+                                case R.id.menu_favorite:
+                                    // Perform add to favorite action
+                                    FileMetadata currentFileMetadatafavo = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
+                                    String tablefavo = checkSubstring(context.toString());
+                                    getParentKeyByChildKeyfavo(currentFileMetadatafavo.getKey(),tablefavo,true);
+                                    break;
+                                case R.id.menu_removefavorite:
+                                    // Perform add to favorite action
+                                    FileMetadata currentFileMetadatafremov = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
+                                    String tableremv = currentFileMetadatafremov.getPage();
+                                    getParentKeyByChildKeyfavo(currentFileMetadatafremov.getKey(),tableremv,false);
+                                    break;
                                 case R.id.menu_delete:
                                     // Perform delete action
                                     FileMetadata currentFileMetadata = (FileMetadata) itemsList.get(currentPosition); // Access the file metadata from the list
-                                    String table = checkSubstring(context.toString());
+                                    //String table = checkSubstring(context.toString());
+                                    String table = currentFileMetadata.getPage();
                                     getParentKeyByChildKey(currentFileMetadata.getKey(),table);
 
                                     break;
@@ -583,6 +609,113 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         // Show the dialog
         dialog.show();
+    }
+    //add to favorite
+
+    private void getParentKeyByChildKeyfavo(String childKey,String table,Boolean F) { // take the parants id
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
+
+        filesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.child(childKey).exists()) {
+                        String parentKey = userSnapshot.getKey();
+
+                        // Now you have the parent key
+                        Log.d("PARENT_KEY", parentKey);
+                        if(F){
+                        addFileToFavorites(parentKey,childKey,table);}
+                        else{
+                            removeFileFromFavorites(parentKey,childKey,table);
+                        }
+
+                        return; // Exit the loop after finding the first match
+                    }
+                }
+
+                // Handle the case when the child key is not found
+                Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void addFileToFavorites(final String parentKey, final String username, String table) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(table);
+        DatabaseReference favoriteRef = reference.child(parentKey).child(username).child("favorite");
+
+        // Check if the file is already marked as favorite
+        favoriteRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getValue(Boolean.class) == Boolean.FALSE) {
+                    // If the favorites attribute exists and is not already true, set it as a favorite
+                    favoriteRef.setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                StyleableToast.makeText(context, "File added to favorites", Toast.LENGTH_SHORT, R.style.mytoastheart).show();
+                            } else {
+                                StyleableToast.makeText(context, "Failed to add to favorites", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
+                        }
+                    });
+                } else if (dataSnapshot.exists()) {
+                    // If the favorites attribute exists and is already true, inform the user
+                    StyleableToast.makeText(context, "File is already on favorites", Toast.LENGTH_SHORT, R.style.mytoastheart).show();
+                } else {
+                    // If the favorites attribute does not exist, inform the user it can't be added
+                    StyleableToast.makeText(context, "Cannot add to favorites", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors
+                StyleableToast.makeText(context, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+            }
+        });
+    }
+    private void removeFileFromFavorites(final String parentKey, final String username, String table) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(table);
+        DatabaseReference favoriteRef = reference.child(parentKey).child(username).child("favorite");
+
+        // Check if the file is marked as a favorite
+        favoriteRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.getValue(Boolean.class) == Boolean.TRUE) {
+                    // If the favorites attribute exists and is true, remove it as a favorite
+                    favoriteRef.setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                StyleableToast.makeText(context, "File removed from favorites", Toast.LENGTH_SHORT, R.style.mytoastheart).show();
+                            } else {
+                                StyleableToast.makeText(context, "Failed to remove from favorites", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
+                        }
+                    });
+                } else if (dataSnapshot.exists()) {
+                    // If the favorites attribute exists and is already false, inform the user
+                    StyleableToast.makeText(context, "File is not in favorites", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                } else {
+                    // If the favorites attribute does not exist, inform the user it can't be removed
+                    StyleableToast.makeText(context, "Cannot remove from favorites, file not found", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors
+                StyleableToast.makeText(context, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show();
+            }
+        });
     }
 
 

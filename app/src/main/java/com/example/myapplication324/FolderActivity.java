@@ -501,6 +501,7 @@ public class FolderActivity extends DrawerBaseActivity {
                     if (fileMetadata != null && fileMetadata.getFolderId().equals(currentFolderId)) {
                         fileMetadata.setKey(dataSnapshot.getKey());
                         fileMetadataList.add(fileMetadata); // Add file to file metadata list
+                        fileMetadata.setPage("filesinsideFolders");
                         itemsList.add(fileMetadata); // Add file to combined list
                     }
                 }

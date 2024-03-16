@@ -6,6 +6,11 @@
         android:iconTint="@color/pink"
         android:title="Add To Favorite " />
     <item
+        android:id="@+id/menu_removefavorite"
+        android:icon="@drawable/baseline_favorite_24"
+        android:iconTint="@color/pink"
+        android:title="Remove From Favorite " />
+    <item
         android:id="@+id/menu_rename"
         android:icon="@drawable/baseline_drive_file_rename_outline_24"
         android:iconTint="@color/bluelight"
@@ -20,5 +25,6 @@
         android:icon="@drawable/baseline_delete_24"
         android:iconTint="@color/bluelight"
         android:title="Delete" />
+
 
 </menu>

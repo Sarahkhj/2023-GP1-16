@@ -13,6 +13,7 @@ public class FileMetadata {
     private String fileDownloadUrl;
     private String folderId;
     private boolean favorite;
+    private String page;
 
 
 
@@ -65,5 +66,12 @@ public class FileMetadata {
     }
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+    public String getPage() {
+        return page;
+    }
+
+    public void setPage(String page) {
+        this.page = page;
     }
 }
