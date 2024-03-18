@@ -5,8 +5,11 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.text.InputType;
 import android.util.Log;
@@ -32,6 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -143,7 +150,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     break;
                                 case R.id.menu_download:
                                     // Perform download action
-                                    downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(), ".pdf",DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
+                                    downLoadFile( ((FileViewHolder) holder).fileNameTextView.getContext(), fileMetadata.getFileName(),DIRECTORY_DOWNLOADS, fileMetadata.getFileDownloadUrl());
                                     break;
                                 case R.id.menu_favorite:
                                     // Perform add to favorite action
@@ -1083,19 +1090,72 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // FileViewHolder and FolderViewHolder classes remain the same
     // ...
-    public void downLoadFile(Context context, String fileName,String fileExtension,String destinationDirectory,String url){
+//    public void downLoadFile(Context context, String fileName,String fileExtension,String destinationDirectory,String url){
+//
+//        DownloadManager downloadManager= (DownloadManager)context.
+//                getSystemService(Context.DOWNLOAD_SERVICE);
+//        Uri uri=Uri.parse(url);
+//        DownloadManager.Request request = new DownloadManager.Request(uri);
+//
+//        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+//        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+ fileExtension);
+//
+//        downloadManager.enqueue(request);
+//
+//    }
 
-        DownloadManager downloadManager= (DownloadManager)context.
-                getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri=Uri.parse(url);
+
+
+    public void downLoadFile(Context context, String fileName, String destinationDirectory, String url) {
+        // Define the BroadcastReceiver to handle download completion
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(Context ctxt, Intent intent) {
+                long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (downloadId != -1) {
+                    // Decrypt the downloaded file and save it
+                    String encryptedFilePath = context.getExternalFilesDir(destinationDirectory) + "/" + fileName;
+                    decryptAndSaveFile(context, encryptedFilePath,fileName);
+                }
+            }
+        };
+
+        // Register the BroadcastReceiver
+        context.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+        // Start the download
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
         DownloadManager.Request request = new DownloadManager.Request(uri);
-
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+ fileExtension);
-
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
         downloadManager.enqueue(request);
-
     }
+
+    private void decryptAndSaveFile(Context context, String encryptedFilePath, String decryptedFileName) {
+        try {
+            File encryptedFile = new File(encryptedFilePath);
+            FileInputStream fis = new FileInputStream(encryptedFile);
+            byte[] encryptedBytes = new byte[(int) encryptedFile.length()];
+            fis.read(encryptedBytes);
+            fis.close();
+
+            // Decrypt the file
+            byte[] decryptedBytes = Crypto.decryptFile(encryptedBytes, "FEMLUJMaOhgfzB+WsictJg==");
+
+            // Save the decrypted data to another file
+            File decryptedFile = new File(context.getExternalFilesDir(null), decryptedFileName);
+            FileOutputStream fos = new FileOutputStream(decryptedFile);
+            fos.write(decryptedBytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     static class FileViewHolder extends RecyclerView.ViewHolder {
         TextView fileNameTextView,fileLinkTextView;

@@ -322,15 +322,125 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
     }
 
+//    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+//        super.onActivityResult(requestCode, resultCode, resultData);
+//        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+//        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+//
+//        if (currentUser == null) {
+//            // Handle the case where the user is not authenticated
+//            return;
+//        }
+//        DatabaseReference mDatabase;
+//        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+//        String userEmail = currentUser.getEmail();
+//        mDatabase.orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    password = dataSnapshot.child("password").getValue(String.class);
+//                    if (requestCode == CHOSE_PDF_FROM_DEVICE && resultCode == Activity.RESULT_OK) {
+//                        if (resultData != null) {
+//                            Uri fileUri = resultData.getData();
+//                            if (fileUri != null) {
+//                                try {
+//                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
+//                                    // Encrypt the file
+//                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
+//                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, password);
+//                                    if (encryptedBytes != null) {
+//                                        // Upload the encrypted file to Firebase Storage
+//                                        String encryptedFileName = fileName;
+//                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
+//
+//                                        UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
+//                                        uploadTask.addOnSuccessListener(taskSnapshot -> {
+//                                            progressBar.setVisibility(View.GONE);
+//                                            StyleableToast.makeText(Home.this, "File uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//
+//                                            // Get the download URL of the uploaded file
+//                                            fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+//                                                progressBar.setVisibility(View.GONE);
+//                                                String fileDownloadUrl = uri.toString();
+//
+//                                                // Store file metadata in the Realtime Database
+//                                                FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
+//                                                databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
+//                                            });
+//                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot12 -> progressBar.setVisibility(View.VISIBLE));
+//                                    } else {
+//                                        // Encryption failed
+//                                        StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                                    }
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    } else if (requestCode == PICK_WORD_FILE && resultCode == Activity.RESULT_OK) {
+//                        if (resultData != null) {
+//                            Uri fileUri = resultData.getData();
+//                            if (fileUri != null) {
+//                                try {
+//                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
+//
+//                                    // Encrypt the file
+//                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
+//                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, password);
+//                                    if (encryptedBytes != null) {
+//                                        // Upload the encrypted file to Firebase Storage
+//                                        String encryptedFileName = fileName;
+//                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
+//
+//                                        UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
+//                                        uploadTask.addOnSuccessListener(taskSnapshot -> {
+//                                            progressBar.setVisibility(View.GONE);
+//                                            StyleableToast.makeText(Home.this, "File uploaded successfully!", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//
+//                                            // Get the download URL of the uploaded file
+//                                            fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+//                                                String fileDownloadUrl = uri.toString();
+//
+//                                                // Store file metadata in the Realtime Database
+//                                                FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
+//                                                databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
+//                                            });
+//                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot1 -> progressBar.setVisibility(View.VISIBLE));
+//                                    } else {
+//                                        // Encryption failed
+//                                        StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//                                    }
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                StyleableToast.makeText(Home.this, "No password?.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+//
+//            }
+//        });
+//
+//    }
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
         if (currentUser == null) {
-            // Handle the case where the user is not authenticated
             return;
         }
+
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         String userEmail = currentUser.getEmail();
@@ -344,15 +454,16 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                             Uri fileUri = resultData.getData();
                             if (fileUri != null) {
                                 try {
-                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
-                                    // Encrypt the file
+                                    String fileName = getFileNameFromUri(fileUri);
                                     InputStream inputStream = getContentResolver().openInputStream(fileUri);
-                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, password);
-                                    if (encryptedBytes != null) {
-                                        // Upload the encrypted file to Firebase Storage
-                                        String encryptedFileName = fileName;
-                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
 
+                                    // Encrypt the file
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "FEMLUJMaOhgfzB+WsictJg==");
+                                    if (encryptedBytes != null) {
+                                        String encryptedFileName = fileName;
+
+                                        // Upload the encrypted file
+                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
                                         uploadTask.addOnSuccessListener(taskSnapshot -> {
                                             progressBar.setVisibility(View.GONE);
@@ -360,16 +471,14 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
                                             // Get the download URL of the uploaded file
                                             fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                                                progressBar.setVisibility(View.GONE);
                                                 String fileDownloadUrl = uri.toString();
 
-                                                // Store file metadata in the Realtime Database
+                                                // Save the encrypted file metadata to the database
                                                 FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
                                                 databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
                                             });
                                         }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot12 -> progressBar.setVisibility(View.VISIBLE));
                                     } else {
-                                        // Encryption failed
                                         StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     }
                                 } catch (Exception e) {
@@ -382,16 +491,16 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                             Uri fileUri = resultData.getData();
                             if (fileUri != null) {
                                 try {
-                                    String fileName = getFileNameFromUri(fileUri); // Get the original file name
+                                    String fileName = getFileNameFromUri(fileUri);
+                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
 
                                     // Encrypt the file
-                                    InputStream inputStream = getContentResolver().openInputStream(fileUri);
-                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, password);
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "FEMLUJMaOhgfzB+WsictJg==");
                                     if (encryptedBytes != null) {
-                                        // Upload the encrypted file to Firebase Storage
                                         String encryptedFileName = fileName;
-                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
 
+                                        // Upload the encrypted file
+                                        StorageReference fileReference = storageReference.child(currentUserId + "/" + encryptedFileName);
                                         UploadTask uploadTask = fileReference.putBytes(encryptedBytes);
                                         uploadTask.addOnSuccessListener(taskSnapshot -> {
                                             progressBar.setVisibility(View.GONE);
@@ -401,19 +510,17 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                             fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                                                 String fileDownloadUrl = uri.toString();
 
-                                                // Store file metadata in the Realtime Database
+                                                // Save the encrypted file metadata to the database
                                                 FileMetadata fileMetadata = new FileMetadata(encryptedFileName, fileDownloadUrl);
                                                 databaseReference.child("files").child(currentUserId).push().setValue(fileMetadata);
                                             });
-                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot1 -> progressBar.setVisibility(View.VISIBLE));
+                                        }).addOnFailureListener(e -> StyleableToast.makeText(Home.this, "Failed to upload encrypted file: " + e.getMessage(), Toast.LENGTH_SHORT, R.style.mytoast).show()).addOnProgressListener(snapshot12 -> progressBar.setVisibility(View.VISIBLE));
                                     } else {
-                                        // Encryption failed
                                         StyleableToast.makeText(Home.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         }
                     }
@@ -429,6 +536,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         });
 
     }
+
+
 
     private String getFileNameFromUri(Uri uri) {
         String fileName = "unknown";
