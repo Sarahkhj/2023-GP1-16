@@ -6,37 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
-
     <ProgressBar
         android:id="@+id/par"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="190dp"
         android:layout_marginTop="290dp"
-        android:indeterminateTint="@color/lightblue"
-        />
+        android:indeterminateTint="@color/lightblue" />
 
-
-
-
-
-
-
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="665dp" >
-
-
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="663dp"
-        android:padding="12dp"
+        android:layout_height="665dp">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="663dp"
+            android:padding="12dp" />
+    </ScrollView>
 
-        /> </ScrollView>
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="8dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search..." />
+
     <include layout="@layout/content_main" />
 
     <com.etebarian.meowbottomnavigation.MeowBottomNavigation
@@ -52,8 +49,8 @@
         app:mbn_rippleColor="#2f424242"
         app:mbn_selectedIconColor="@color/lightblue"
         app:mbn_shadowColor="#1f212121">
-
     </com.etebarian.meowbottomnavigation.MeowBottomNavigation>
+
     <!--
         <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"

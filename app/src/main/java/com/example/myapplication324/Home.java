@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ import java.util.List;
 
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
+    private SearchView searchView;
 
     private FirebaseAuth auth;
     private String rtvFullName;
@@ -184,7 +186,20 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         }
 
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String searchText = newText.toLowerCase();
+                performSearch(searchText);
+                return true;
+            }
+        });
 //Bottom nav
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.show(1, true);
@@ -207,6 +222,26 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         // Call method to fetch files and folders from Firebase
         fetchFilesFromFirebase();
 
+    }
+    private void performSearch(String searchText) {
+        List<Object> searchResults = new ArrayList<>();
+
+        for (Object item : itemsList) {
+            if (item instanceof FileMetadata) {
+                FileMetadata fileMetadata = (FileMetadata) item;
+                if (fileMetadata.getFileName().toLowerCase().contains(searchText)) {
+                    searchResults.add(fileMetadata);
+                }
+            } else if (item instanceof FolderMetadata) {
+                FolderMetadata folderMetadata = (FolderMetadata) item;
+                if (folderMetadata.getFolderName().toLowerCase().contains(searchText)) {
+                    searchResults.add(folderMetadata);
+                }
+            }
+        }
+
+        fileAdapter = new FileAdapter(searchResults,this ); // Create a new instance of FileAdapter with the search results
+        recyclerView.setAdapter(fileAdapter);
     }
 
     private void SetUpFB(){
