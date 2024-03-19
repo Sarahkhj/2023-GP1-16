@@ -609,7 +609,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     //bottom nav method
     private void MeowBottomNavigationShow(MeowBottomNavigation bottomNavigation) {
         bottomNavigation.add(new MeowBottomNavigation.Model(home, R.drawable.baseline_home_24));
-        bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
+      //  bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(favo, R.drawable.baseline_favorite_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(shared, R.drawable.baseline_group_24));
 
