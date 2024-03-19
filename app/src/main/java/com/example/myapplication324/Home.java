@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -16,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.SearchView;
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
     private SearchView searchView;
@@ -186,20 +188,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
 
         }
 
-        searchView = findViewById(R.id.searchView);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String searchText = newText.toLowerCase();
-                performSearch(searchText);
-                return true;
-            }
-        });
 //Bottom nav
         MeowBottomNavigation bottomNavigation = findViewById(R.id.meow);
         bottomNavigation.show(1, true);
@@ -222,6 +211,28 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         // Call method to fetch files and folders from Firebase
         fetchFilesFromFirebase();
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String searchText = newText.toLowerCase();
+                performSearch(searchText);
+                return true;
+            }
+        });
+
+        return true;
     }
     private void performSearch(String searchText) {
         List<Object> searchResults = new ArrayList<>();
