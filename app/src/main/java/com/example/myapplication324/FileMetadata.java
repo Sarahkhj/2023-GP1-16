@@ -35,6 +35,8 @@ public class FileMetadata {
         this.fileName = fileName;
         this.fileDownloadUrl = fileDownloadUrl;
         this.folderId = folderId;
+        this.favorite=false;
+
     }
 
     public String getFileName() {
