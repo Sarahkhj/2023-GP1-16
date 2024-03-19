@@ -11,7 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
+        </androidx.appcompat.widget.Toolbar>
         <ProgressBar
             android:id="@+id/par"
             android:layout_width="wrap_content"

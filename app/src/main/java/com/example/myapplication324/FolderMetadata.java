@@ -2,10 +2,13 @@
 package com.example.myapplication324;
 
 import com.google.firebase.database.Exclude;
+
+import java.util.List;
 import java.util.Map;
 
 public class FolderMetadata {
-
+    private List<FileMetadata> files;
+    private List<FolderMetadata> subfolders;
     @Exclude
     private String key;
     private String folderId;
@@ -38,7 +41,9 @@ public class FolderMetadata {
     public void setFolderId(String folderId) {
         this.folderId = folderId;
     }
-
+    public List<FileMetadata> getFiles() {
+        return files;
+    }
     public String getFolderName() {
         return folderName;
     }

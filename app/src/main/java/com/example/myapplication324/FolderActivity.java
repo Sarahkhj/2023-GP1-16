@@ -3,6 +3,7 @@ package com.example.myapplication324;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -198,7 +201,48 @@ public class FolderActivity extends DrawerBaseActivity {
         intent.setType("application/pdf");
         startActivityForResult(intent, CHOSE_PDF_FROM_DEVICE);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
 
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String searchText = newText.toLowerCase();
+                performSearch(searchText);
+                return true;
+            }
+        });
+
+        return true;
+    }
+    private void performSearch(String searchText) {
+        List<Object> searchResults = new ArrayList<>();
+
+        for (Object item : itemsList) {
+            if (item instanceof FileMetadata) {
+                FileMetadata fileMetadata = (FileMetadata) item;
+                if (fileMetadata.getFileName().toLowerCase().contains(searchText)) {
+                    searchResults.add(fileMetadata);
+                }
+            } else if (item instanceof FolderMetadata) {
+                FolderMetadata folderMetadata = (FolderMetadata) item;
+                if (folderMetadata.getFolderName().toLowerCase().contains(searchText)) {
+                    searchResults.add(folderMetadata);
+                }
+            }
+        }
+
+        fileAdapter = new FileAdapter(searchResults,this ); // Create a new instance of FileAdapter with the search results
+        recyclerView.setAdapter(fileAdapter);
+    }
 
     private void callChooseWordFile() {
 

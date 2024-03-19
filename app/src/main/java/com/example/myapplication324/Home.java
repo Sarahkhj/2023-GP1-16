@@ -246,6 +246,8 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
             } else if (item instanceof FolderMetadata) {
                 FolderMetadata folderMetadata = (FolderMetadata) item;
                 if (folderMetadata.getFolderName().toLowerCase().contains(searchText)) {
+                    // Search within the files of the current folder
+
                     searchResults.add(folderMetadata);
                 }
             }
