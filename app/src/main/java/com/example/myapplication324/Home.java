@@ -48,7 +48,7 @@ import java.util.List;
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
     private SearchView searchView;
-
+//
     private FirebaseAuth auth;
     private String rtvFullName;
     protected final int home = 1;
