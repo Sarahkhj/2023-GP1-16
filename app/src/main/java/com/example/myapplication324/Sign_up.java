@@ -3,6 +3,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.view.View;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 import io.github.muddz.styleabletoast.StyleableToast;
 
 public class Sign_up extends AppCompatActivity  {
-    private TextView login;
+    private TextView login,help;
     private EditText username, email, PhoneNum, password, rePassword;
     private Button sign;
     private FingerPrintAuthenticator fingerprintAuthenticator;
@@ -47,7 +48,16 @@ public class Sign_up extends AppCompatActivity  {
         password = findViewById(R.id.password);
         rePassword = findViewById(R.id.rePassword);
         sign = findViewById(R.id.sign);
+        help = findViewById(R.id.help);
         spinner = findViewById(R.id.spinner2);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent to open a YouTube video
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/DEGN9sPTWe4?si=LU9jHueucrzu-hnU")); // Replace VIDEO_ID with the actual YouTube video ID
+                startActivity(intent);
+            }
+        });
 
         // create spinnerItemlist for spinner
         customList=new ArrayList<>();
