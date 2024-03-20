@@ -471,7 +471,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
     private void MeowBottomNavigationShow(MeowBottomNavigation bottomNavigation) {
         bottomNavigation.add(new MeowBottomNavigation.Model(home, R.drawable.baseline_home_24));
-        bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
+    //    bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(favo, R.drawable.baseline_favorite_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(shared, R.drawable.baseline_group_24));
 
@@ -490,10 +490,7 @@ public class FolderActivity extends DrawerBaseActivity {
                 intent = new Intent(FolderActivity.this, Share.class);
                 startActivity(intent);
                 break;
-            case 4:
-                intent = new Intent(FolderActivity.this, Search.class);
-                startActivity(intent);
-                break;
+
         }
 
     }
