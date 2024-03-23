@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import io.github.muddz.styleabletoast.StyleableToast;
 
 public class Login2 extends AppCompatActivity {
-    private TextView userEmailTextView,pass, forget;
+    private TextView userEmailTextView,pass, forget,help;
     private WheelView wheelView;
     private String password,userfinal;
     private Button login;
@@ -46,10 +47,18 @@ public class Login2 extends AppCompatActivity {
         pass = findViewById(R.id.pass);
         wheelView = findViewById(R.id.wheelView);
         auth = FirebaseAuth.getInstance();
+        help = findViewById(R.id.help);
         wheelView.setTextView(pass); // Set the TextView in the WheelView
         reference = FirebaseDatabase.getInstance().getReference("users");
         fingerprintAuthenticator = new FingerPrintAuthenticator(Login2.this, () -> startActivity(new Intent(Login2.this, Home.class)));
-
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent to open a YouTube video
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/DEGN9sPTWe4?si=LU9jHueucrzu-hnU")); // Replace VIDEO_ID with the actual YouTube video ID
+                startActivity(intent);
+            }
+        });
 
         forget.setOnClickListener(view -> openforget());
 

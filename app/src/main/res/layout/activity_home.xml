@@ -25,14 +25,14 @@
             android:padding="12dp" />
     </ScrollView>
 
-    <SearchView
-        android:id="@+id/searchView"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="8dp"
-        android:iconifiedByDefault="false"
-        android:queryHint="Search..." />
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+    </androidx.appcompat.widget.Toolbar>
 
     <include layout="@layout/content_main" />
 
@@ -50,13 +50,4 @@
         app:mbn_selectedIconColor="@color/lightblue"
         app:mbn_shadowColor="#1f212121">
     </com.etebarian.meowbottomnavigation.MeowBottomNavigation>
-
-    <!--
-        <com.google.android.material.navigation.NavigationView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:headerLayout="@layout/header"
-            app:menu="@menu/nav_menu"
-            app:itemIconTint="@color/lightblue"
-            app:itemTextColor="@color/bluelogo"/> -->
 </RelativeLayout>

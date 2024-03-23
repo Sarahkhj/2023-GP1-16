@@ -60,16 +60,16 @@
                 android:layout_height="343dp"
                 android:layout_marginLeft="-65dp" />
 
+
             <Button
                 android:id="@+id/rotateClockwiseButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="200dp"
-                android:layout_marginBottom="-45dp"
+                android:layout_marginBottom="-48dp"
                 android:backgroundTint="@color/bluelogo"
                 android:onClick="rotateClockwise"
                 android:text="Rotate right" />
-
 
             <Button
                 android:id="@+id/rotateCounterClockwiseButton"
@@ -114,6 +114,13 @@
                     android:layout_marginLeft="230dp"
 
                     android:textColor="@color/black" />
+                <TextView
+                    android:id="@+id/help"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="-320dp"
+                    android:alpha="0.8"
+                    android:text="Need help?" />
 
 
             </LinearLayout>

@@ -130,8 +130,6 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if (currentActivityName.toLowerCase().contains("favorite")) {
                         popupMenu.getMenu().removeItem(R.id.menu_favorite);
                         popupMenu.getMenu().removeItem(R.id.menu_download);
-                        popupMenu.getMenu().removeItem(R.id.menu_rename);
-
 
                     }
                     else{
@@ -224,7 +222,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 ((FileViewHolder) holder).fileNameTextView.setText(newName);
 
                                 // Update the file name in Firebase
-                                String table = checkSubstring(context.toString());
+                                String table = currentFileMetadata.getPage();
                                 getParentKeyByChildKeyRENAME(currentFileMetadata.getKey(), table, newName);
 
                                 dialog.dismiss(); // Close the dialog

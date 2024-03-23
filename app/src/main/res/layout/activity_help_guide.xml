@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bbs"
+    tools:context=".HelpGuide">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/amazonImage"
+            android:layout_width="215dp"
+            android:layout_height="160dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="87dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="90dp"
+            android:src="@drawable/baseline_help_24"
+            app:tint="@color/white" />
+
+        <androidx.cardview.widget.CardView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/amazonImage"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/white"
+            app:cardBackgroundColor="#DAEFEE"
+            app:cardCornerRadius="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="388dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Help Guide"
+                    android:layout_marginLeft="120dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="26dp" />
+
+
+                <TextView
+                    android:id="@+id/helptext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.8"
+                    android:drawableStart="@drawable/baseline_contact_support_24"
+                    android:drawableTint="@color/black"
+                    android:text="  How to Set Up and Use Text-Based Graphical Password"
+                    android:textColor="@color/black"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="3dp"
+                    tools:layout_editor_absoluteY="0dp" />
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.8"
+                    android:drawableTint="@color/black"
+                    android:drawableStart="@drawable/baseline_contact_support_24"
+                    android:text="  Content Support Team"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="3dp"
+                    tools:layout_editor_absoluteY="0dp" />
+
+
+
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
+
+</ScrollView>

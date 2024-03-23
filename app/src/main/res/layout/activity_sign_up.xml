@@ -49,6 +49,7 @@
                 android:alpha="0.8"
                 android:text="Please Sign up with your information" />
 
+
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="30dp" />
@@ -167,6 +168,15 @@
                     android:text="Sign in"
                     android:textAlignment="center"
                     android:textColor="@color/bluelogo" />
+
+                <TextView
+                    android:id="@+id/help"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="-275dp"
+                    android:layout_marginTop="30dp"
+                    android:alpha="0.8"
+                    android:text="Need help?" />
 
             </LinearLayout>
         </LinearLayout>

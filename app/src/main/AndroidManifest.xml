@@ -14,6 +14,9 @@
         android:theme="@style/Theme.MyApplication324"
         tools:targetApi="31">
         <activity
+            android:name=".HelpGuide"
+            android:exported="false" />
+        <activity
             android:name=".FolderActivity"
             android:exported="false" />
         <activity
