@@ -13,7 +13,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
-import java.util.Base64;
+//import java.util.Base64;
+import android.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -145,7 +146,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
+//import java.util.Base64;
 //
 //public class Crypto {
 //
@@ -251,12 +252,19 @@ import java.util.Base64;
 
 public class Crypto {
 
-    private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding"; // Changed to ECB mode for simplicity
+   // private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding"; // Changed to ECB mode for simplicity
+   private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
     private static final int KEY_SIZE = 128; // Key size in bits
-    private static final String SPECIFIC_KEY = "FEMLUJMaOhgfzB+WsictJg==";
+   // private static final String SPECIFIC_KEY = "FEMLUJMaOhgfzB+WsictJg==";
+
+
+
+
+    // نوف هذي اكوادك الي كنتي كاتبتها
+
 
     // Method to encrypt data using AES with the specific key
-    public static byte[] encryptFile(InputStream inputFile, String specificKey) {
+   /*public static byte[] encryptFile(InputStream inputFile, String specificKey) {
         try {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -305,4 +313,135 @@ public class Crypto {
         }
         return null;
     }
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // هذي الاكواد الجديده الي انا كاتبتها
+
+    public static byte[] encryptFile(InputStream inputFile, Context context, String fileName) {
+        try {
+            // Generate a new unique key
+            String uniqueKey = generateUniqueKey();
+
+            // Store the key in SharedPreferences
+            storeKeyInSharedPreferences(context, fileName, uniqueKey);
+
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(Base64.decode(uniqueKey, Base64.DEFAULT), "AES"));
+            }
+
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            try (CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputFile.read(buffer)) != -1) {
+                    cipherOutputStream.write(buffer, 0, bytesRead);
+                }
+            }
+
+            // Return the encrypted data along with the unique key
+            return outputStream.toByteArray();
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Method to decrypt data using AES with the stored key
+    public static byte[] decryptFile(byte[] encryptedFile, Context context, String fileName) {
+        // Retrieve the unique key from SharedPreferences using the provided filename
+        String uniqueKey = getKeyFromSharedPreferences(context, fileName);
+
+        if (uniqueKey == null) {
+            Log.e("Crypto", "Unique key not found for file: " + fileName);
+            return null;
+        }
+
+        try {
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Base64.decode(uniqueKey, Base64.DEFAULT), "AES"));
+            }
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(encryptedFile);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            try (CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = cipherInputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+
+            // Return the decrypted data
+            return outputStream.toByteArray();
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    // Method to generate a new unique key for each file
+    private static String generateUniqueKey() {
+        // Generate a 128-bit (16 bytes) random key
+        byte[] key = new byte[16];
+        new SecureRandom().nextBytes(key);
+        Log.e("Crypto", "Unique key is: " + key);
+
+        // Encode the key to Base64 string for storage
+        return Base64.encodeToString(key, Base64.DEFAULT);
+
+    }
+
+    // Method to store the key in SharedPreferences
+    private static void storeKeyInSharedPreferences(Context context, String fileName, String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("FileKeys", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(fileName, key);
+        editor.apply();
+        Log.e("Crypto", "Unique key not found for file: " + key);
+    }
+
+    // Method to retrieve the key from SharedPreferences
+    public static String getKeyFromSharedPreferences(Context context, String fileName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("FileKeys", Context.MODE_PRIVATE);
+        return sharedPreferences.getString(fileName, null);
+    }
+
+
+
+
+
+
+
 }

@@ -3,6 +3,7 @@ package com.example.myapplication324;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.text.InputType;
 import android.util.Log;
@@ -39,6 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -1106,6 +1110,170 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 
+
+
+
+
+// ميثود مافيه ايررور لكن مدري وين يودي الفايلات
+   /* public void downLoadFile(Context context, String fileName, String destinationDirectory, String url) {
+        // Start the download
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
+        long downloadId = downloadManager.enqueue(request);
+
+        // Define the BroadcastReceiver to handle download completion
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(Context ctxt, Intent intent) {
+                long completedDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (completedDownloadId == downloadId) {
+                    // Get the downloaded file's input stream
+                    InputStream inputStream = getDownloadedFileInputStream(context, downloadId);
+                    if (inputStream != null) {
+                        // Encrypt the downloaded file and save it
+                        byte[] encryptedData = Crypto.encryptFile(inputStream, context, fileName);
+                        if (encryptedData != null) {
+                            // Save the encrypted data to a file (if needed)
+                            // For example:
+                            // saveEncryptedDataToFile(encryptedData, fileName);
+                            // Decrypt the file and do something with it
+                            byte[] decryptedData = Crypto.decryptFile(encryptedData, context, fileName);
+                            if (decryptedData != null) {
+                                // Do something with the decrypted data
+                            }
+                        }
+                    }
+                }
+                // Unregister the BroadcastReceiver
+                context.unregisterReceiver(this);
+            }
+        };
+
+        // Register the BroadcastReceiver to handle download completion
+        context.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+
+    // نفس الي تحت مكرر نسخته
+    private InputStream getDownloadedFileInputStream(Context context, long downloadId) {
+        // Retrieve the downloaded file's URI
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        try (Cursor cursor = downloadManager.query(query)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                int status = cursor.getInt(columnIndex);
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                    @SuppressLint("Range") String uriString = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)); // عدلت عليه من راسي  وهذا الكود قبل التعديل                     String uriString = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+
+                    if (uriString != null) {
+                        Uri uri = Uri.parse(uriString);
+                        return context.getContentResolver().openInputStream(uri);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+/*
+
+    //ميثوديالجديد
+    public void downLoadFile(Context context, String fileName, String destinationDirectory, String url) {
+        // Start the download
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
+        long downloadId = downloadManager.enqueue(request);
+
+        // Define the BroadcastReceiver to handle download completion
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(Context ctxt, Intent intent) {
+                long completedDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (completedDownloadId == downloadId) {
+                    // Get the downloaded file's input stream
+                    InputStream inputStream = getDownloadedFileInputStream(context, downloadId);
+                    if (inputStream != null) {
+                        // Encrypt the downloaded file and save it
+                        byte[] encryptedData = Crypto.encryptFile(inputStream, context, fileName);
+                        if (encryptedData != null) {
+                            // Save the encrypted data to a file (if needed)
+                            // For example:
+                            // saveEncryptedDataToFile(encryptedData, fileName);
+                        }
+                    }
+                }
+                // Unregister the BroadcastReceiver
+                context.unregisterReceiver(this);
+            }
+        };
+
+        // Register the BroadcastReceiver to handle download completion
+        context.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+
+
+
+    private InputStream getDownloadedFileInputStream(Context context, long downloadId) {
+        // Retrieve the downloaded file's URI
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(downloadId);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        try (Cursor cursor = downloadManager.query(query)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                int status = cursor.getInt(columnIndex);
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                    String uriString = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    if (uriString != null) {
+                        Uri uri = Uri.parse(uriString);
+                        return context.getContentResolver().openInputStream(uri);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+    // الي يشتغل
+
     public void downLoadFile(Context context, String fileName, String destinationDirectory, String url) {
         // Define the BroadcastReceiver to handle download completion
         BroadcastReceiver onComplete = new BroadcastReceiver() {
@@ -1131,6 +1299,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         downloadManager.enqueue(request);
     }
 
+
     private void decryptAndSaveFile(Context context, String encryptedFilePath, String decryptedFileName) {
         try {
             File encryptedFile = new File(encryptedFilePath);
@@ -1140,7 +1309,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             fis.close();
 
             // Decrypt the file
-            byte[] decryptedBytes = Crypto.decryptFile(encryptedBytes, "FEMLUJMaOhgfzB+WsictJg==");
+            byte[] decryptedBytes = Crypto.decryptFile(encryptedBytes, context,decryptedFileName);
 
             // Save the decrypted data to another file
             File decryptedFile = new File(context.getExternalFilesDir(null), decryptedFileName);
@@ -1153,6 +1322,93 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    private void storeKeyInSharedPreferences(Context context, String fileName, String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("FileKeys", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(fileName, key);
+        editor.apply();
+    }
+
+
+
+
+    private void decryptAndSaveFile(Context context, String encryptedFilePath, String decryptedFileName) {
+        try {
+            File encryptedFile = new File(encryptedFilePath);
+            FileInputStream fis = new FileInputStream(encryptedFile);
+            byte[] encryptedBytes = new byte[(int) encryptedFile.length()];
+            fis.read(encryptedBytes);
+            fis.close();
+
+            // Generate a new unique key for decryption
+            String uniqueKey = Crypto.generateUniqueKey();
+
+            // Decrypt the file using the generated unique key
+            byte[] decryptedBytes = Crypto.decryptFile(encryptedBytes, uniqueKey);
+
+            // Save the decrypted data to another file
+            File decryptedFile = new File(context.getExternalFilesDir(null), decryptedFileName);
+            FileOutputStream fos = new FileOutputStream(decryptedFile);
+            fos.write(decryptedBytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    // Method to decrypt the file using the stored key
+    private byte[] decryptFileWithKey(byte[] encryptedFile, String fileName, Context context) {
+        // Retrieve the key from SharedPreferences
+        String storedKey = getKeyFromSharedPreferences(context, fileName);
+        // Use the stored key for decryption
+        return Crypto.decryptFile(encryptedFile, storedKey);
+    }
+
+    // Method to retrieve the key from SharedPreferences
+    private String getKeyFromSharedPreferences(Context context, String fileName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("FileKeys", Context.MODE_PRIVATE);
+        return sharedPreferences.getString(fileName, null);
+    }
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -48,32 +48,26 @@ import java.util.List;
 
 public class Home extends DrawerBaseActivity { //i changed the extends class
     private SearchView searchView;
-//
     private FirebaseAuth auth;
     private String rtvFullName;
     protected final int home = 1;
     protected final int favo = 2;
     protected final int shared = 3;
     protected final int search = 4;
-
     private Intent intent;
-
     private final int CHOSE_PDF_FROM_DEVICE = 1001;
     private final int PICK_WORD_FILE = 1002;
-
     private ActivityHomeBinding activityHomeBinding;
     private String password;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private String currentUserId; // This should be unique for each user
-
     private FloatingActionButton fab_main, fab1_mail, fab2_share, pdf;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
     TextView textview_mail, textview_share, text;
     Boolean isOpen = false;
     private EditText FolderName;
-
     private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
 
@@ -83,9 +77,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
     private List<Object> itemsList = new ArrayList<>(); // Combined list of files and folders
     private ProgressBar progressBar;
     FirebaseFirestore db;
-    ArrayList<DownModel> downModelArrayList = new ArrayList<>();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,12 +106,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         progressBar.setVisibility(View.GONE);
 
         db=FirebaseFirestore.getInstance();
-
-        SetUpRV();
-        SetUpFB();
-        //dataFromFirebase();
-
-
 
 
         fab_main.setOnClickListener(view -> {
@@ -243,22 +228,6 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
         fileAdapter = new FileAdapter(searchResults,this ); // Create a new instance of FileAdapter with the search results
         recyclerView.setAdapter(fileAdapter);
     }
-
-    private void SetUpFB(){
-
-        db=FirebaseFirestore.getInstance();
-
-    }
-
-    private void SetUpRV(){
-
-        recyclerView=findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-    }
-
 
     private void fetchFilesFromFirebase() {
         DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child("files").child(currentUserId);
@@ -493,7 +462,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                     InputStream inputStream = getContentResolver().openInputStream(fileUri);
 
                                     // Encrypt the file
-                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "FEMLUJMaOhgfzB+WsictJg==");
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, Home.this, fileName);////////////////////////
                                     if (encryptedBytes != null) {
                                         String encryptedFileName = fileName;
 
@@ -530,7 +499,7 @@ public class Home extends DrawerBaseActivity { //i changed the extends class
                                     InputStream inputStream = getContentResolver().openInputStream(fileUri);
 
                                     // Encrypt the file
-                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, "FEMLUJMaOhgfzB+WsictJg==");
+                                    byte[] encryptedBytes = Crypto.encryptFile(inputStream, Home.this, fileName); ///////////////////////////
                                     if (encryptedBytes != null) {
                                         String encryptedFileName = fileName;
 
