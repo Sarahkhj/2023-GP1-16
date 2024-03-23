@@ -534,7 +534,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         // Now you have the parent key
                         Log.d("PARENT_KEY", parentKey);
                         // Update the file name
-                        updateFileName(parentKey, childKey, newName, table);
+                        checkIfFileNameExists(parentKey, childKey, newName, table);
 
                         return; // Exit the loop after finding the first match
                     }
@@ -542,6 +542,47 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 // Handle the case when the child key is not found
                 Log.d("CHILD_KEY_NOT_FOUND", "Child key not found");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("ERROR", "Database Error: " + databaseError.getMessage());
+            }
+        });
+    }
+    private void checkIfFileNameExists(String parentKey, String childKey, String newName, String table) {
+        DatabaseReference filesRef = FirebaseDatabase.getInstance().getReference().child(table);
+
+        filesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.getKey().equals(parentKey)) {
+                        for (DataSnapshot fileSnapshot : userSnapshot.getChildren()) {
+                            if (fileSnapshot.child("fileName").getValue(String.class).equals(newName)) {
+                                // The file name already exists, so add a number to it
+                                int count = 1;
+                                String baseName = newName.substring(0, newName.lastIndexOf('.'));
+                                String extension = newName.substring(newName.lastIndexOf('.'));
+                                String modifiedName = baseName + " (" + count + ")" + extension;
+
+                                // Keep incrementing the count until a unique name is found
+                                while (fileSnapshot.child("fileName").getValue(String.class).equals(modifiedName)) {
+                                    count++;
+                                    modifiedName = baseName + " (" + count + ")" + extension;
+                                }
+
+                                // Update the file name in Firebase
+                                updateFileName(parentKey, childKey, modifiedName, table);
+                                return; // Exit the loop after finding the first match
+                            }
+                        }
+                    }
+                }
+
+                // The file name is unique, so proceed with the rename
+                updateFileName(parentKey, childKey, newName, table);
             }
 
             @Override
