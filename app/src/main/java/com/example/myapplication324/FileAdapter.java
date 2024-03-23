@@ -182,7 +182,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 }
 
-
+//
 
                 private void showRenameDialog(View itemView) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
