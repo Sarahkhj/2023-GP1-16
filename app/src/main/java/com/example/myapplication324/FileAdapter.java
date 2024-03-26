@@ -97,7 +97,7 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return viewHolder;
     }
     private boolean containsInvalidCharacters(String name) {
-        String invalidCharacters = "[]{}()/\\:?\"<>|*";
+        String invalidCharacters = "[]{}/\\:?\"<>|*";
         for (int i = 0; i < name.length(); i++) {
             if (invalidCharacters.contains(String.valueOf(name.charAt(i)))) {
                 return true;
