@@ -129,7 +129,6 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         inflater.inflate(R.menu.file_popup_menu, popupMenu.getMenu());
                     if (currentActivityName.toLowerCase().contains("favorite")) {
                         popupMenu.getMenu().removeItem(R.id.menu_favorite);
-                        popupMenu.getMenu().removeItem(R.id.menu_download);
 
                     }
                     else{
