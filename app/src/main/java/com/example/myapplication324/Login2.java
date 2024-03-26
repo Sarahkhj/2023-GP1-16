@@ -55,7 +55,7 @@ public class Login2 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Intent to open a YouTube video
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/DEGN9sPTWe4?si=LU9jHueucrzu-hnU")); // Replace VIDEO_ID with the actual YouTube video ID
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/vNENWl8cm08?si=doMf3cawjEPYgHXN")); // Replace VIDEO_ID with the actual YouTube video ID
                 startActivity(intent);
             }
         });

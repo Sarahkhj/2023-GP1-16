@@ -408,14 +408,14 @@ public class FolderActivity extends DrawerBaseActivity {
         filesMetadataRef.child(fileId).setValue(fileMetadata)
                 .addOnSuccessListener(aVoid -> {
                     // File metadata saved successfully
-                    StyleableToast.makeText(FolderActivity.this, "File metadata saved successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                 //   StyleableToast.makeText(FolderActivity.this, "File metadata saved successfully", Toast.LENGTH_SHORT, R.style.mytoast).show();
 
                     // Fetch and display updated files and folders
                     fetchFilesFromFirebase(folderId);  // Pass the folderId when fetching files
                 })
                 .addOnFailureListener(e -> {
                     // File metadata saving failed
-                    StyleableToast.makeText(FolderActivity.this, "File metadata saving failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                   // StyleableToast.makeText(FolderActivity.this, "File metadata saving failed", Toast.LENGTH_SHORT, R.style.mytoast).show();
                 });
     }
 
