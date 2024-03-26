@@ -40,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -256,8 +257,8 @@ public class FolderActivity extends DrawerBaseActivity {
     }
 
 
-    @Override
 
+    @Override
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -274,9 +275,19 @@ public class FolderActivity extends DrawerBaseActivity {
                         Uri pdfUri = data.getData();
                         fileName = getFileNameFromUri(pdfUri);
 
-                        // Perform the necessary actions with the selected PDF file
-                        // For example, you might want to upload it to Firebase Storage
-                        uploadFileToFirebase(pdfUri, folderId,fileName);
+                        // Encrypt the file
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(pdfUri);
+                            byte[] encryptedBytes = Crypto.encryptFile(inputStream, FolderActivity.this, fileName);
+                            if (encryptedBytes != null) {
+                                // Proceed with uploading the encrypted file
+                                uploadFileToFirebase(encryptedBytes, folderId, fileName);
+                            } else {
+                                StyleableToast.makeText(FolderActivity.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
 
@@ -287,9 +298,19 @@ public class FolderActivity extends DrawerBaseActivity {
                         Uri wordUri = data.getData();
                         fileName = getFileNameFromUri(wordUri);
 
-                        // Perform the necessary actions with the selected Word file
-                        // For example, you might want to upload it to Firebase Storage
-                        uploadFileToFirebase(wordUri, folderId,fileName);
+                        // Encrypt the file
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(wordUri);
+                            byte[] encryptedBytes = Crypto.encryptFile(inputStream, FolderActivity.this, fileName);
+                            if (encryptedBytes != null) {
+                                // Proceed with uploading the encrypted file
+                                uploadFileToFirebase(encryptedBytes, folderId, fileName);
+                            } else {
+                                StyleableToast.makeText(FolderActivity.this, "Encryption failed.", Toast.LENGTH_SHORT, R.style.mytoast).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
 
@@ -297,7 +318,6 @@ public class FolderActivity extends DrawerBaseActivity {
             }
         }
     }
-
     // Replace this method with the actual method to get the current folderId
     private String getFolderId() {
         return folderId;
@@ -306,7 +326,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
 
 
-    private void uploadFileToFirebase(Uri fileUri, String folderId, String fileName) {
+    private void uploadFileToFirebase(byte[] encryptedBytes, String folderId, String fileName) {
         // Sample logic for uploading a file to Firebase Storage within a specific folder
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -320,7 +340,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
 
         // Upload the file to Firebase Storage
-        fileRef.putFile(fileUri)
+        fileRef.putBytes(encryptedBytes)
                 .addOnSuccessListener(taskSnapshot -> {
                     // File uploaded successfully
                     progressBar.setVisibility(View.GONE); // Hide progressBar on success
@@ -471,7 +491,7 @@ public class FolderActivity extends DrawerBaseActivity {
 
     private void MeowBottomNavigationShow(MeowBottomNavigation bottomNavigation) {
         bottomNavigation.add(new MeowBottomNavigation.Model(home, R.drawable.baseline_home_24));
-    //    bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
+        //    bottomNavigation.add(new MeowBottomNavigation.Model(search, R.drawable.baseline_search_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(favo, R.drawable.baseline_favorite_24));
         bottomNavigation.add(new MeowBottomNavigation.Model(shared, R.drawable.baseline_group_24));
 

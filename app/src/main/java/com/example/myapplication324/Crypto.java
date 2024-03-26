@@ -379,6 +379,7 @@ public class Crypto {
     public static byte[] decryptFile(byte[] encryptedFile, Context context, String fileName) {
         // Retrieve the unique key from SharedPreferences using the provided filename
         String uniqueKey = getKeyFromSharedPreferences(context, fileName);
+        Log.e("Decrypt", "the key is " + uniqueKey);
 
         if (uniqueKey == null) {
             Log.e("Crypto", "Unique key not found for file: " + fileName);
