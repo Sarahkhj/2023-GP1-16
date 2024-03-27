@@ -39,7 +39,7 @@ public class HelpGuide extends  DrawerBaseActivity {
                 // Intent to send an email
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:sbtestgp@gmail.com")); // only email apps should handle this
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"sb@gmail.com"}); // recipient's email
+                //intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"sb@gmail.com"}); // recipient's email
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Your subject here"); // email subject
                 intent.putExtra(Intent.EXTRA_TEXT, "Email body text."); // email body text
 
